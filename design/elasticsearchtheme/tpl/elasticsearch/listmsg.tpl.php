@@ -1,12 +1,5 @@
 <h1><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat messages list')?></h1>
 
-<?php 
-
-print_r($items);
-
-?>
-
-
 <?php if ($pages->items_total > 0): ?>
 	<table class="table">
 		<thead>
