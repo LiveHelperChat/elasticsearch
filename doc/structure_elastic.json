@@ -1,0 +1,240 @@
+{
+	"types": {	  
+		"lh_chat": {
+			"user_id": {
+				"type": "long"
+			}, 
+			"chat_id": {
+				"type": "long"
+			},
+			"dep_id": {
+				"type": "integer"
+			},
+			"status": {
+				"type": "integer"
+			},
+			"status_sub": {
+				"type": "integer"
+			},
+			"status_sub_sub": {
+				"type": "integer"
+			},
+			"sender_user_id": {
+				"type": "integer"
+			},
+			"auto_responder_id": {
+				"type": "integer"
+			},
+			"time": {
+				"type": "date"
+			},
+			"ip": {
+			    "type": "ip"
+			},		
+			"hash": {
+			    "type": "keyword"
+			},
+			"referrer": {
+			    "type": "text"
+			},
+			"session_referrer": {
+			    "type": "text"
+			},
+			"email": {
+			    "type": "keyword"
+			},
+			"user_status": {
+			    "type": "integer"
+			},
+			"support_informed": {
+			    "type": "integer"
+			},
+			"chat_initiator": {
+			    "type": "integer"
+			},
+			"hour": {
+			    "type": "integer"
+			},
+			"online_user_id": {
+			    "type": "integer"
+			},
+			"chat_duration": {
+			    "type": "integer"
+			},
+			"transfer_timeout_ts": {
+			    "type": "integer"
+			},
+			"nc_cb_executed": {
+			    "type": "integer"
+			},
+			"operator_typing_id": {
+			    "type": "integer"
+			},
+			"transfer_if_na": {
+			    "type": "integer"
+			},
+			"fbst": {
+			    "type": "integer"
+			},
+			"na_cb_executed": {
+			    "type": "integer"
+			},
+			"transfer_timeout_ac": {
+			    "type": "integer"
+			},
+			"country_code": {
+			    "type": "keyword"
+			},
+			"country_name": {
+			    "type": "keyword"
+			},
+			"phone": {
+			    "type": "keyword"
+			},
+			"user_tz_identifier": {
+			    "type": "keyword"
+			},
+			"chat_locale": {
+			    "type": "keyword"
+			},
+			"chat_locale_to": {
+			    "type": "keyword"
+			},
+			"additional_data": {
+			    "type": "text",
+			    "index" : false
+			},
+			"operation": {
+			    "type": "text",
+			    "index" : false
+			},
+			"chat_variables": {
+			    "type": "text",
+			    "index" : false
+			},
+			"operation_admin": {
+			    "type": "text",
+			    "index" : false
+			},
+			"status_sub_arg": {
+			    "type": "text",
+			    "index" : false
+			},
+			"remarks": {
+			    "type": "text"
+			},
+			"uagent": {
+			    "type": "text"
+			},
+			"nick": {
+			    "type": "text"
+			},
+			"has_unread_messages": {
+			    "type": "integer"
+			},
+			"device_type": {
+			    "type": "integer"
+			},
+			"unread_messages_informed": {
+			    "type": "integer"
+			},
+			"unanswered_chat": {
+			    "type": "integer"
+			},
+			"product_id": {
+			    "type": "integer"
+			},
+			"reinform_timeout": {
+			    "type": "integer"
+			},
+			"tslasign": {
+			    "type": "date"
+			},
+			"user_closed_ts": {
+			    "type": "date"
+			},
+			"screenshot_id": {
+			    "type": "integer"
+			},
+			"usaccept": {
+			    "type": "integer"
+			},
+			"priority": {
+			    "type": "integer"
+			},
+			"has_unread_op_messages": {
+			    "type": "integer"
+			},
+			"wait_time": {
+			    "type": "integer"
+			},
+			"unread_op_messages_informed": {
+			    "type": "integer"
+			},
+			"last_user_msg_time": {
+			    "type": "date"
+			},
+			"last_op_msg_time": {
+			    "type": "date"
+			},
+			"lsync": {
+			    "type": "date"
+			},
+			"last_msg_id": {
+			    "type": "long"
+			},
+			"mail_send": {
+			    "type": "integer"
+			},
+			"location": {
+			    "type": "geo_point"
+			},			
+			"city": {
+			    "type": "keyword"
+			}
+		},
+		"lh_msg": {
+			"msg_id": {
+				"type": "long"
+			}, 
+			"msg": {
+				"type": "text"
+			},
+			"time": {
+				"type": "date"
+			},
+			"chat_id": {
+				"type": "long"
+			},
+			"user_id": {
+				"type": "long"
+			},
+			"op_user_id": {
+				"type": "long"
+			},
+			"dep_id": {
+				"type": "integer"
+			},
+			"name_support": {
+				"type": "text"
+			}
+		},
+		"lh_os": {
+			"os_id": {
+				"type": "long"
+			}, 
+			"user_id": {
+				"type": "long"
+			},
+			"time": {
+				"type": "date"
+			},
+			"lactivity": {
+				"type": "date"
+			},
+			"duration": {
+				"type": "integer"
+			}
+		}
+	}  
+}

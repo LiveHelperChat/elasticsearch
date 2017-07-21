@@ -1,0 +1,20 @@
+{
+    "tables": {        
+        "lhc_lheschat_index": [
+            {
+                "field": "chat_id",
+                "type": "bigint(20)",
+                "null": "NO",
+                "key": "UNI",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },  
+    "tables_data": {    },
+    "tables_data_identifier": {    },
+    "tables_indexes" : {    },
+    "tables_create": {
+    	"lhc_lhcchatbot_question" : "CREATE TABLE `lhc_lheschat_index` (  `chat_id` bigint(20) unsigned NOT NULL,  UNIQUE KEY `chat_id` (`chat_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+    }
+}
