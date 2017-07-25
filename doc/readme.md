@@ -34,3 +34,6 @@ php cron.php -s site_admin -e elasticsearch -c cron/index_os
 Setup automatic indexing
 1. Setup cronjob for every 5 minutes
 */5 * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/cron > log_index.txt /dev/null 2>&1
+
+Setup indexing for pending, active chats and online oprators monitoring.
+* * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/cron_1m > cron_1m.txt /dev/null 2>&1
