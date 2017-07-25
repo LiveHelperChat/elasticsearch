@@ -38,7 +38,162 @@ class erLhcoreClassElasticSearchStatistic
             'list' => $statsAggr
         );
     }
+    
+    /**
+     * Appends statistic tab as valid option
+     *
+     * @param array $params
+     */
+    public static function appendStatisticTab($params) {
+        $params['valid_tabs'][] = 'pendingvsonlineop';
+    }
+    
+    public static function getGroupBy()
+    {
+        $items = array();
 
+        $item = new stdClass();
+        $item->id = 60*1000;
+        $item->name = "Minute";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
+        $item->id = 5*60*1000;
+        $item->name = "5 Minutes";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
+        $item->id = 10*60*1000;
+        $item->name = "10 Minutes";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
+        $item->id = 30*60*1000;
+        $item->name = "30 Minutes";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
+        $item->id = 60*60*1000;
+        $item->name = "1 Hour";
+        $items[$item->id] = $item;
+
+        return $items;
+    }
+    
+    /**
+     * Process this option
+     *
+     * @param array $paramsExecution
+     */
+    public static function processTab($paramsExecution) {
+    
+        $Params = $paramsExecution['params'];
+    
+        if ($Params['user_parameters_unordered']['tab'] == 'pendingvsonlineop')
+        {
+            $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+            if (isset($_GET['doSearch'])) {
+                $filterParams = erLhcoreClassSearchHandler::getParams(array('customfilterfile' => 'extension/elasticsearch/classes/searchattr/pendingvsonlineop.php', 'format_filter' => true, 'use_override' => true, 'uparams' => $Params['user_parameters_unordered']));
+            } else {
+                $filterParams = erLhcoreClassSearchHandler::getParams(array('customfilterfile' => 'extension/elasticsearch/classes/searchattr/pendingvsonlineop.php', 'format_filter' => true, 'uparams' => $Params['user_parameters_unordered']));
+            }
+
+            $groupByData = array(
+                'interval' => 60000,
+                'divide' => 1
+            );
+            
+            $groupOptions = self::getGroupBy();
+            if (!empty($filterParams['input_form']->group_by) && isset($groupOptions[$filterParams['input_form']->group_by])) {
+                $groupByData = array(
+                    'interval' => (int)$filterParams['input_form']->group_by,
+                    'divide' => round($filterParams['input_form']->group_by/(60000))
+                );
+            }
+            
+            $sparams = array();
+            $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+            $sparams['type'] = erLhcoreClassModelESPendingChat::$elasticType;
+          
+            if (! isset($filterParams['filter']['filtergte']['itime']) && ! isset($filterParams['filter']['filterlte']['itime'])) {
+                $filterParams['filter']['filtergte']['itime'] = time()-(24*3600);
+            }
+
+            erLhcoreClassChatStatistic::formatUserFilter($filterParams);
+
+            self::formatFilter($filterParams['filter'], $sparams);
+
+            $sparams['body']['size'] = 0;
+            $sparams['body']['from'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'itime';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $groupByData['interval'];
+            
+            $dateTime = new DateTime("now");
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
+            
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_status']['terms']['field'] = 'status';
+            $response = $elasticSearchHandler->search($sparams);
+            
+            $numberOfChats = array();
+           
+            $keyStatus = array(
+                erLhcoreClassModelChat::STATUS_ACTIVE_CHAT => 'active',
+                erLhcoreClassModelChat::STATUS_PENDING_CHAT => 'pending'
+            );
+            
+            foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+                
+                $indexBucket = $bucket['key']/1000;
+                
+                foreach ($bucket['chat_status']['buckets'] as $bucket) {
+                    if (isset($keyStatus[$bucket['key']])) {
+                        $numberOfChats[$indexBucket][$keyStatus[$bucket['key']]] = $bucket['doc_count'] / $groupByData['divide'];
+                    }
+                }
+                
+                foreach ($keyStatus as $mustHave) {
+                    if (! isset($numberOfChats[$indexBucket][$mustHave])) {
+                        $numberOfChats[$indexBucket][$mustHave] = 0;
+                    }
+                }
+                
+                $numberOfChats[$indexBucket]['op_count'] = 0;
+            }
+
+            $sparams = array();
+            $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+            $sparams['type'] = erLhcoreClassModelESOnlineOperator::$elasticType;
+
+            self::formatFilter($filterParams['filter'], $sparams);
+
+            $sparams['body']['size'] = 0;
+            $sparams['body']['from'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'itime';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $groupByData['interval'];
+            
+            $dateTime = new DateTime("now");
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['uniq_users']['cardinality']['field'] = 'user_id'; // Get unique online operators
+            $response = $elasticSearchHandler->search($sparams);
+
+            foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+                $indexBucket = $bucket['key']/1000;
+                $numberOfChats[$indexBucket]['op_count'] = $bucket['uniq_users']['value'];
+                
+                foreach ($keyStatus as $mustHave) {
+                    if (! isset($numberOfChats[$indexBucket][$mustHave])) {
+                        $numberOfChats[$indexBucket][$mustHave] = 0;
+                    }
+                }
+            }
+
+            $tpl = $paramsExecution['tpl'];
+            $tpl->set('input',$filterParams['input_form']);
+            $tpl->set('statistic', $numberOfChats);            
+        }
+    }
+    
     public static function statisticNumberofchatsdialogsbyuser($params)
     {
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
@@ -848,7 +1003,7 @@ class erLhcoreClassElasticSearchStatistic
                 
                 $field = str_replace('lh_chat.', '', $field);
                 
-                if ($field == 'time') {
+                if ($field == 'time' || $field == 'itime') {
                     $value = $value * 1000;
                 }
                 

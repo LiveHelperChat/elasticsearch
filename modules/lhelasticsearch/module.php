@@ -23,6 +23,18 @@ $ViewList['listos'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['listpc'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
+$ViewList['listop'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
 $ViewList['options'] = array(
     'params' => array(),
     'uparams' => array(),
@@ -47,7 +59,19 @@ $ViewList['delete'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['deleteop'] = array(
+    'params' => array('id'),
+    'uparams' => array('csfr'),
+    'functions' => array('configure')
+);
+
 $ViewList['deleteos'] = array(
+    'params' => array('id'),
+    'uparams' => array('csfr'),
+    'functions' => array('configure')
+);
+
+$ViewList['deletepc'] = array(
     'params' => array('id'),
     'uparams' => array('csfr'),
     'functions' => array('configure')

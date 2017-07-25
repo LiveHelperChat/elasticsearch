@@ -1,5 +1,5 @@
 <?php
-
+// Run me every 5 minutes
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/cron
 
 echo "==Indexing messages== \n";

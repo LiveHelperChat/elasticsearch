@@ -18,7 +18,10 @@ class erLhcoreClassExtensionElasticsearch
     	
     	$dispatcher->listen('chat.close', 'erLhcoreClassElasticSearchIndex::indexChatDelay');    	
     	$dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');    	
-    	    	 
+    	
+    	$dispatcher->listen('statistic.valid_tabs', 'erLhcoreClassElasticSearchStatistic::appendStatisticTab');
+    	$dispatcher->listen('statistic.process_tab', 'erLhcoreClassElasticSearchStatistic::processTab');
+    	
     	if (isset($this->settings_personal['use_es_statistic']) && $this->settings_personal['use_es_statistic'] == true)
     	{
     	    $dispatcher->listen('statistic.gettopchatsbycountry', 'erLhcoreClassElasticSearchStatistic::statisticGettopchatsbycountry');    	        	    
@@ -54,6 +57,8 @@ class erLhcoreClassExtensionElasticsearch
             'erLhcoreClassModelESChat'           => 'extension/elasticsearch/classes/erlhcoreclassmodeleschat.php',
             'erLhcoreClassModelESMsg'            => 'extension/elasticsearch/classes/erlhcoreclassmodelesmsg.php',
             'erLhcoreClassModelESOnlineSession'  => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlinesession.php',
+            'erLhcoreClassModelESPendingChat'    => 'extension/elasticsearch/classes/erlhcoreclassmodelespendingchat.php',
+            'erLhcoreClassModelESOnlineOperator' => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlineoperator.php',
             'erLhcoreClassElasticSearchIndex'    => 'extension/elasticsearch/classes/lhelasticsearchindex.php'
         );
         

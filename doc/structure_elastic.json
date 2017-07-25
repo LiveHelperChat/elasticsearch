@@ -235,6 +235,34 @@
 			"duration": {
 				"type": "integer"
 			}
+		},
+		"lh_pc": {
+			"chat_id": {
+				"type": "long"
+			}, 
+			"time": {
+				"type": "date"
+			},
+			"itime": {
+				"type": "date"
+			},
+			"dep_id": {
+				"type": "integer"
+			},
+			"status": {
+				"type": "integer"
+			}
+		},
+		"lh_op": {
+			"user_id": {
+				"type": "long"
+			}, 
+			"dep_id": {
+				"type": "integer"
+			},
+			"itime": {
+				"type": "date"
+			}			
 		}
 	}  
 }

@@ -301,6 +301,48 @@ class erLhcoreClassElasticSearchIndex
         }
     }
 
+    public static function indexPendingChats($params)
+    {
+        $items = $params['items'];
+        
+        foreach ($items as $keyValue => $item) {
+            $esChat = new erLhcoreClassModelESPendingChat();
+            $esChat->chat_id = $item->id;
+            $esChat->time = $item->time * 1000;
+            $esChat->itime = time()*1000;
+            $esChat->dep_id = $item->dep_id;
+            $esChat->status = $item->status;
+
+            $objectsSave[] = $esChat;
+        }
+        
+        erLhcoreClassModelESPendingChat::bulkSave($objectsSave);
+    }
+    
+    public static function indexOnlineOperators()
+    {
+        $db = ezcDbInstance::get();
+        
+        $stmt = $db->prepare("SELECT user_id, dep_id FROM `lh_userdep` WHERE `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id");
+        $stmt->bindValue(':time', time()-60, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $objectsSave = array();
+        
+        foreach ($rows as $row) {
+            $opEs = new erLhcoreClassModelESOnlineOperator();
+            $opEs->dep_id = $row['dep_id'];
+            $opEs->user_id = $row['user_id'];
+            $opEs->itime = time()*1000;
+                        
+            $objectsSave[] = $opEs;
+        }
+        
+        erLhcoreClassModelESOnlineOperator::bulkSave($objectsSave);
+    }
+    
     public static function indexMessages($params)
     {
         $items = $params['messages'];

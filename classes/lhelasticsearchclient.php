@@ -144,7 +144,6 @@ class erLhcoreClassElasticClient {
 		}	
 			
 		return $documentsCount;
-		
 	}
 	
 	public static function removeObj($handler, & $obj, $indexName, $indexType) {
@@ -154,7 +153,6 @@ class erLhcoreClassElasticClient {
 		$deleteParams['type'] = $indexType;
 		$deleteParams['id'] = $obj->id;
 		$handler->delete($deleteParams);
-		
 	}
 
 	public static function load($handler, $className, $id, $indexName, $indexType) {
