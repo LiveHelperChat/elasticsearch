@@ -94,7 +94,7 @@ class erLhcoreClassElasticSearchIndex
         // Store hour as UTC for easier grouping
         $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
         $date_utc->setTimestamp($params['chat']->time);
-        $chat->hour = $date_utc->format("H");
+        $chat->hour = $date_utc->format("G");
         
         if ($new == false) {
             $chat->updateThis();

@@ -734,6 +734,44 @@ class erLhcoreClassElasticSearchStatistic
         
         $sparams['body']['aggs']['chat_count']['range']['field'] = 'wait_time';
         
+        $filterParams = $params['filter_params'];
+        
+        $dateTime = new DateTime("now");
+        $utcAdjust = $dateTime->getOffset() / 60 / 60; // Hours are stored in UTC format. We need to adjust filters
+               
+        if (isset($filterParams['input']->timefrom_include_hours) && is_numeric($filterParams['input']->timefrom_include_hours)){
+            $filterParams['input']->timefrom_include_hours = $filterParams['input']->timefrom_include_hours - $utcAdjust;
+            
+            if ($filterParams['input']->timefrom_include_hours < 0) {
+                $filterParams['input']->timefrom_include_hours = 24 + $filterParams['input']->timefrom_include_hours;
+            }
+        }
+
+        if (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours)){
+            $filterParams['input']->timeto_include_hours = $filterParams['input']->timeto_include_hours - $utcAdjust;
+            
+            if ($filterParams['input']->timeto_include_hours < 0) {
+                $filterParams['input']->timeto_include_hours = 24 + $filterParams['input']->timeto_include_hours;
+            }
+        }
+
+        // Include fixed hours range
+        if ((isset($filterParams['input']->timefrom_include_hours) && is_numeric($filterParams['input']->timefrom_include_hours)) && (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours))) {
+   
+            if ($filterParams['input']->timefrom_include_hours <= $filterParams['input']->timeto_include_hours){
+                $sparams['body']['query']['bool']['must'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
+                $sparams['body']['query']['bool']['must'][]['range']['hour']['lte'] = (int)$filterParams['input']->timeto_include_hours;
+            } else {
+                $sparams['body']['query']['bool']['should'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
+                $sparams['body']['query']['bool']['should'][]['range']['hour']['lte'] = (int)$filterParams['input']->timeto_include_hours;
+            }
+        
+        } elseif (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours)) {            
+            $sparams['body']['query']['bool']['must'][]['range']['hour']['lte'] = (int)$filterParams['input']->timeto_include_hours; 
+        } elseif (isset($filterParams['input']->timefrom_include_hours) && is_numeric($filterParams['input']->timefrom_include_hours)) {
+            $sparams['body']['query']['bool']['must'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
+        }
+        
         foreach ($params['ranges'] as $rangeData) {
             $rangeFilter = array();
             
