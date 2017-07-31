@@ -27,14 +27,14 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
 #### Indexing existing chats
 `php cron.php -s site_admin -e elasticsearch -c cron/index_chats`
 
-#### Indexign existing messages
+#### Indexing existing messages
 `php cron.php -s site_admin -e elasticsearch -c cron/index_msg`
 
 #### Indexing existing online sessions
 `php cron.php -s site_admin -e elasticsearch -c cron/index_os`
 
-#### Setup automatic indexing
+#### Setup automatic indexing [Required]
 `*/5 * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/cron > log_index.txt /dev/null 2>&1`
 
-#### Used to generate online operators/Active/Pending chat's chart
+#### Used to generate online operators/Active/Pending chat's chart [Optional]
 `* * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/cron_1m > cron_1m.txt /dev/null 2>&1`
