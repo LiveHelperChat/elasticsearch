@@ -6,6 +6,8 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
  - Eliminates MySQL Queries in statistic genreation
  - Allows to search withing messages with keyword
  - Allows to generate Online Operators/Active/Pending chat's chart
+ 
+![See image](https://livehelperchat.com/design/frontendnew/images/stats.png)
 
 ## How it works?
  - After chat close event chat is indexed within cronjob.
