@@ -745,6 +745,10 @@ class erLhcoreClassElasticSearchStatistic
             if ($filterParams['input']->timefrom_include_hours < 0) {
                 $filterParams['input']->timefrom_include_hours = 24 + $filterParams['input']->timefrom_include_hours;
             }
+            
+            if ($filterParams['input']->timefrom_include_hours > 23) {
+                $filterParams['input']->timefrom_include_hours = $filterParams['input']->timefrom_include_hours - 24;
+            }
         }
 
         if (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours)){
@@ -753,8 +757,12 @@ class erLhcoreClassElasticSearchStatistic
             if ($filterParams['input']->timeto_include_hours < 0) {
                 $filterParams['input']->timeto_include_hours = 24 + $filterParams['input']->timeto_include_hours;
             }
+            
+            if ($filterParams['input']->timeto_include_hours > 23) {
+                $filterParams['input']->timeto_include_hours = $filterParams['input']->timeto_include_hours - 24;
+            }
         }
-
+        
         // Include fixed hours range
         if ((isset($filterParams['input']->timefrom_include_hours) && is_numeric($filterParams['input']->timefrom_include_hours)) && (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours))) {
    
