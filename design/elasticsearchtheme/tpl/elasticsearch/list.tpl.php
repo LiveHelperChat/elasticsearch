@@ -9,7 +9,7 @@
 	<div role="tabpanel" class="tab-pane <?php if ($tab == '' || $tab == 'chats') : ?>active<?php endif;?>" id="chats">
 		<?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter.tpl.php')); ?>
 	   	<?php if ($tab == 'chats') : ?>
-            <?php if ($pages->items_total > 0): ?>
+            <?php if ($pages->items_total > 0): ?>           
             	<table class="table">
             		<thead>
             			<tr>
@@ -50,8 +50,7 @@
         
         <?php if ($tab == 'messages') : ?>
         
-            <?php if ($pages->items_total > 0): ?>
-            
+            <?php if ($pages->items_total > 0): ?>            
             <table class="table">
         		<thead>
         			<tr>

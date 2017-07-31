@@ -62,9 +62,12 @@ if ($tab == 'chats') {
     
     $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
     
+    $total = erLhcoreClassModelESChat::getCount($sparams);
+    $tpl->set('total_literal',$total);
+    
     $pages = new lhPaginator();
     $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') . $append;
-    $pages->items_total = erLhcoreClassModelESChat::getCount($sparams);
+    $pages->items_total = $total > 9000 ? 9000 : $total;
     $pages->setItemsPerPage(30);
     $pages->paginate();
     
@@ -96,9 +99,12 @@ if ($tab == 'chats') {
     
     $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParamsMsg['input_form']);
     
+    $total = erLhcoreClassModelESMsg::getCount($sparams);
+    $tpl->set('total_literal',$total);
+    
     $pages = new lhPaginator();
     $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') .'/(tab)/messages' . $append;
-    $pages->items_total = erLhcoreClassModelESMsg::getCount($sparams);
+    $pages->items_total = $total > 9000 ? 9000 : $total;
     $pages->setItemsPerPage(30);
     $pages->paginate();
     

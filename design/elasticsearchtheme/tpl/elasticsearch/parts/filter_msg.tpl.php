@@ -1,3 +1,9 @@
+<?php if ($tab == 'messages') : ?>
+<div class="pull-right">
+    Records in total - <?php echo $total_literal;?>
+</div>
+<?php endif; ?>
+
 <form action="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>/(tab)/messages#/messages" method="get" name="SearchFormRight">
 	<input type="hidden" name="doSearch" value="1">
 	<div class="row">	
