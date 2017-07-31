@@ -1,17 +1,17 @@
-Author
+### Author
 Remigijus Kiminas, Live Helper Chat
 
-Description
+## Description
 This plugin enables statistic generation using only Elastic Search. MySQL is not a good solution for statistic generation, but Elastic Search does great job on that.
 
-How it works
+## How it works
 After chat close event chat is indexed within cronjob.
 Also there is cronjob which indexes existing data.
 
-Future
+## Future
 Remove older chat's than 3 months and implement fallback if record is not found in MySQL. At the moment we just duplicate records.
 
-Install
+## Install
 
 1. Put elasticsearch folder in extensions folder.
 2. copy settings.ini.default.php to settings.ini.php and edit settings
@@ -21,7 +21,7 @@ Install
 5. Click create index and later update structure
 6. Execute doc/install.sql
 
-Indexing chats
+#Indexing chats
 1. To index existing chats execute
 php cron.php -s site_admin -e elasticsearch -c cron/index_chats
 
