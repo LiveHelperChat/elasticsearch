@@ -772,6 +772,7 @@ class erLhcoreClassElasticSearchStatistic
             } else {
                 $sparams['body']['query']['bool']['should'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
                 $sparams['body']['query']['bool']['should'][]['range']['hour']['lte'] = (int)$filterParams['input']->timeto_include_hours;
+                $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
             }
         
         } elseif (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours)) {            
