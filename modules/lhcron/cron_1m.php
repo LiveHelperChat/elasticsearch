@@ -54,6 +54,29 @@ for ($i = 0; $i < $parts; $i++) {
 
 echo "Total indexed - ",$totalIndex,"\n";
 
+/*
+ *  @todo I do not have chat close time to determine it's close time
+ *  
+echo "==Indexing abandon chats== \n";
+
+$totalIndex = 0;
+
+$pageLimit = 100;
+
+$tsFilter = time()-60;
+
+$parts = ceil(erLhcoreClassModelChat::getCount(array('filtergt' => array('time' => $tsFilter),'filter' => array('user_id' => 0, 'status' => erLhcoreClassModelChat::STATUS_CLOSED_CHAT)))/$pageLimit);
+
+for ($i = 0; $i < $parts; $i++) {
+
+    echo "Pending chats records",($i + 1),"\n";
+    $items = erLhcoreClassModelChat::getList(array('filter' => array('status' => erLhcoreClassModelChat::STATUS_CLOSED_CHAT), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
+
+    erLhcoreClassElasticSearchIndex::indexPendingChats(array('items' => $items));
+
+    $totalIndex += count($items);
+}*/
+
 erLhcoreClassElasticSearchIndex::indexOnlineOperators();
 
 ?>

@@ -2,15 +2,15 @@
 
 $fieldsSearch = array();
 
-$fieldsSearch['chat_id'] = array (
+$fieldsSearch['message_text'] = array (
     'type' => 'text',
     'trans' => 'Sort by',
     'required' => false,
     'valid_if_filled' => false,
     'filter_type' => 'like',
-    'filter_table_field' => 'chat_id',
+    'filter_table_field' => 'message_text',
     'validation_definition' => new ezcInputFormDefinitionElement (
-            ezcInputFormDefinitionElement::OPTIONAL, 'string'
+            ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
     )
 );
 
