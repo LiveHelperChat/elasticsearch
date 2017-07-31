@@ -3,13 +3,16 @@ Remigijus Kiminas, Live Helper Chat
 
 ## Description
 This plugin enables statistic generation using only Elastic Search. MySQL is not a good solution for statistic generation, but Elastic Search does great job on that.
+ - Eliminates MySQL Queries in statistic genreation
+ - Allows to search withing messages with keyword
+ - Allows to generate Online Operators/Active/Pending chat's chart
 
-## How it works
-After chat close event chat is indexed within cronjob.
-Also there is cronjob which indexes existing data.
+## How it works?
+ - After chat close event chat is indexed within cronjob.
+ - Also there is cronjob which indexes existing data.
 
-## Future
-Remove older chat's than 3 months and implement fallback if record is not found in MySQL. At the moment we just duplicate records.
+## Future plans
+ - Remove older chat's than 3 months and implement fallback if record is not found in MySQL. At the moment we just duplicate records.
 
 ## Install
 
