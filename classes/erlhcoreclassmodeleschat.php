@@ -8,6 +8,7 @@ class erLhcoreClassModelESChat
     {
         $states = array(
             'user_id' => $this->user_id,
+            'transfer_uid' => $this->transfer_uid,
             'chat_id' => $this->chat_id,
             'time' => $this->time,
             'ip'  => $this->ip,
@@ -105,6 +106,7 @@ class erLhcoreClassModelESChat
 
     public static $elasticType = 'lh_chat';
     
+    public $transfer_uid = null;
     public $nc_cb_executed = null;
     public $operation = null;
     public $status_sub = null;

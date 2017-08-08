@@ -279,6 +279,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         $params['filter']['filtergt']['chat_duration'] = 0;
+        $params['filter']['filterlt']['chat_duration'] = 60*60;
         $params['filter']['filtergt']['user_id'] = 0;
         $params['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_CLOSED_CHAT;
         
@@ -540,6 +541,7 @@ class erLhcoreClassElasticSearchStatistic
         
         $params['filter']['filtergt']['user_id'] = 0;
         $params['filter']['filtergt']['chat_duration'] = 0;
+        $params['filter']['filterlt']['chat_duration'] = 60*60;
         $params['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_CLOSED_CHAT;
         
         self::formatFilter($params['filter'], $sparams);
@@ -569,12 +571,25 @@ class erLhcoreClassElasticSearchStatistic
         
         $response = $elasticSearchHandler->search($sparams);
         
-        $numberOfChats = array_fill(1, 24, 0);
-        
+        $numberOfChats = array_fill(1, 23, 0);
+
+        $dateTime = new DateTime("now");
+        $utcAdjust = $dateTime->getOffset() / 60 / 60; // Hours are stored in UTC format. We need to adjust filters
+
         foreach ($response['aggregations']['group_by_hour']['buckets'] as $item) {
-            $numberOfChats[$item['key']] = $item['doc_count'];
+            $hourAdjusted = $item['key'] + $utcAdjust;
+
+            if ($hourAdjusted < 0){
+                $hourAdjusted = 24 + $hourAdjusted;
+            }
+
+            if ($hourAdjusted > 23) {
+                $hourAdjusted = $hourAdjusted - 24;
+            }
+
+            $numberOfChats[$hourAdjusted] = $item['doc_count'];
         }
-        
+
         ksort($numberOfChats, SORT_NUMERIC);
         
         return array(
@@ -762,25 +777,27 @@ class erLhcoreClassElasticSearchStatistic
                 $filterParams['input']->timeto_include_hours = $filterParams['input']->timeto_include_hours - 24;
             }
         }
-        
+
         // Include fixed hours range
         if ((isset($filterParams['input']->timefrom_include_hours) && is_numeric($filterParams['input']->timefrom_include_hours)) && (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours))) {
    
             if ($filterParams['input']->timefrom_include_hours <= $filterParams['input']->timeto_include_hours){
                 $sparams['body']['query']['bool']['must'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
-                $sparams['body']['query']['bool']['must'][]['range']['hour']['lte'] = (int)$filterParams['input']->timeto_include_hours;
+                $sparams['body']['query']['bool']['must'][]['range']['hour']['lt'] = (int)$filterParams['input']->timeto_include_hours;
             } else {
                 $sparams['body']['query']['bool']['should'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
-                $sparams['body']['query']['bool']['should'][]['range']['hour']['lte'] = (int)$filterParams['input']->timeto_include_hours;
+                $sparams['body']['query']['bool']['should'][]['range']['hour']['lt'] = (int)$filterParams['input']->timeto_include_hours;
                 $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
             }
         
         } elseif (isset($filterParams['input']->timeto_include_hours) && is_numeric($filterParams['input']->timeto_include_hours)) {            
-            $sparams['body']['query']['bool']['must'][]['range']['hour']['lte'] = (int)$filterParams['input']->timeto_include_hours; 
+            $sparams['body']['query']['bool']['must'][]['range']['hour']['lt'] = (int)$filterParams['input']->timeto_include_hours;
         } elseif (isset($filterParams['input']->timefrom_include_hours) && is_numeric($filterParams['input']->timefrom_include_hours)) {
             $sparams['body']['query']['bool']['must'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
         }
-        
+
+        print_r($sparams['body']['query']['bool']);
+
         foreach ($params['ranges'] as $rangeData) {
             $rangeFilter = array();
             
@@ -848,7 +865,8 @@ class erLhcoreClassElasticSearchStatistic
         // totalHoursOfOnlineDialogsByUser
         $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['filter']['bool']['must'][]['term']['status'] = erLhcoreClassModelChat::STATUS_CLOSED_CHAT;
         $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['filter']['bool']['must'][]['range']['chat_duration']['gt'] = 0;
-        
+        $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['filter']['bool']['must'][]['range']['chat_duration']['lt'] = 60*60;
+
         // Sum
         $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['chat_duration_sum']['sum']['field'] = 'chat_duration';
         

@@ -1,9 +1,12 @@
 {
-	"types": {	  
+	"types": {
 		"lh_chat": {
 			"user_id": {
 				"type": "long"
-			}, 
+			},
+			"transfer_uid": {
+				"type": "long"
+			},
 			"chat_id": {
 				"type": "long"
 			},

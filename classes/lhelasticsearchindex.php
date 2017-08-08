@@ -34,6 +34,7 @@ class erLhcoreClassElasticSearchIndex
             );
         }
         
+        $chat->transfer_uid = $params['chat']->transfer_uid;
         $chat->dep_id = $params['chat']->dep_id;
         $chat->city = $params['chat']->city;
         $chat->wait_time = $params['chat']->wait_time;
