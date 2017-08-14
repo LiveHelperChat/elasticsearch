@@ -188,12 +188,64 @@ class erLhcoreClassElasticSearchStatistic
                 }
             }
 
+            if (isset($Params['user_parameters_unordered']['xls']) && $Params['user_parameters_unordered']['xls'] == 1) {
+                self::exportXLSPendingOnlineOperators($numberOfChats);
+            }
+
             $tpl = $paramsExecution['tpl'];
             $tpl->set('input',$filterParams['input_form']);
             $tpl->set('statistic', $numberOfChats);            
         }
     }
-    
+
+    public static function exportXLSPendingOnlineOperators($data)
+    {
+        include 'lib/core/lhform/PHPExcel.php';
+        $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+        $cacheSettings = array( 'memoryCacheSize ' => '64MB');
+        PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+
+        $objPHPExcel = new PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:AW1')->getFont()->setBold(true);
+        $objPHPExcel->getActiveSheet()->setTitle('Report');
+
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Date'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Online Operators'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Pending Chats'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Active Chats'));
+
+        $i = 2;
+        foreach ($data as $time => $item) {
+
+            $key = 0;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, date('Y-m-d H:i:s',$time));
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['op_count']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['pending']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['active']);
+
+            $i++;
+        }
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+
+        // We'll be outputting an excel file
+        header('Content-type: application/vnd.ms-excel');
+
+        // It will be called file.xls
+        header('Content-Disposition: attachment; filename="report.xlsx"');
+
+        // Write file to the browser
+        $objWriter->save('php://output');
+        exit;
+    }
+
     public static function statisticNumberofchatsdialogsbyuser($params)
     {
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();

@@ -114,12 +114,11 @@
     
     
     <div class="col-md-12">
-    	<div class="row">
-    		<div class="col-md-1">
-    			<input type="submit" name="doSearch" class="btn btn-default" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
-    		</div>
-    	</div>		
-	</div>		
+        <div class="btn-group" role="group" aria-label="...">
+            <input type="submit" name="doSearch" class="btn btn-default" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
+            <a href="<?php echo erLhcoreClassDesign::baseurl('statistic/statistic')?>/(tab)/pendingvsonlineop/(xls)/1<?php echo erLhcoreClassSearchHandler::getURLAppendFromInput($input)?>" class="btn btn-default">Export XLS</a>
+        </div>
+	</div>
 
 </div>
 	
