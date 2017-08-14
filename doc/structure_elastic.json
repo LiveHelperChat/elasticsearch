@@ -259,9 +259,6 @@
 		"lh_op": {
 			"user_id": {
 				"type": "long"
-			}, 
-			"dep_id": {
-				"type": "integer"
 			},
 			"itime": {
 				"type": "date"

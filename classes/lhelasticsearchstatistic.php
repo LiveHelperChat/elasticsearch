@@ -141,7 +141,7 @@ class erLhcoreClassElasticSearchStatistic
                 erLhcoreClassModelChat::STATUS_ACTIVE_CHAT => 'active',
                 erLhcoreClassModelChat::STATUS_PENDING_CHAT => 'pending'
             );
-            
+
             foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
                 
                 $indexBucket = $bucket['key']/1000;
@@ -165,6 +165,14 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
             $sparams['type'] = erLhcoreClassModelESOnlineOperator::$elasticType;
 
+            if (isset($filterParams['filter']['filterin']['lh_chat.dep_id'])) {
+                $filterParams['filter']['filterinm']['dep_ids'] = $filterParams['filter']['filterin']['lh_chat.dep_id'];
+                unset($filterParams['filter']['filterin']['lh_chat.dep_id']);
+            } elseif (isset($filterParams['filter']['filter']['dep_id'])) {
+                $filterParams['filter']['filterm']['dep_ids'] = $filterParams['filter']['filter']['dep_id'];
+                unset($filterParams['filter']['filter']['dep_id']);
+            };
+
             self::formatFilter($filterParams['filter'], $sparams);
 
             $sparams['body']['size'] = 0;
@@ -174,12 +182,11 @@ class erLhcoreClassElasticSearchStatistic
             
             $dateTime = new DateTime("now");
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
-            $sparams['body']['aggs']['chats_over_time']['aggs']['uniq_users']['cardinality']['field'] = 'user_id'; // Get unique online operators
             $response = $elasticSearchHandler->search($sparams);
 
             foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
                 $indexBucket = $bucket['key']/1000;
-                $numberOfChats[$indexBucket]['op_count'] = $bucket['uniq_users']['value'];
+                $numberOfChats[$indexBucket]['op_count'] = $bucket['doc_count'] / $groupByData['divide'];
                 
                 foreach ($keyStatus as $mustHave) {
                     if (! isset($numberOfChats[$indexBucket][$mustHave])) {
@@ -194,7 +201,7 @@ class erLhcoreClassElasticSearchStatistic
 
             $tpl = $paramsExecution['tpl'];
             $tpl->set('input',$filterParams['input_form']);
-            $tpl->set('statistic', $numberOfChats);            
+            $tpl->set('statistic', $numberOfChats);
         }
     }
 
@@ -1134,7 +1141,12 @@ class erLhcoreClassElasticSearchStatistic
                     $sparams['body']['query']['bool']['must'][]['range'][$field]['gt'] = $value;
                 } elseif ($type == 'filterin') {
                     $sparams['body']['query']['bool']['must'][]['terms'][$field] = $value;
+                } elseif ($type == 'filterm') {
+                    $sparams['body']['query']['bool']['must'][]['term'][$field] = $value;
+                } elseif ($type == 'filterinm') {
+                    $sparams['body']['query']['bool']['must'][]['terms'][$field] = $value;
                 }
+
             }
         }
         

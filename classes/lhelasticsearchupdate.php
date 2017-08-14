@@ -20,7 +20,7 @@ class erLhcoreClassElasticSearchUpdate
             $elasticData = erLhcoreClassElasticClient::getHandler()->indices()->getMapping(array(
                 'index' => $elasticIndex
             ));
-            
+
             $currentMappingData = $elasticData[$elasticIndex]['mappings'];
             
             if (isset($definition[$elasticIndex])) {
