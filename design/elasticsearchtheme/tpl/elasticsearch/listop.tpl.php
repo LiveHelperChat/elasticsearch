@@ -14,7 +14,7 @@
 		    <tr>
 		        <td><?php echo $item->user_id?></a></td>
 		        <td><?php echo $item->itime_front?></td>
-		        <td><?php echo $item->dep_id?></td>
+		        <td><?php echo json_encode($item->dep_ids,true)?></td>
 		        <td>
 		            <a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/deleteop')?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a>
 		        </td>

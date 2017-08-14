@@ -256,7 +256,7 @@ trait erLhcoreClassElasticTrait
             }
             $operations[] = json_encode($object->getState());
         }
-        
+
         if (! empty($operations)) {
             $operations[] = "";
             $params['body'] = implode("\n", $operations);

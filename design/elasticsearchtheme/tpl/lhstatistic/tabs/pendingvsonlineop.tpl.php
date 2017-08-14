@@ -99,7 +99,7 @@
     </div> 
     
     
-    <div class="col-md-4">
+    <div class="col-md-2">
 	   <div class="form-group">
     	<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Group by');?></label>
     	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
@@ -109,17 +109,32 @@
                     'list_function'  => 'erLhcoreClassElasticSearchStatistic::getGroupBy'
             )); ?> 
         </div>   
-    </div> 
-    
-    
-    
+    </div>
+
+    <div class="col-md-2">
+        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose what to display')?></label>
+        <ul class="nav">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true">Display <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="PendingChats"> Pending chats</label></li>
+                    <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('ActiveChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="ActiveChats"> Active chats</label></li>
+                    <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('OnlineOperators',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="OnlineOperators"> Online operators</label></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
     <div class="col-md-12">
     	<div class="row">
     		<div class="col-md-1">
     			<input type="submit" name="doSearch" class="btn btn-default" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
     		</div>
     	</div>		
-	</div>		
+	</div>
+
+
+
 
 </div>
 	
@@ -138,37 +153,45 @@
 <canvas id="pendingvsonline-chart" width="400" height="300" style="cursor:pointer"></canvas>
 
 <script>
-function randomScalingFactor()
-{
-	return Math.floor((Math.random() * 10) + 1);
-}
+var dataSets = [];
+
+<?php $showOperators = false; if (!isset($_GET['displayChart']) || empty($_GET['displayChart']) || is_array($_GET['displayChart']) && in_array('OnlineOperators',$_GET['displayChart'])) : $showOperators = true;?>
+dataSets.push({
+    type: 'line',
+    label: 'Online Operators',
+    borderColor: "rgb(54, 162, 235)",
+    borderWidth: 2,
+    fill: false,
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['op_count'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-2"
+});
+<?php endif ?>
+
+<?php if (!isset($_GET['displayChart']) || empty($_GET['displayChart']) || is_array($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>
+dataSets.push({
+    type: 'bar',
+    label: 'Pending chats',
+    backgroundColor: "rgb(226, 213, 59)",
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['pending'];?><?php $counter++;endforeach;?>],
+    borderColor: 'white',
+    borderWidth: 2,
+    yAxisID: "y-axis-1"
+});
+<?php endif ?>
+
+<?php if (!isset($_GET['displayChart']) || empty($_GET['displayChart']) || is_array($_GET['displayChart']) && in_array('ActiveChats',$_GET['displayChart'])) : ?>
+dataSets.push({
+    type: 'bar',
+    label: 'Active Chats',
+    backgroundColor: "rgb(93, 164, 35)",
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['active'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-1"
+});
+<?php endif; ?>
 
 var chartData = {
     labels: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo '"',date('Y-m-d H:i',$key),'"';?><?php $counter++;endforeach;?>],
-    datasets: [{
-        type: 'line',
-        label: 'Online Operators',
-        borderColor: "rgb(54, 162, 235)",
-        borderWidth: 2,
-        fill: false,
-        data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['op_count'];?><?php $counter++;endforeach;?>],
-        yAxisID: "y-axis-2"
-    }, {
-        type: 'bar',
-        label: 'Pending chats',
-        backgroundColor: "rgb(226, 213, 59)",
-        data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['pending'];?><?php $counter++;endforeach;?>],
-        borderColor: 'white',
-        borderWidth: 2,
-        yAxisID: "y-axis-1"
-    }, {
-        type: 'bar',
-        label: 'Active Chats',
-        backgroundColor: "rgb(93, 164, 35)",
-        data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['active'];?><?php $counter++;endforeach;?>],
-        yAxisID: "y-axis-1"
-    }]
-
+    datasets: dataSets
 };
 
 var ctx = document.getElementById("pendingvsonline-chart").getContext("2d");
@@ -192,17 +215,16 @@ new Chart(ctx, {
                 display: true,
                 position: "left",
                 id: "y-axis-1",
-            }, {
+            }<?php if ($showOperators == true) : ?>,
+            {
                 type: "linear", // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
                 display: true,
                 position: "right",
                 id: "y-axis-2",
-
-                // grid line settings
                 gridLines: {
                     drawOnChartArea: false, // only want the grid lines for one axis to show up
                 },
-            }],
+            }<?php endif?>],
         }
     }
 });

@@ -8,7 +8,7 @@ class erLhcoreClassModelESOnlineOperator
     {
         $states = array(
             'user_id' => $this->user_id,
-            'dep_id' => $this->dep_id,
+            'dep_ids' => $this->dep_ids,
             'itime' => $this->itime
         );
         
@@ -36,5 +36,5 @@ class erLhcoreClassModelESOnlineOperator
 
     public $user_id = null;
 
-    public $dep_id = null;
+    public $dep_ids = array();
 }

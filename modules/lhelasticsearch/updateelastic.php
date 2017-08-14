@@ -48,7 +48,6 @@ if (in_array($action, array(
     if ($elasticIndexExist == true) {
         
         $types = erLhcoreClassElasticSearchUpdate::getElasticStatus($contentData);
-        
         $tpl->set('types', $types);
     }
     

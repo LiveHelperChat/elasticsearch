@@ -327,20 +327,27 @@ class erLhcoreClassElasticSearchIndex
         $stmt = $db->prepare("SELECT user_id, dep_id FROM `lh_userdep` WHERE `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id");
         $stmt->bindValue(':time', time()-60, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         $objectsSave = array();
-        
+
+        $ts = time()*1000;
+
+        $saveObjects = array();
         foreach ($rows as $row) {
+            $saveObjects[$row['user_id']]['dep_ids'][] = (int)$row['dep_id'];
+        }
+
+        foreach ($saveObjects as $userId => $data) {
             $opEs = new erLhcoreClassModelESOnlineOperator();
-            $opEs->dep_id = $row['dep_id'];
-            $opEs->user_id = $row['user_id'];
+            $opEs->dep_ids = $data['dep_ids'];
+            $opEs->user_id = $userId;
             $opEs->itime = time()*1000;
-                        
+
             $objectsSave[] = $opEs;
         }
-        
+
         erLhcoreClassModelESOnlineOperator::bulkSave($objectsSave);
     }
     
