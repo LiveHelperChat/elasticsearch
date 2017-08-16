@@ -263,6 +263,29 @@ trait erLhcoreClassElasticTrait
             return erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objects, $paramsExecution);
         }
     }
+
+    public static function bulkDelete(& $objects, $paramsExecution = array())
+    {
+        $searchHandler = self::getSession();
+
+        $params['index'] = self::$indexName;
+        $params['type'] = self::$elasticType;
+
+        $operations = array();
+
+        foreach ($objects as $object) {
+            if ($object->id != null) {
+                $object->beforeRemove();
+                $operations[] = '{ "delete":  { "_id": "' . $object->id . '"} }';
+            }
+        }
+
+        if (! empty($operations)) {
+            $operations[] = "";
+            $params['body'] = implode("\n", $operations);
+            return erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objects, $paramsExecution);
+        }
+    }
 }
 
 ?>
