@@ -13,7 +13,7 @@ $ViewList['index'] = array(
 
 $ViewList['list'] = array(
     'params' => array(),
-    'uparams' => array('tab','chat_id','message_text','nick'),
+    'uparams' => array('tab','chat_id','message_text','nick','sort_msg'),
     'functions' => array('configure')
 );
 

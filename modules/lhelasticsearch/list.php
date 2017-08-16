@@ -107,25 +107,27 @@ if ($tab == 'chats') {
     $pages->items_total = $total > 9000 ? 9000 : $total;
     $pages->setItemsPerPage(30);
     $pages->paginate();
-    
+
+    if ($filterParamsMsg['input_form']->sort_msg == 'asc') {
+        $sort = array('time' => array('order' => 'asc'));
+    } elseif ($filterParamsMsg['input_form']->sort_msg == 'desc'){
+        $sort = array('time' => array('order' => 'desc'));
+    } else {
+        $sort = array('_score' => array('order' => 'desc'));
+    }
+
     if ($pages->items_total > 0) {
         $tpl->set('items', erLhcoreClassModelESMsg::getList(array(
             'offset' => $pages->low,
             'limit' => $pages->items_per_page,
             'body' => array_merge(array(
-                'sort' => array(
-                    '_score' => array(
-                        'order' => 'desc'
-                    )
-                )
+                'sort' => $sort
             ), $sparams['body'])
         )));
     }
     
     $tpl->set('pages', $pages);        
 }
-
-
 
 $Result['content'] = $tpl->fetch();
 $Result['path'] = array(

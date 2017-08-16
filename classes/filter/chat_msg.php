@@ -14,6 +14,18 @@ $fieldsSearch['message_text'] = array (
     )
 );
 
+$fieldsSearch['sort_msg'] = array (
+    'type' => 'text',
+    'trans' => 'Sort by',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'like',
+    'filter_table_field' => 'sort_msg',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'string'
+    )
+);
+
 $fieldSortAttr = array (
     'field'      => false,
     'default'    => false,
