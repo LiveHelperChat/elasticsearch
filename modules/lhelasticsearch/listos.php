@@ -25,7 +25,7 @@ $sparams = array(
 $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
 
 $pages = new lhPaginator();
-$pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') . $append;
+$pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/listos') . $append;
 $pages->items_total = erLhcoreClassModelESOnlineSession::getCount($sparams);
 $pages->setItemsPerPage(30);
 $pages->paginate();
