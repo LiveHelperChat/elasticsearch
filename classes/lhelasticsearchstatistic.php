@@ -199,6 +199,9 @@ class erLhcoreClassElasticSearchStatistic
                 self::exportXLSPendingOnlineOperators($numberOfChats);
             }
 
+            // We have to sort because some indexes get's appended at the bottom
+            ksort($numberOfChats);
+
             $tpl = $paramsExecution['tpl'];
             $tpl->set('input',$filterParams['input_form']);
             $tpl->set('statistic', $numberOfChats);
