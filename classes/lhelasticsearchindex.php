@@ -305,12 +305,14 @@ class erLhcoreClassElasticSearchIndex
     public static function indexPendingChats($params)
     {
         $items = $params['items'];
-        
+
+        $ts = time()*1000;
+
         foreach ($items as $keyValue => $item) {
             $esChat = new erLhcoreClassModelESPendingChat();
             $esChat->chat_id = $item->id;
             $esChat->time = $item->time * 1000;
-            $esChat->itime = time()*1000;
+            $esChat->itime = $ts;
             $esChat->dep_id = $item->dep_id;
             $esChat->status = $item->status;
 
@@ -323,7 +325,7 @@ class erLhcoreClassElasticSearchIndex
     public static function indexOnlineOperators()
     {
         $db = ezcDbInstance::get();
-        
+
         $stmt = $db->prepare("SELECT user_id, dep_id FROM `lh_userdep` WHERE `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id");
         $stmt->bindValue(':time', time()-60, PDO::PARAM_INT);
         $stmt->execute();
@@ -343,7 +345,7 @@ class erLhcoreClassElasticSearchIndex
             $opEs = new erLhcoreClassModelESOnlineOperator();
             $opEs->dep_ids = $data['dep_ids'];
             $opEs->user_id = $userId;
-            $opEs->itime = time()*1000;
+            $opEs->itime = $ts;
 
             $objectsSave[] = $opEs;
         }

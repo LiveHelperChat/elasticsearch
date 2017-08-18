@@ -58,6 +58,21 @@ class erLhcoreClassElasticSearchStatistic
         $items[$item->id] = $item;
 
         $item = new stdClass();
+        $item->id = 2*60*1000;
+        $item->name = "2 Minutes";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
+        $item->id = 3*60*1000;
+        $item->name = "3 Minutes";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
+        $item->id = 4*60*1000;
+        $item->name = "4 Minutes";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
         $item->id = 5*60*1000;
         $item->name = "5 Minutes";
         $items[$item->id] = $item;
@@ -75,6 +90,11 @@ class erLhcoreClassElasticSearchStatistic
         $item = new stdClass();
         $item->id = 60*60*1000;
         $item->name = "1 Hour";
+        $items[$item->id] = $item;
+
+        $item = new stdClass();
+        $item->id = 4*60*60*1000;
+        $item->name = "4 Hours";
         $items[$item->id] = $item;
 
         return $items;
