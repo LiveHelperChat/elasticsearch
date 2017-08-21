@@ -2,6 +2,8 @@
 
 class erLhcoreClassElasticSearchIndex
 {
+    public static $ts = null;
+
     public static function indexChat($params)
     {
         $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $params['chat']->id;
@@ -306,7 +308,7 @@ class erLhcoreClassElasticSearchIndex
     {
         $items = $params['items'];
 
-        $ts = time()*1000;
+        $ts = erLhcoreClassElasticSearchIndex::$ts !== null ? erLhcoreClassElasticSearchIndex::$ts*1000 : time()*1000;
 
         foreach ($items as $keyValue => $item) {
             $esChat = new erLhcoreClassModelESPendingChat();
@@ -326,15 +328,17 @@ class erLhcoreClassElasticSearchIndex
     {
         $db = ezcDbInstance::get();
 
+        $ts = erLhcoreClassElasticSearchIndex::$ts !== null ? erLhcoreClassElasticSearchIndex::$ts-60 : time()-60;
+
         $stmt = $db->prepare("SELECT user_id, dep_id FROM `lh_userdep` WHERE `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id");
-        $stmt->bindValue(':time', time()-60, PDO::PARAM_INT);
+        $stmt->bindValue(':time', $ts, PDO::PARAM_INT);
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $objectsSave = array();
 
-        $ts = time()*1000;
+        $ts = erLhcoreClassElasticSearchIndex::$ts !== null ? erLhcoreClassElasticSearchIndex::$ts * 1000 : time() * 1000;
 
         $saveObjects = array();
         foreach ($rows as $row) {
@@ -399,19 +403,24 @@ class erLhcoreClassElasticSearchIndex
             } else {
                 $esMsg = new erLhcoreClassModelESMsg();
             }
-            
-            $esMsg->chat_id = $item->chat_id;
-            $esMsg->msg_id = $item->id;
-            $esMsg->msg = $item->msg;
-            $esMsg->time = $item->time * 1000;
-            $esMsg->name_support = $item->name_support;
-            $esMsg->user_id = $item->user_id;
-            $esMsg->dep_id = $infoChat[$item->chat_id]['dep_id'];
-            $esMsg->op_user_id = $infoChat[$item->chat_id]['user_id'];
-            
-            $objectsSave[] = $esMsg;
+
+            if (isset($infoChat[$item->chat_id]['dep_id']) && isset($infoChat[$item->chat_id]['user_id']))
+            {
+                $esMsg->chat_id = $item->chat_id;
+                $esMsg->msg_id = $item->id;
+                $esMsg->msg = $item->msg;
+                $esMsg->time = $item->time * 1000;
+                $esMsg->name_support = $item->name_support;
+                $esMsg->user_id = $item->user_id;
+                $esMsg->dep_id = $infoChat[$item->chat_id]['dep_id'];
+                $esMsg->op_user_id = $infoChat[$item->chat_id]['user_id'];
+
+                $objectsSave[] = $esMsg;
+            }
         }
-        
-        erLhcoreClassModelESMsg::bulkSave($objectsSave);
+
+        if (!empty($objectsSave)) {
+            erLhcoreClassModelESMsg::bulkSave($objectsSave);
+        }
     }
 }

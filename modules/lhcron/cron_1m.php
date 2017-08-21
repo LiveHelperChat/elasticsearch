@@ -2,6 +2,8 @@
 // Run me every minute
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/cron_1m
 
+erLhcoreClassElasticSearchIndex::$ts = time();
+
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $data = (array)$esOptions->data;
 
@@ -24,7 +26,7 @@ $parts = ceil(erLhcoreClassModelChat::getCount(array('filter' => array('status' 
 
 for ($i = 0; $i < $parts; $i++) {
 
-    echo "Pending chats records",($i + 1),"\n";
+    echo "Pending chats records - ",($i + 1),"\n";
     $items = erLhcoreClassModelChat::getList(array('filter' => array('status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
 
     erLhcoreClassElasticSearchIndex::indexPendingChats(array('items' => $items));

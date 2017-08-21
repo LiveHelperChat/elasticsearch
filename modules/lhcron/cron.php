@@ -4,6 +4,8 @@
 
 echo "==Indexing messages== \n";
 
+erLhcoreClassElasticSearchIndex::$ts = time();
+
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $data = (array)$esOptions->data;
 
@@ -82,7 +84,7 @@ $pageLimit = 500;
 
 $totalIndex = 0;
 
-$tsFilter = time()-10*60;
+$tsFilter = erLhcoreClassElasticSearchIndex::$ts - 10*60;
 
 $parts = ceil(erLhcoreClassModelUserOnlineSession::getCount(array('filtergt' => array('lactivity' => $tsFilter)))/$pageLimit);
 

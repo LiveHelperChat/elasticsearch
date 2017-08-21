@@ -15,6 +15,6 @@
     "tables_data_identifier": {    },
     "tables_indexes" : {    },
     "tables_create": {
-    	"lhc_lhcchatbot_question" : "CREATE TABLE `lhc_lheschat_index` (  `chat_id` bigint(20) unsigned NOT NULL,  UNIQUE KEY `chat_id` (`chat_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+    	"lhc_lheschat_index" : "CREATE TABLE `lhc_lheschat_index` (  `chat_id` bigint(20) unsigned NOT NULL,  UNIQUE KEY `chat_id` (`chat_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8"
     }
 }
