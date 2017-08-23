@@ -276,6 +276,42 @@ class erLhcoreClassElasticSearchStatistic
         exit;
     }
 
+    public static function statisticNumberofchatsdialogsbydepartment($params)
+    {
+        $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
+
+        self::formatFilter($params['filter'], $sparams);
+
+        if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
+            $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y')) * 1000;
+        }
+
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+        $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = 'dep_id';
+        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 40;
+
+        $response = $elasticSearchHandler->search($sparams);
+
+        $statsAggr = array();
+
+        foreach ($response['aggregations']['group_by_country_count']['buckets'] as $item) {
+            $statsAggr[] = array(
+                'number_of_chats' => $item['doc_count'],
+                'dep_id' => (trim($item['key']) == '' ? '-' : $item['key'])
+            );
+        }
+
+        return array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+            'list' => $statsAggr
+        );
+    }
+
     public static function statisticNumberofchatsdialogsbyuser($params)
     {
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();

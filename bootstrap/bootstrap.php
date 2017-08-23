@@ -26,6 +26,7 @@ class erLhcoreClassExtensionElasticsearch
     	{
     	    $dispatcher->listen('statistic.gettopchatsbycountry', 'erLhcoreClassElasticSearchStatistic::statisticGettopchatsbycountry');    	        	    
         	$dispatcher->listen('statistic.numberofchatsdialogsbyuser', 'erLhcoreClassElasticSearchStatistic::statisticNumberofchatsdialogsbyuser');
+        	$dispatcher->listen('statistic.numberofchatsdialogsbydepartment', 'erLhcoreClassElasticSearchStatistic::statisticNumberofchatsdialogsbydepartment');
         	$dispatcher->listen('statistic.avgwaittimeuser', 'erLhcoreClassElasticSearchStatistic::statisticAvgwaittimeuser');
         	$dispatcher->listen('statistic.averageofchatsdialogsbyuser', 'erLhcoreClassElasticSearchStatistic::statisticAverageofchatsdialogsbyuser');
         	$dispatcher->listen('statistic.getnumberofchatspermonth', 'erLhcoreClassElasticSearchStatistic::statisticGetnumberofchatspermonth');
