@@ -20,7 +20,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = 'country_name';
-        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 20;
+        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 40;
         
         $response = $elasticSearchHandler->search($sparams);
         
@@ -293,7 +293,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = 'user_id';
-        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 20;
+        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 40;
         
         $response = $elasticSearchHandler->search($sparams);
         
@@ -331,7 +331,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = 'user_id';
-        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 20;
+        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 40;
         $sparams['body']['aggs']['group_by_country_count']['terms']['order']['avg_wait_time'] = 'desc';
         $sparams['body']['aggs']['group_by_country_count']['aggs']['avg_wait_time']['avg']['field'] = 'wait_time';
         
@@ -588,7 +588,7 @@ class erLhcoreClassElasticSearchStatistic
         self::formatFilter($params['filter'], $sparams);
         
         $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
-        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 20;
+        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 40;
         
         $response = $elasticSearchHandler->search($sparams);
         
