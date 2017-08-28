@@ -140,9 +140,21 @@ class erLhcoreClassElasticSearchStatistic
                 $filterParams['filter']['filtergte']['itime'] = time()-(24*3600);
             }
 
+            $filterChats = $filterParams;
+
+            if (isset($filterChats['filter']['filterin']['lh_chat.user_id'])) {
+                unset($filterChats['filter']['filterin']['lh_chat.user_id']);
+            }
+
+            if (isset($filterChats['filter']['filter']['user_id'])) {
+                unset($filterChats['filter']['filter']['user_id']);
+            }
+
+            self::formatFilter($filterChats['filter'], $sparams);
+
             erLhcoreClassChatStatistic::formatUserFilter($filterParams);
 
-            self::formatFilter($filterParams['filter'], $sparams);
+            self::formatFilter($filterChats['filter'], $sparams);
 
             $sparams['body']['size'] = 0;
             $sparams['body']['from'] = 0;

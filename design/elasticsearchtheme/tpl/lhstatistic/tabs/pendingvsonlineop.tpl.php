@@ -1,8 +1,36 @@
 <form action="" method="get">
 
 <div class="row form-group">
-    	
-	<div class="col-md-3">
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','User');?></label>
+            <?php echo erLhcoreClassRenderHelper::renderCombobox( array (
+                'input_name'     => 'user_id',
+                'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select user'),
+                'selected_id'    => $input->user_id,
+                'css_class'      => 'form-control',
+                'display_name'   => 'name_official',
+                'list_function'  => 'erLhcoreClassModelUser::getUserList'
+            )); ?>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','User group');?></label>
+            <?php echo erLhcoreClassRenderHelper::renderCombobox( array (
+                'input_name'     => 'group_id',
+                'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select group'),
+                'selected_id'    => $input->group_id,
+                'css_class'      => 'form-control',
+                'display_name'   => 'name',
+                'list_function'  => 'erLhcoreClassModelGroup::getList'
+            )); ?>
+        </div>
+    </div>
+
+    <div class="col-md-3">
 	  <div class="form-group">
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range from');?></label>
 			<div class="row">
@@ -72,7 +100,7 @@
 	  </div>
 	</div>
 
-	<div class="col-md-4">
+	<div class="col-md-3">
 	   <div class="form-group">
     	<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department');?></label>
     	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
@@ -85,7 +113,7 @@
         </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
 	   <div class="form-group">
     	<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department group');?></label>
     	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
