@@ -992,20 +992,33 @@ class erLhcoreClassElasticSearchStatistic
         // avgWaitTimeFilter
         $sparams['body']['aggs']['group_by_user']['aggs']['avg_wait_time_filter']['filter']['range']['wait_time']['lt'] = 600;
         $sparams['body']['aggs']['group_by_user']['aggs']['avg_wait_time_filter']['aggs']['wait_time']['avg']['field'] = 'wait_time';
-        
+
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getagentstatistic', array(
+            'sparams' => & $sparams
+        ));
+
         $result = $elasticSearchHandler->search($sparams);
         
         $usersStats = array();
         foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
-            $usersStats[$bucket['key']] = array(
+
+            $statsValue = array(
                 'total_chats' => $bucket['doc_count'],
                 'total_chats_usaccept' => $bucket['us_accept']['doc_count'],
                 'chat_duration_sum' => $bucket['closed_chats']['chat_duration_sum']['value'],
                 'chat_duration_avg' => $bucket['closed_chats']['chat_duration_avg']['value'],
                 'wait_time' => $bucket['avg_wait_time_filter']['wait_time']['value']
             );
+
+            // Append extension custom aggregation
+            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getagentstatistic_chats_value', array(
+                'bucket' => & $bucket,
+                'stats_value' => & $statsValue
+            ));
+
+            $usersStats[$bucket['key']] = $statsValue;
         }
-        
+
         // Online hours aggregration
         $sparams = array();
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
@@ -1060,8 +1073,8 @@ class erLhcoreClassElasticSearchStatistic
             $avgWaitTime = isset($usersStats[$user->id]['wait_time']) ? $usersStats[$user->id]['wait_time'] : 0;
             $totalHours = isset($usersStats[$user->id]['chat_duration_sum']) ? $usersStats[$user->id]['chat_duration_sum'] : 0;
             $avgDuration = isset($usersStats[$user->id]['chat_duration_avg']) ? $usersStats[$user->id]['chat_duration_avg'] : 0; //
-            
-            $list[] = (object) array(
+
+            $statsRecord = array(
                 'agentName' => $agentName,
                 'userId' => $user->id,
                 'numberOfChats' => $numberOfChats,
@@ -1076,6 +1089,14 @@ class erLhcoreClassElasticSearchStatistic
                 'avgChatLength' => ($avgDuration > 0 ? erLhcoreClassChat::formatSeconds($avgDuration) : '0 s.'),
                 'avgChatLengthSeconds' => $avgDuration
             );
+
+            // Allow extension append custom column
+            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getagentstatistic_display', array(
+                'users_stats' => (isset($usersStats[$user->id]) ? $usersStats[$user->id] : null),
+                'stats_record' => & $statsRecord
+            ));
+
+            $list[] = (object) $statsRecord;
         }
         
         return array(

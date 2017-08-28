@@ -93,7 +93,12 @@ class erLhcoreClassElasticSearchIndex
         $chat->usaccept = $params['chat']->usaccept;
         $chat->lsync = $params['chat']->lsync;
         $chat->auto_responder_id = $params['chat']->auto_responder_id;
-        
+
+        // Extensions can append custom value
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.indexchat', array(
+            'chat' => & $chat
+        ));
+
         // Store hour as UTC for easier grouping
         $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
         $date_utc->setTimestamp($params['chat']->time);
@@ -232,7 +237,12 @@ class erLhcoreClassElasticSearchIndex
             $esChat->usaccept = $item->usaccept;
             $esChat->lsync = $item->lsync;
             $esChat->auto_responder_id = $item->auto_responder_id;
-            
+
+            // Extensions can append custom value
+            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.indexchat', array(
+                'chat' => & $esChat
+            ));
+
             // Store hour as UTC for easier grouping
             $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
             $date_utc->setTimestamp($item->time);

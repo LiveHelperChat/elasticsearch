@@ -69,6 +69,11 @@ class erLhcoreClassModelESChat
             'hour' => $this->hour,
         );
 
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate', array(
+            'state' => & $states,
+            'chat' => & $this
+        ));
+
         return $states;
     }
 
