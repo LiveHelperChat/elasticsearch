@@ -632,7 +632,9 @@ class erLhcoreClassElasticSearchStatistic
         if ($useTimeFilter == true) {
             $params['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
         }
-        
+
+        $params['filter']['filtergt']['user_id'] = 0;
+
         self::formatFilter($params['filter'], $sparams);
         
         $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
