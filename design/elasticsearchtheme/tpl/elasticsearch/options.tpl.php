@@ -11,6 +11,10 @@
     <div class="form-group">
         <label><input type="checkbox" value="on" name="use_es_statistic" <?php isset($es_options['use_es_statistic']) && ($es_options['use_es_statistic'] == true) ? print 'checked="checked"' : ''?> /> Use Elastic Search Statistic</label><br/>
     </div>
+
+    <div class="form-group">
+        <label><input type="checkbox" value="on" name="use_es_prev_chats" <?php isset($es_options['use_es_prev_chats']) && ($es_options['use_es_prev_chats'] == true) ? print 'checked="checked"' : ''?> /> Use Elastic Search for previous chats. Search By Username.</label><br/>
+    </div>
     
     <div class="form-group">
         <label>Last indexed message Id</label>

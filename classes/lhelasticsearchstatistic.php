@@ -1246,4 +1246,8 @@ class erLhcoreClassElasticSearchStatistic
         
         return $returnFilter;
     }
+
+    public static function getPreviousChatsByChat($chat) {
+
+    }
 }

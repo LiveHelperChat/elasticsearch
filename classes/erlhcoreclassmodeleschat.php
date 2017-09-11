@@ -98,12 +98,19 @@ class erLhcoreClassModelESChat
     public function __get($var)
     {
         switch ($var) {
-                        
-            case 'demo':
-                $this->demo = '';
-                
-                return $this->demo;
+
+            case 'department':
+                $this->department = false;
+                if ($this->dep_id > 0) {
+                    try {
+                        $this->department = erLhcoreClassModelDepartament::fetch($this->dep_id,true);
+                    } catch (Exception $e) {
+
+                    }
+                }
+                return $this->department;
                 break;
+
             default:
                 break;
         }

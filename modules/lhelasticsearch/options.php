@@ -11,6 +11,9 @@ if ( isset($_POST['StoreOptions']) ) {
         'use_es_statistic' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
+        'use_es_prev_chats' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+        ),
         'last_index_msg_id' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'int'
         )
@@ -23,6 +26,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['use_es_statistic'] = 1;
     } else {
         $data['use_es_statistic'] = 0;
+    }
+
+    if ( $form->hasValidData( 'use_es_prev_chats' ) && $form->use_es_prev_chats == true ) {
+        $data['use_es_prev_chats'] = 1;
+    } else {
+        $data['use_es_prev_chats'] = 0;
     }
             
     if ( $form->hasValidData( 'last_index_msg_id' )) {

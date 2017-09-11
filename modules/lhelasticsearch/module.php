@@ -17,6 +17,12 @@ $ViewList['list'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['getpreviouschats'] = array(
+    'params' => array('chat_id'),
+    'uparams' => array(),
+    'functions' => array('use')
+);
+
 $ViewList['listos'] = array(
     'params' => array(),
     'uparams' => array(),
