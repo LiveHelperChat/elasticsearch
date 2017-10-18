@@ -52,8 +52,8 @@ if ($tab == 'chats') {
         'body' => array()
     );
     
-    if ($filterParams['input_form']->chat_id != '') {
-        $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $filterParams['input_form']->chat_id;
+    if (trim($filterParams['input_form']->chat_id) != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = (int)trim($filterParams['input_form']->chat_id);
     }
     
     if ($filterParams['input_form']->nick != '') {
