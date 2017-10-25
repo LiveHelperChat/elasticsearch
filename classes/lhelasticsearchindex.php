@@ -41,6 +41,7 @@ class erLhcoreClassElasticSearchIndex
         $chat->city = $params['chat']->city;
         $chat->wait_time = $params['chat']->wait_time;
         $chat->nick = $params['chat']->nick;
+        $chat->nick_keyword = $params['chat']->nick;
         $chat->status = $params['chat']->status;
         $chat->hash = $params['chat']->hash;
         $chat->referrer = $params['chat']->referrer;
@@ -185,6 +186,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->city = $item->city;
             $esChat->wait_time = $item->wait_time;
             $esChat->nick = $item->nick;
+            $esChat->nick_keyword = $item->nick;
             $esChat->status = $item->status;
             $esChat->hash = $item->hash;
             $esChat->referrer = $item->referrer;

@@ -16,6 +16,7 @@ class erLhcoreClassModelESChat
             'city' => $this->city,
             'wait_time' => $this->wait_time,
             'nick' => $this->nick,
+            'nick_keyword' => $this->nick_keyword,
             'status' => $this->status,
             'hash' => $this->hash,
             'referrer' => $this->referrer,
@@ -136,7 +137,8 @@ class erLhcoreClassModelESChat
     public $status = null;    
     public $hash = null;    
     public $nick = null;    
-    public $dep_id = null;    
+    public $nick_keyword = null;
+    public $dep_id = null;
     public $user_status = null;    
     public $country_code = null;    
     public $country_name = null;    

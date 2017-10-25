@@ -194,6 +194,9 @@
 			},			
 			"city": {
 			    "type": "keyword"
+			},
+			"nick_keyword": {
+			    "type": "keyword"
 			}
 		},
 		"lh_msg": {
