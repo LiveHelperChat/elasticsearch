@@ -4,7 +4,7 @@ $chat = erLhcoreClassModelChat::fetch($Params['user_parameters']['chat_id']);
 
 $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/getpreviouschats.tpl.php');
 
-if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined') {
+if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined' && $chat->nick != 'visitor') {
     $sparams['body']['query']['bool']['must'][]['term']['nick'] = $chat->nick;
 
     erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats', array(
