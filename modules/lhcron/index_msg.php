@@ -5,14 +5,25 @@
 echo "Indexing chats\n";
 
 $pageLimit = 500;
+$lastId = 0;
 
-$parts = ceil(erLhcoreClassChat::getCount(array(),'lh_msg')/$pageLimit);
-
-for ($i = 0; $i < $parts; $i++) {
+for ($i = 0; $i < 100000; $i++) {
 
     echo "Saving msg - ",($i + 1),"\n";
 
-    erLhcoreClassElasticSearchIndex::indexMessages(array('messages' => erLhcoreClassModelmsg::getList(array('offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'))));
+    $messages = erLhcoreClassModelmsg::getList(array('offset' => 0, 'filtergt' => array('id' => $lastId), 'limit' => $pageLimit, 'sort' => 'id ASC'));
+    end($messages);
+    $lastMessage = current($messages);
+
+    $lastId = $lastMessage->id;
+
+    echo $lastId,'-',count($messages),"\n";
+
+    if (empty($messages)){
+        exit;
+    }
+
+    erLhcoreClassElasticSearchIndex::indexMessages(array('messages' => $messages));
 }
 
 ?>
