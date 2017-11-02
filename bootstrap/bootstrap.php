@@ -17,8 +17,10 @@ class erLhcoreClassExtensionElasticsearch
     	$dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
     	
     	$dispatcher->listen('chat.close', 'erLhcoreClassElasticSearchIndex::indexChatDelay');    	
-    	$dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');    	
-    	
+    	$dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');
+        $dispatcher->listen('chat.modified', 'erLhcoreClassElasticSearchIndex::indexChatModify');
+
+
     	$dispatcher->listen('statistic.valid_tabs', 'erLhcoreClassElasticSearchStatistic::appendStatisticTab');
     	$dispatcher->listen('statistic.process_tab', 'erLhcoreClassElasticSearchStatistic::processTab');
     	

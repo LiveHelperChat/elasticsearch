@@ -301,6 +301,13 @@ class erLhcoreClassElasticSearchIndex
         $stmt->execute();
     }
 
+    public static function indexChatModify($params)
+    {
+        if ($params['chat']->status == erLhcoreClassModelChat::STATUS_CLOSED_CHAT) {
+            self::indexChatDelay($params);
+        }
+    }
+
     public static function indexChatDelete($params)
     {
         $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $params['chat']->id;
