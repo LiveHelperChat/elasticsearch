@@ -15,7 +15,7 @@ if (($online_user = $chat->online_user) !== false) {
 
     $previousChats = erLhcoreClassModelESChat::getList(array(
         'offset' => 0,
-        'limit' => 200,
+        'limit' => 50,
         'body' => array_merge(array(
             'sort' => array(
                 'time' => array(
