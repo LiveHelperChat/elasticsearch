@@ -4,9 +4,9 @@ $chat = erLhcoreClassModelChat::fetch($Params['user_parameters']['chat_id']);
 
 $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/getpreviouschats.tpl.php');
 
-if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined') {
+if (($online_user = $chat->online_user) !== false) {
 
-    $sparams['body']['query']['bool']['must'][]['term']['nick_keyword'] = $chat->nick;
+    $sparams['body']['query']['bool']['must'][]['term']['online_user_id'] = $online_user->id;
 
     erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats', array(
         'chat' => $chat,
@@ -32,17 +32,15 @@ if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined')
     }
 
     erLhcoreClassChatArcive::setArchiveAttribute($chatIds);
-    
+
     $tpl->set('chatsPrevArchives', $chatIds);
 
     $tpl->set('chatsPrev', $previousChats);
-} else {
-    $tpl->set('chatsPrev', array());
+
+    $tpl->set('chat', $chat);
+
+    echo json_encode(array('result' => $tpl->fetch()));
 }
-
-$tpl->set('chat', $chat);
-
-echo json_encode(array('result' => $tpl->fetch()));
 exit;
 
 ?>

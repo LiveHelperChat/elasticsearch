@@ -1,1 +1,1 @@
-<li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/index')?>">ElasticSearch</a></li>
+<li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/index')?>"><i class="material-icons">&#xE8B6;</i>ElasticSearch</a></li>

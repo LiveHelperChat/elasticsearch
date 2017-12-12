@@ -72,7 +72,8 @@ if ($tab == 'chats') {
     $pages->paginate();
     
     if ($pages->items_total > 0) {
-        $tpl->set('items', erLhcoreClassModelESChat::getList(array(
+
+        $chats = erLhcoreClassModelESChat::getList(array(
             'offset' => $pages->low,
             'limit' => $pages->items_per_page,
             'body' => array_merge(array(
@@ -82,7 +83,15 @@ if ($tab == 'chats') {
                     )
                 )
             ), $sparams['body'])
-        )));
+        ));
+
+        $chatIds = array();
+        foreach ($chats as $prevChat) {
+            $chatIds[$prevChat->chat_id] = array();
+        }
+        erLhcoreClassChatArcive::setArchiveAttribute($chatIds);
+        $tpl->set('itemsArchive', $chatIds);
+        $tpl->set('items', $chats);
     }
     
     $tpl->set('pages', $pages);
