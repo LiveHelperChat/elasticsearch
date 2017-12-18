@@ -1,30 +1,41 @@
 <?php
 
-// /usr/bin/php56 cron.php -s site_admin -e elasticsearch -c cron/index_chats
+// /usr/bin/php56 cron.php -s site_admin -e elasticsearch -c cron/index_chats -p <last_chat_id>
+
+if (is_numeric($cronjobPathOption->value)) {
+    $lastId = (int)$cronjobPathOption->value;
+} else {
+    $lastId = 0;
+}
 
 echo "Indexing chats\n";
 
 $pageLimit = 500;
 
-$lastId = 0;
-
 for ($i = 0; $i < 1000000; $i++) {
 
-    echo "Saving msg - ",($i + 1),"\n";
+    echo "Saving chats - ",($i + 1),"\n";
 
     $chats = erLhcoreClassModelChat::getList(array('offset' => 0, 'filtergt' => array('id' => $lastId), 'limit' => $pageLimit, 'sort' => 'id ASC'));
-    end($chats);
-    $lastChat = current($chats);
 
-    $lastId = $lastChat->id;
+    if (!empty($chats))
+    {
+        end($chats);
+        $lastChat = current($chats);
 
-    echo $lastId,'-',count($chats),"\n";
+        $lastId = $lastChat->id;
 
-    if (empty($chats)){
+        echo $lastId,'-',count($chats),"\n";
+
+        if (empty($chats)){
+            exit;
+        }
+
+        erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+    } else {
+        echo "No chats to index!\n";
         exit;
     }
-
-    erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
 }
 
 ?>

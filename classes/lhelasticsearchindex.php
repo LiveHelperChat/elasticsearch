@@ -108,8 +108,12 @@ class erLhcoreClassElasticSearchIndex
             $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
             $date_utc->setTimestamp($item->time);
             $esChat->hour = $date_utc->format("H");
-            
-            $messagesChat = erLhcoreClassModelmsg::getList(array('limit' => 5000, 'filter' => array('chat_id' => $item->id)));
+
+            if (isset($params['archive']) && $params['archive'] == true) {
+                $messagesChat = erLhcoreClassModelChatArchiveMsg::getList(array('limit' => 5000, 'filter' => array('chat_id' => $item->id)));
+            } else {
+                $messagesChat = erLhcoreClassModelmsg::getList(array('limit' => 5000, 'filter' => array('chat_id' => $item->id)));
+            }
 
             $esChat->msg_visitor = null;
             $esChat->msg_operator = null;
