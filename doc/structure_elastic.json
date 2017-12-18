@@ -197,6 +197,15 @@
 			},
 			"nick_keyword": {
 			    "type": "keyword"
+			},
+			"msg_visitor": {
+			    "type": "text"
+			},
+			"msg_operator": {
+			    "type": "text"
+			},
+			"msg_system": {
+			    "type": "text"
 			}
 		},
 		"lh_msg": {

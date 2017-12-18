@@ -1,6 +1,6 @@
 <?php
 
-// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_chats
+// /usr/bin/php56 cron.php -s site_admin -e elasticsearch -c cron/index_chats
 
 echo "Indexing chats\n";
 

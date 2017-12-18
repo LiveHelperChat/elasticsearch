@@ -4,147 +4,6 @@ class erLhcoreClassElasticSearchIndex
 {
     public static $ts = null;
 
-    public static function indexChat($params)
-    {
-        $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $params['chat']->id;
-        
-        $chat = erLhcoreClassModelESChat::findOne(array(
-            'offset' => 0,
-            'limit' => 0,
-            'body' => $sparams['body']
-        ));
-        
-        $new = false;
-        if ($chat == false) {
-            $chat = new erLhcoreClassModelESChat();
-            $new = true;
-        }
-        
-        $chat->chat_id = $params['chat']->id;
-        $chat->time = $params['chat']->time * 1000;
-        
-        if ($params['chat']->ip != '') {
-            $chat->ip = $params['chat']->ip;
-        }
-        
-        $chat->user_id = $params['chat']->user_id;
-        
-        if (! empty($params['chat']->lon) && ! empty($params['chat']->lat)) {
-            $chat->location = array(
-                (float) $params['chat']->lon,
-                (float) $params['chat']->lat
-            );
-        }
-        
-        $chat->transfer_uid = $params['chat']->transfer_uid;
-        $chat->dep_id = $params['chat']->dep_id;
-        $chat->city = $params['chat']->city;
-        $chat->wait_time = $params['chat']->wait_time;
-        $chat->nick = $params['chat']->nick;
-        $chat->nick_keyword = $params['chat']->nick;
-        $chat->status = $params['chat']->status;
-        $chat->hash = $params['chat']->hash;
-        $chat->referrer = $params['chat']->referrer;
-        $chat->user_status = $params['chat']->user_status;
-        $chat->support_informed = $params['chat']->support_informed;
-        $chat->email = $params['chat']->email;
-        $chat->country_code = $params['chat']->country_code;
-        $chat->country_name = $params['chat']->country_name;
-        $chat->phone = $params['chat']->phone;
-        $chat->has_unread_messages = $params['chat']->has_unread_messages;
-        $chat->last_user_msg_time = $params['chat']->last_user_msg_time;
-        $chat->last_msg_id = $params['chat']->last_msg_id;
-        $chat->additional_data = $params['chat']->additional_data;
-        $chat->mail_send = $params['chat']->mail_send;
-        $chat->session_referrer = $params['chat']->session_referrer;
-        $chat->chat_duration = $params['chat']->chat_duration;
-        $chat->chat_variables = $params['chat']->chat_variables;
-        $chat->priority = $params['chat']->priority;
-        $chat->chat_initiator = $params['chat']->chat_initiator;
-        $chat->online_user_id = $params['chat']->online_user_id;
-        $chat->transfer_timeout_ts = $params['chat']->transfer_timeout_ts;
-        $chat->transfer_timeout_ac = $params['chat']->transfer_timeout_ac;
-        $chat->transfer_if_na = $params['chat']->transfer_if_na;
-        $chat->na_cb_executed = $params['chat']->na_cb_executed;
-        $chat->fbst = $params['chat']->fbst;
-        $chat->nc_cb_executed = $params['chat']->nc_cb_executed;
-        $chat->operator_typing_id = $params['chat']->operator_typing_id;
-        $chat->remarks = $params['chat']->remarks;
-        $chat->status_sub = $params['chat']->status_sub;
-        $chat->operation = $params['chat']->operation;
-        $chat->screenshot_id = $params['chat']->screenshot_id;
-        $chat->unread_messages_informed = $params['chat']->unread_messages_informed;
-        $chat->reinform_timeout = $params['chat']->reinform_timeout;
-        $chat->has_unread_op_messages = $params['chat']->has_unread_op_messages;
-        $chat->user_closed_ts = $params['chat']->user_closed_ts;
-        $chat->chat_locale = $params['chat']->chat_locale;
-        $chat->chat_locale_to = $params['chat']->chat_locale_to;
-        $chat->unanswered_chat = $params['chat']->unanswered_chat;
-        $chat->product_id = $params['chat']->product_id;
-        $chat->last_op_msg_time = $params['chat']->last_op_msg_time;
-        $chat->unread_op_messages_informed = $params['chat']->unread_op_messages_informed;
-        $chat->status_sub_sub = $params['chat']->status_sub_sub;
-        $chat->status_sub_arg = $params['chat']->status_sub_arg;
-        $chat->uagent = $params['chat']->uagent;
-        $chat->device_type = $params['chat']->device_type;
-        $chat->sender_user_id = $params['chat']->sender_user_id;
-        $chat->user_tz_identifier = $params['chat']->user_tz_identifier;
-        $chat->operation_admin = $params['chat']->operation_admin;
-        $chat->tslasign = $params['chat']->tslasign;
-        $chat->usaccept = $params['chat']->usaccept;
-        $chat->lsync = $params['chat']->lsync;
-        $chat->auto_responder_id = $params['chat']->auto_responder_id;
-
-        // Extensions can append custom value
-        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.indexchat', array(
-            'chat' => & $chat
-        ));
-
-        // Store hour as UTC for easier grouping
-        $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
-        $date_utc->setTimestamp($params['chat']->time);
-        $chat->hour = $date_utc->format("G");
-        
-        if ($new == false) {
-            $chat->updateThis();
-        } else {
-            $chat->saveThis();
-        }
-        
-        // Store messages in elastic
-        $msgs = erLhcoreClassModelmsg::getList(array(
-            'limit' => 5000,
-            'filter' => array(
-                'chat_id' => $params['chat']->id
-            )
-        ));
-        
-        $sparams = array();
-        $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $params['chat']->id;
-        
-        $esMsgs = erLhcoreClassModelESMsg::getList(array(
-            'limit' => 2000,
-            'body' => $sparams['body']
-        ));
-        
-        $remapped = array();
-        foreach ($esMsgs as $esMsg) {
-            $remapped[$esMsg->msg_id] = $esMsg;
-        }
-        
-        foreach ($msgs as $msg) {
-            $esMsg = isset($remapped[$msg->id]) ? $remapped[$msg->id] : new erLhcoreClassModelESMsg();
-            $esMsg->chat_id = $msg->chat_id;
-            $esMsg->msg_id = $msg->id;
-            $esMsg->msg = $msg->msg;
-            $esMsg->time = $msg->time * 1000;
-            $esMsg->name_support = $msg->name_support;
-            $esMsg->user_id = $msg->user_id;
-            $esMsg->dep_id = $params['chat']->dep_id;
-            $esMsg->saveThis();
-        }
-    }
-
     public static function indexChats($params)
     {
         $sparams = array();
@@ -249,6 +108,26 @@ class erLhcoreClassElasticSearchIndex
             $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
             $date_utc->setTimestamp($item->time);
             $esChat->hour = $date_utc->format("H");
+            
+            $messagesChat = erLhcoreClassModelmsg::getList(array('limit' => 5000, 'filter' => array('chat_id' => $item->id)));
+
+            $esChat->msg_visitor = null;
+            $esChat->msg_operator = null;
+            $esChat->msg_system = null; 
+            
+            foreach ($messagesChat as $messageChat) {
+                if ($messageChat->user_id == 0) {
+                    $esChat->msg_visitor .= $messageChat->msg . "\n";
+                } elseif ($messageChat->user_id > 0) {
+                    $esChat->msg_operator .= $messageChat->msg . "\n";
+                } else {
+                    $esChat->msg_system .= $messageChat->msg . "\n";
+                }
+            }
+            
+            $esChat->msg_system = trim($esChat->msg_system);
+            $esChat->msg_operator = trim($esChat->msg_operator);
+            $esChat->msg_visitor = trim($esChat->msg_visitor);
             
             $objectsSave[] = $esChat;
         }

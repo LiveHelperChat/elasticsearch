@@ -1,0 +1,5 @@
+<h1><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Raw information')?></h1>
+
+<pre>
+<?php echo htmlspecialchars(print_r($item,true))?>
+</pre>

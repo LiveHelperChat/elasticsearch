@@ -60,6 +60,73 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['match']['nick'] = $filterParams['input_form']->nick;
     }
     
+    if ($filterParams['input_form']->email != '') {
+        $sparams['body']['query']['bool']['must'][]['match']['email'] = $filterParams['input_form']->email;
+    }
+    
+    if (trim($filterParams['input_form']->user_id) != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['user_id'] = (int)trim($filterParams['input_form']->user_id);
+    }
+    
+    if (trim($filterParams['input_form']->department_id) != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = (int)trim($filterParams['input_form']->department_id);
+    }
+
+    if (isset($filterParams['filter']['filtergte']['time'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['time']['gte'] = $filterParams['filter']['filtergte']['time'] * 1000;
+    }
+
+    if (isset($filterParams['filter']['filterlte']['time'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['time']['lte'] = $filterParams['filter']['filterlte']['time'] * 1000;
+    }
+    
+    if (isset($filterParams['filter']['filtergt']['chat_duration'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['chat_duration']['gt'] = (int)$filterParams['filter']['filtergt']['chat_duration'];
+    }
+    
+    if (isset($filterParams['filter']['filterlte']['chat_duration'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['chat_duration']['lte'] = (int)$filterParams['filter']['filterlte']['chat_duration'];
+    }
+    
+    if (isset($filterParams['filter']['filtergt']['wait_time'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['wait_time']['gt'] = (int)$filterParams['filter']['filtergt']['wait_time'];
+    }
+    
+    if (isset($filterParams['filter']['filterlte']['wait_time'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['wait_time']['lte'] = (int)$filterParams['filter']['filterlte']['wait_time'];
+    }
+    
+    if (trim($filterParams['input_form']->keyword) != '') {
+        
+        if (empty($filterParams['input_form']->search_in) || in_array(1,$filterParams['input_form']->search_in)) {
+            $sparams['body']['query']['bool']['should'][]['match']['msg_visitor'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][]['match']['msg_operator'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][]['match']['msg_system'] = $filterParams['input_form']->keyword;            
+        } else {
+            if (in_array(2,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][]['match']['msg_visitor'] = $filterParams['input_form']->keyword;
+            }
+            
+            if (in_array(3,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][]['match']['msg_operator'] = $filterParams['input_form']->keyword;
+            }
+            
+            if (in_array(4,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][]['match']['msg_system'] = $filterParams['input_form']->keyword;
+            }
+        }
+        
+        $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
+    }
+    
+    if ($filterParams['input_form']->sort_chat == 'asc') {
+        $sort = array('time' => array('order' => 'asc'));
+    } elseif ($filterParams['input_form']->sort_chat == 'relevance') {
+        $sort = array('_score' => array('order' => 'desc'));
+    } else {
+        $sort = array('time' => array('order' => 'desc'));
+    }
+    
     $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
     
     $total = erLhcoreClassModelESChat::getCount($sparams);
@@ -70,18 +137,14 @@ if ($tab == 'chats') {
     $pages->items_total = $total > 9000 ? 9000 : $total;
     $pages->setItemsPerPage(30);
     $pages->paginate();
-    
+
     if ($pages->items_total > 0) {
 
         $chats = erLhcoreClassModelESChat::getList(array(
             'offset' => $pages->low,
             'limit' => $pages->items_per_page,
             'body' => array_merge(array(
-                'sort' => array(
-                    'time' => array(
-                        'order' => 'desc'
-                    )
-                )
+                'sort' => $sort
             ), $sparams['body'])
         ));
 
