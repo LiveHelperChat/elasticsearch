@@ -228,7 +228,8 @@
     			<label><input type="checkbox" <?php if (is_array($input->search_in) && in_array(4,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="4" /> System messages</label>   
           	</div>
           </div>
-          
+
+           <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/custom_filter_attr_multiinclude.tpl.php')); ?>
 	</div>
 	
 	<?php if ($tab == 'chats') : ?>

@@ -13,7 +13,7 @@ $ViewList['index'] = array(
 
 $ViewList['list'] = array(
     'params' => array(),
-    'uparams' => array('search_in','sort_chat','keyword','tab','chat_id','message_text','nick','sort_msg','email','user_id','department_id','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours'),
+    'uparams' => array('attr_int_1','attr_int_2','attr_int_3','attr_int_4','attr_int_5','search_in','sort_chat','keyword','tab','chat_id','message_text','nick','sort_msg','email','user_id','department_id','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours'),
     'multiple_arguments' => array('search_in'),
     'functions' => array('configure')
 );

@@ -180,7 +180,11 @@ $fieldSortAttr = array (
     'options'    => array()
 );
 
-return array(
+$searchAttributes = array(
     'filterAttributes' => $fieldsSearch,
     'sortAttributes'   => $fieldSortAttr
 );
+
+erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.chatsearchattr',array('attr' => & $searchAttributes));
+
+return $searchAttributes;

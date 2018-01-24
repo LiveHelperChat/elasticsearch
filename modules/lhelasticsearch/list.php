@@ -95,7 +95,7 @@ if ($tab == 'chats') {
     if (isset($filterParams['filter']['filterlte']['wait_time'])) {
         $sparams['body']['query']['bool']['must'][]['range']['wait_time']['lte'] = (int)$filterParams['filter']['filterlte']['wait_time'];
     }
-    
+
     if (trim($filterParams['input_form']->keyword) != '') {
         
         if (empty($filterParams['input_form']->search_in) || in_array(1,$filterParams['input_form']->search_in)) {
@@ -118,7 +118,9 @@ if ($tab == 'chats') {
         
         $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
     }
-    
+
+    erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.chatsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
+
     if ($filterParams['input_form']->sort_chat == 'asc') {
         $sort = array('time' => array('order' => 'asc'));
     } elseif ($filterParams['input_form']->sort_chat == 'relevance') {

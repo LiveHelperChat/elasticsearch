@@ -1070,7 +1070,7 @@ class erLhcoreClassElasticSearchStatistic
         $list = array();
         
         foreach ($params['user_list'] as $user) {
-            $agentName = $user->name;
+            $agentName = trim($user->name .' '. $user->surname);
             $numberOfChats = isset($usersStats[$user->id]['total_chats']) ? $usersStats[$user->id]['total_chats'] : 0;
             $numberOfChatsOnline = isset($usersStats[$user->id]['total_chats_usaccept']) ? $usersStats[$user->id]['total_chats_usaccept'] : 0;
             
