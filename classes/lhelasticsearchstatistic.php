@@ -970,16 +970,18 @@ class erLhcoreClassElasticSearchStatistic
     public static function statisticGetagentstatistic($params)
     {
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
-        
+
         // Chat statistic aggregation
         $sparams = array();
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
-        
-        $params['filter']['filterin']['user_id'] = array_keys($params['user_list']);
-        
+
+        if (!empty($params['user_filter'])) {
+            $params['filter']['filterin']['user_id'] = $params['user_filter'];
+        }
+
         self::formatFilter($params['filter'], $sparams);
-        
+
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
             $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y')) * 1000;
         }
@@ -1037,8 +1039,17 @@ class erLhcoreClassElasticSearchStatistic
         $sparams = array();
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
         $sparams['type'] = erLhcoreClassModelESOnlineSession::$elasticType;
-        $params['filter']['filterin']['user_id'] = array_keys($params['user_list']);
-        
+
+        $userIdFilter = array_keys($usersStats);
+        if (!empty($userIdFilter)) {
+            $params['filter']['filterin']['user_id'] = $userIdFilter;
+        } else {
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => array()
+            );
+        }
+
         // Remove department filter
         $filterOnlineHours = $params['filter'];
         if (isset($filterOnlineHours['filter']['dep_id'])) {
@@ -1060,7 +1071,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
         $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
         $sparams['body']['aggs']['group_by_user']['aggs']['duration_sum']['sum']['field'] = 'duration';
-        
+
         $result = $elasticSearchHandler->search($sparams);
         
         foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
@@ -1068,7 +1079,10 @@ class erLhcoreClassElasticSearchStatistic
         }
         
         $list = array();
-        
+
+        // Set again user List
+        $params['user_list'] = erLhcoreClassModelUser::getUserList(array('filterin' => array('id' => $userIdFilter)));
+
         foreach ($params['user_list'] as $user) {
             $agentName = trim($user->name .' '. $user->surname);
             $numberOfChats = isset($usersStats[$user->id]['total_chats']) ? $usersStats[$user->id]['total_chats'] : 0;
