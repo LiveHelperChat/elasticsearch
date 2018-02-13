@@ -72,6 +72,30 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = (int)trim($filterParams['input_form']->department_id);
     }
 
+    if (trim($filterParams['input_form']->department_group_id) != '') {
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
+        $stmt->bindValue( ':group_id', $filterParams['input']->department_group_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $depIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!empty($depIds)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $depIds;
+        }
+    }
+
+    if (isset($filterParams['input']->group_id) && is_numeric($filterParams['input']->group_id) && $filterParams['input']->group_id > 0 ) {
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare('SELECT user_id FROM lh_groupuser WHERE group_id = :group_id');
+        $stmt->bindValue( ':group_id', $filterParams['input']->group_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!empty($userIds)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['user_id'] = $userIds;
+        }
+    }
+
     if (isset($filterParams['filter']['filtergte']['time'])) {
         $sparams['body']['query']['bool']['must'][]['range']['time']['gte'] = $filterParams['filter']['filtergte']['time'] * 1000;
     }
@@ -128,9 +152,9 @@ if ($tab == 'chats') {
     } else {
         $sort = array('time' => array('order' => 'desc'));
     }
-    
+
     $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
-    
+
     $total = erLhcoreClassModelESChat::getCount($sparams);
     $tpl->set('total_literal',$total);
     
