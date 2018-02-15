@@ -693,7 +693,13 @@ class erLhcoreClassElasticSearchStatistic
         $sparams = array();
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
-        
+
+        if (!isset($params['filter']['filtergte']['time'])) {
+            $params['filter']['filtergte']['time'] = mktime(0,0,0,date('m'),date('d')-$params['days'],date('y'));
+        }
+
+        $diffDays = ((isset($params['filter']['filterlte']['time']) ? $params['filter']['filterlte']['time'] : time())-$params['filter']['filtergte']['time'])/(24*3600);
+
         self::formatFilter($params['filter'], $sparams);
         
         $sparams['body']['size'] = 0;
@@ -703,7 +709,8 @@ class erLhcoreClassElasticSearchStatistic
         
         $response = $elasticSearchHandler->search($sparams);
         
-        $numberOfChats = array_fill(1, 23, 0);
+        $numberOfChats['total'] = array_fill(1, 23, 0);
+        $numberOfChats['byday'] = array_fill(1, 23, 0);
 
         $dateTime = new DateTime("now");
         $utcAdjust = $dateTime->getOffset() / 60 / 60; // Hours are stored in UTC format. We need to adjust filters
@@ -719,7 +726,8 @@ class erLhcoreClassElasticSearchStatistic
                 $hourAdjusted = $hourAdjusted - 24;
             }
 
-            $numberOfChats[$hourAdjusted] = $item['doc_count'];
+            $numberOfChats['total'][$hourAdjusted] = $item['doc_count'];
+            $numberOfChats['byday'][$hourAdjusted] = $item['doc_count']/$diffDays;
         }
 
         ksort($numberOfChats, SORT_NUMERIC);
