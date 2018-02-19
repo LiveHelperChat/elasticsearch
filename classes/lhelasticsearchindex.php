@@ -27,7 +27,9 @@ class erLhcoreClassElasticSearchIndex
             
             $esChat->chat_id = $item->id;
             $esChat->time = $item->time * 1000;
-            
+            $esChat->pnd_time = $item->pnd_time * 1000;
+            $esChat->cls_time = $item->cls_time * 1000;
+                        
             if ($item->ip != '') {
                 $esChat->ip = $item->ip;
             }

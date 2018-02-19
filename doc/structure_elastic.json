@@ -31,6 +31,12 @@
 			"time": {
 				"type": "date"
 			},
+			"pnd_time": {
+				"type": "date"
+			},
+			"cls_time": {
+				"type": "date"
+			},
 			"ip": {
 			    "type": "ip"
 			},		
