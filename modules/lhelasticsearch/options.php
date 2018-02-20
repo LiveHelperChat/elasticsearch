@@ -19,6 +19,9 @@ if ( isset($_POST['StoreOptions']) ) {
         ),
         'use_es_prev_chats_id' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+        ),
+        'indexType' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'string'
         )
     );
       
@@ -47,6 +50,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['use_es_prev_chats_id'] = $form->use_es_prev_chats_id ;
     } else {
         $data['use_es_prev_chats_id'] = 0;
+    }
+
+    if ( $form->hasValidData( 'indexType' )) {
+        $data['index_type'] = $form->indexType ;
+    } else {
+        $data['index_type'] = 'static';
     }
      
     $esOptions->explain = '';

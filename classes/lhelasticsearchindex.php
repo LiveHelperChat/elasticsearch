@@ -18,6 +18,11 @@ class erLhcoreClassElasticSearchIndex
         
         $objectsSave = array();
         
+        $indexSave = '';
+        $indexOptions = '';
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
         foreach ($params['chats'] as $keyValue => $item) {
             if (isset($documentsReindexed[$keyValue])) {
                 $esChat = $documentsReindexed[$keyValue];
@@ -134,11 +139,21 @@ class erLhcoreClassElasticSearchIndex
             $esChat->msg_system = trim($esChat->msg_system);
             $esChat->msg_operator = trim($esChat->msg_operator);
             $esChat->msg_visitor = trim($esChat->msg_visitor);
-            
-            $objectsSave[] = $esChat;
+
+            if (isset($dataOptions['index_type'])) {
+                if ($dataOptions['index_type'] == 'static') {
+                    $indexSave = erLhcoreClassModelESChat::$indexName;
+                } elseif ($indexSave == 'daily') {
+                    $indexSave = erLhcoreClassModelESChat::$indexName . date('Y.m.d',$item->time);
+                } elseif ($indexSave == 'monthly') {
+                    $indexSave = erLhcoreClassModelESChat::$indexName . date('Y.m',$item->time);
+                }
+            }
+
+            $objectsSave[$indexSave][] = $esChat;
         }
         
-        erLhcoreClassModelESChat::bulkSave($objectsSave);
+        erLhcoreClassModelESChat::bulkSave($objectsSave,array('custom_index' => true));
     }
 
     public static function indexOs($params)
