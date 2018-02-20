@@ -71,6 +71,8 @@ class erLhcoreClassModelESChat
             'msg_visitor' => $this->msg_visitor,
             'msg_operator' => $this->msg_operator,
             'msg_system' => $this->msg_system,
+            'pnd_time' => $this->pnd_time,
+            'cls_time' => $this->cls_time,
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate', array(
@@ -182,5 +184,7 @@ class erLhcoreClassModelESChat
     public $chat_initiator = null;
     public $msg_visitor = null;
     public $msg_operator = null;
-    public $msg_system = null;    
+    public $msg_system = null;
+    public $pnd_time = null;
+    public $cls_time = null;
 }
