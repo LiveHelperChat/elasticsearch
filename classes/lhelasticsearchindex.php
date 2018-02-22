@@ -17,9 +17,7 @@ class erLhcoreClassElasticSearchIndex
         }
         
         $objectsSave = array();
-        
-        $indexSave = '';
-        $indexOptions = '';
+
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
         $dataOptions = (array)$esOptions->data;
 
@@ -140,12 +138,14 @@ class erLhcoreClassElasticSearchIndex
             $esChat->msg_operator = trim($esChat->msg_operator);
             $esChat->msg_visitor = trim($esChat->msg_visitor);
 
-            if (isset($dataOptions['index_type'])) {
-                if ($dataOptions['index_type'] == 'static') {
-                    $indexSave = erLhcoreClassModelESChat::$indexName;
-                } elseif ($indexSave == 'daily') {
+            $indexSave = erLhcoreClassModelESChat::$indexName;
+
+            if (isset($esChat->meta_data['index']) && $esChat->meta_data['index'] != '') {
+                $indexSave = $esChat->meta_data['index'];
+            } else if (isset($dataOptions['index_type'])) {
+                if ($dataOptions['index_type'] == 'daily') {
                     $indexSave = erLhcoreClassModelESChat::$indexName . date('Y.m.d',$item->time);
-                } elseif ($indexSave == 'monthly') {
+                } elseif ($dataOptions['index_type'] == 'monthly') {
                     $indexSave = erLhcoreClassModelESChat::$indexName . date('Y.m',$item->time);
                 }
             }
@@ -153,7 +153,7 @@ class erLhcoreClassElasticSearchIndex
             $objectsSave[$indexSave][] = $esChat;
         }
         
-        erLhcoreClassModelESChat::bulkSave($objectsSave,array('custom_index' => true));
+        erLhcoreClassModelESChat::bulkSave($objectsSave, array('custom_index' => true));
     }
 
     public static function indexOs($params)
@@ -171,9 +171,14 @@ class erLhcoreClassElasticSearchIndex
         foreach ($documents as $document) {
             $documentsReindexed[$document->os_id] = $document;
         }
-        
+
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
         $objectsSave = array();
-        
+
+        erLhcoreClassModelESOnlineSession::getSession();
+
         foreach ($params['items'] as $keyValue => $item) {
             if (isset($documentsReindexed[$keyValue])) {
                 $osLog = $documentsReindexed[$keyValue];
@@ -186,11 +191,23 @@ class erLhcoreClassElasticSearchIndex
             
             $osLog->lactivity = $item->lactivity * 1000;
             $osLog->duration = $item->duration;
-            
-            $objectsSave[] = $osLog;
+
+            $indexSave = erLhcoreClassModelESOnlineSession::$indexName;
+
+            if (isset($osLog->meta_data['index']) && $osLog->meta_data['index'] != '') {
+                $indexSave = $osLog->meta_data['index'];
+            } else if (isset($dataOptions['index_type'])) {
+                if ($dataOptions['index_type'] == 'daily') {
+                    $indexSave = erLhcoreClassModelESOnlineSession::$indexName . date('Y.m.d',$item->time);
+                } elseif ($dataOptions['index_type'] == 'monthly') {
+                    $indexSave = erLhcoreClassModelESOnlineSession::$indexName . date('Y.m',$item->time);
+                }
+            }
+
+            $objectsSave[$indexSave][] = $osLog;
         }
         
-        erLhcoreClassModelESOnlineSession::bulkSave($objectsSave);
+        erLhcoreClassModelESOnlineSession::bulkSave($objectsSave, array('custom_index' => true));
     }
 
     public static function indexChatDelay($params)
@@ -225,9 +242,16 @@ class erLhcoreClassElasticSearchIndex
 
     public static function indexPendingChats($params)
     {
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
         $items = $params['items'];
 
         $ts = erLhcoreClassElasticSearchIndex::$ts !== null ? erLhcoreClassElasticSearchIndex::$ts*1000 : time()*1000;
+
+        $objectsSave = array();
+
+        erLhcoreClassModelESPendingChat::getSession();
 
         foreach ($items as $keyValue => $item) {
             $esChat = new erLhcoreClassModelESPendingChat();
@@ -237,10 +261,22 @@ class erLhcoreClassElasticSearchIndex
             $esChat->dep_id = $item->dep_id;
             $esChat->status = $item->status;
 
-            $objectsSave[] = $esChat;
+            $indexSave = erLhcoreClassModelESPendingChat::$indexName;
+
+            if (isset($dataOptions['index_type'])) {
+                if ($dataOptions['index_type'] == 'daily') {
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . date('Y.m.d',$item->time);
+                } elseif ($dataOptions['index_type'] == 'monthly') {
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . date('Y.m',$item->time);
+                }
+            }
+
+            $objectsSave[$indexSave][] = $esChat;
         }
-        
-        erLhcoreClassModelESPendingChat::bulkSave($objectsSave);
+
+        if (!empty($objectsSave)) {
+            erLhcoreClassModelESPendingChat::bulkSave($objectsSave, array('custom_index' => true));
+        }
     }
     
     public static function indexOnlineOperators()
@@ -264,16 +300,32 @@ class erLhcoreClassElasticSearchIndex
             $saveObjects[$row['user_id']]['dep_ids'][] = (int)$row['dep_id'];
         }
 
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
+        // To initialize indexes
+        erLhcoreClassModelESOnlineOperator::getSession();
+
         foreach ($saveObjects as $userId => $data) {
             $opEs = new erLhcoreClassModelESOnlineOperator();
             $opEs->dep_ids = $data['dep_ids'];
             $opEs->user_id = $userId;
             $opEs->itime = $ts;
 
-            $objectsSave[] = $opEs;
+            $indexSave = erLhcoreClassModelESOnlineOperator::$indexName;
+
+            if (isset($dataOptions['index_type'])) {
+                if ($dataOptions['index_type'] == 'daily') {
+                    $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . date('Y.m.d', $opEs->itime/1000);
+                } elseif ($dataOptions['index_type'] == 'monthly') {
+                    $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . date('Y.m',$opEs->itime/1000);
+                }
+            }
+
+            $objectsSave[$indexSave][] = $opEs;
         }
 
-        erLhcoreClassModelESOnlineOperator::bulkSave($objectsSave);
+        erLhcoreClassModelESOnlineOperator::bulkSave($objectsSave, array('custom_index' => true));
     }
     
     public static function indexMessages($params)
@@ -307,14 +359,19 @@ class erLhcoreClassElasticSearchIndex
         $sparams['body']['query']['bool']['must'][]['terms']['msg_id'] = array_keys($params['messages']);
         $sparams['limit'] = 1000;
         $documents = erLhcoreClassModelESMsg::getList($sparams);
-        
+
         $documentsReindexed = array();
         foreach ($documents as $document) {
             $documentsReindexed[$document->msg_id] = $document;
         }
         
         $objectsSave = array();
-        
+
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
+        erLhcoreClassModelESMsg::getSession();
+
         foreach ($params['messages'] as $keyValue => $item) {
             
             if (isset($documentsReindexed[$keyValue])) {
@@ -334,12 +391,24 @@ class erLhcoreClassElasticSearchIndex
                 $esMsg->dep_id = $infoChat[$item->chat_id]['dep_id'];
                 $esMsg->op_user_id = $infoChat[$item->chat_id]['user_id'];
 
-                $objectsSave[] = $esMsg;
+                $indexSave = erLhcoreClassModelESMsg::$indexName;
+
+                if (isset($esMsg->meta_data['index']) && $esMsg->meta_data['index'] != '') {
+                    $indexSave = $esMsg->meta_data['index'];
+                } else if (isset($dataOptions['index_type'])) {
+                    if ($dataOptions['index_type'] == 'daily') {
+                        $indexSave = erLhcoreClassModelESMsg::$indexName . date('Y.m.d', $item->time);
+                    } elseif ($dataOptions['index_type'] == 'monthly') {
+                        $indexSave = erLhcoreClassModelESMsg::$indexName . date('Y.m',$item->time);
+                    }
+                }
+
+                $objectsSave[$indexSave][] = $esMsg;
             }
         }
 
         if (!empty($objectsSave)) {
-            erLhcoreClassModelESMsg::bulkSave($objectsSave);
+            erLhcoreClassModelESMsg::bulkSave($objectsSave, array('custom_index' => true));
         }
     }
 }

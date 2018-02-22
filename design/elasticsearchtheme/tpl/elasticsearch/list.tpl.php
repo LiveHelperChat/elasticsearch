@@ -16,7 +16,8 @@
             			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
             			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Nick')?></th>
             			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
-            			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','IP')?></th>
+            			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','IP')?></th>
+            			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Index')?></th>
             			    <th></th>
             			</tr>  
             		</thead>
@@ -33,14 +34,15 @@
 
             		        <a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listmsg')?>/<?php echo $item->chat_id?>"><?php echo $item->chat_id?></a>
             		        
-            		        <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/raw')?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
+            		        <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/raw')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
             		        
             		        </td>
             		        <td><?php echo htmlspecialchars($item->nick)?></td>
             		        <td><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
             		        <td><?php echo htmlspecialchars($item->ip)?></td>
+            		        <td><?php echo htmlspecialchars($item->meta_data['index'])?></td>
             		        <td>
-            		            <a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/delete')?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a>
+            		            <a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/delete')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a>
             		        </td>
             		    </tr>
             		<?php endforeach; ?>
@@ -68,7 +70,8 @@
         			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
         			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Message')?></th>
         			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','User ID')?></th>
-        			</tr>  
+        			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Indice')?></th>
+        			</tr>
         		</thead>
         		<?php foreach ($items as $item) : ?>
         		    <tr>
@@ -80,6 +83,7 @@
         		        <td><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
         		        <td><?php echo htmlspecialchars($item->msg)?></td>
         		        <td><?php echo htmlspecialchars($item->user_id)?></td>        		       
+        		        <td><?php echo htmlspecialchars($item->meta_data['index'])?></td>
         		    </tr>
         		<?php endforeach; ?>
         	</table>

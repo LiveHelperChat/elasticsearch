@@ -30,7 +30,6 @@
         <select name="indexType" class="form-control">
             <option value="static" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'static') ? print 'selected="selected"' : ''?> >Static</option>
             <option value="daily" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'daily') ? print 'selected="selected"' : ''?> >Daily</option>
-            <option value="weekly" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'weekly') ? print 'selected="selected"' : ''?> >Weekly</option>
             <option value="monthly" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'monthly') ? print 'selected="selected"' : ''?> >Monthly</option>
         </select>
     </div>

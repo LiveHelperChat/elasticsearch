@@ -7,6 +7,7 @@
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listpc')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of pending/active chats history')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/elastic')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Elastic Search console')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/options')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Elastic Search Options')?></a></li>
+    <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/indices')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Indices')?></a></li>
 </ul>
 
 <hr>

@@ -15,6 +15,10 @@ for ($i = 0; $i < 100000; $i++) {
     end($messages);
     $lastMessage = current($messages);
 
+    if (!is_object($lastMessage)) {
+        exit;
+    }
+
     $lastId = $lastMessage->id;
 
     echo $lastId,'-',count($messages),"\n";

@@ -19,7 +19,7 @@ trait erLhcoreClassElasticTrait
     public function saveThis()
     {
         $this->beforeSave();
-        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, self::$indexName, self::$elasticType);
+        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
         $this->afterSave();
         $this->clearCache();
     }
@@ -27,7 +27,7 @@ trait erLhcoreClassElasticTrait
     public function updateThis()
     {
         $this->beforeUpdate();
-        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, self::$indexName, self::$elasticType);
+        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
         $this->afterUpdate();
         $this->clearCache();
     }
@@ -35,7 +35,7 @@ trait erLhcoreClassElasticTrait
     public function removeThis()
     {
         $this->beforeRemove();
-        erLhcoreClassElasticClient::removeObj(self::getSession(), $this, self::$indexName, self::$elasticType);
+        erLhcoreClassElasticClient::removeObj(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
         $this->afterRemove();
         $this->clearCache();
     }
@@ -99,13 +99,13 @@ trait erLhcoreClassElasticTrait
         return $dbHandler;
     }
 
-    public static function fetch($id, $useCache = true)
+    public static function fetch($id, $indexName = null, $useCache = true)
     {
         if (isset($GLOBALS[__CLASS__ . $id]) && $useCache == true)
             return $GLOBALS[__CLASS__ . $id];
         
         try {
-            $GLOBALS[__CLASS__ . $id] = erLhcoreClassElasticClient::load(self::getSession(), __CLASS__, $id, self::$indexName, self::$elasticType);
+            $GLOBALS[__CLASS__ . $id] = erLhcoreClassElasticClient::load(self::getSession(), __CLASS__, $id, ($indexName === null ? self::$indexName : $indexName), self::$elasticType);
         } catch (Exception $e) {
             $GLOBALS[__CLASS__ . $id] = false;
         }
@@ -165,7 +165,6 @@ trait erLhcoreClassElasticTrait
         $searchHandler = self::getSession();
         
         $paramsDefault = array(
-            //'index' => self::$indexName,
             'index' => self::$indexNameSearch,
             'type' => self::$elasticType
         );
@@ -200,8 +199,7 @@ trait erLhcoreClassElasticTrait
         }
         
         $searchHandler = self::getSession();
-        
-        //$params['index'] = self::$indexName;
+
         $params['index'] = self::$indexNameSearch;
         $params['type'] = self::$elasticType;
         
@@ -236,9 +234,8 @@ trait erLhcoreClassElasticTrait
     public static function mGet($ids)
     {
         $searchHandler = self::getSession();
-        
-        //$params['index'] = self::$indexName;
-        $params['index'] = self::$indexNameSearch;
+
+        $params['index'] = self::$indexName;
         $params['type'] = self::$elasticType;
         $params['body']['ids'] = array_values($ids);
         
@@ -274,6 +271,7 @@ trait erLhcoreClassElasticTrait
             }
 
         } else {
+
             foreach ($objects as $index => $objectCollection)
             {
                 $params['index'] = $index;
@@ -295,7 +293,8 @@ trait erLhcoreClassElasticTrait
                 if (! empty($operations)) {
                     $operations[] = "";
                     $params['body'] = implode("\n", $operations);
-                    return erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objects, $paramsExecution);
+
+                    erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objectCollection, $paramsExecution);
                 }
             }
         }

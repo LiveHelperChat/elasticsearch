@@ -157,7 +157,7 @@ if ($tab == 'chats') {
 
     $total = erLhcoreClassModelESChat::getCount($sparams);
     $tpl->set('total_literal',$total);
-    
+
     $pages = new lhPaginator();
     $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') . $append;
     $pages->items_total = $total > 9000 ? 9000 : $total;
@@ -199,7 +199,7 @@ if ($tab == 'chats') {
     
     $total = erLhcoreClassModelESMsg::getCount($sparams);
     $tpl->set('total_literal',$total);
-    
+
     $pages = new lhPaginator();
     $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') .'/(tab)/messages' . $append;
     $pages->items_total = $total > 9000 ? 9000 : $total;

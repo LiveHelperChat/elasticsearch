@@ -5,7 +5,7 @@ if (!$currentUser->validateCSFRToken($Params['user_parameters_unordered']['csfr'
     exit;
 }
 
-$chat = erLhcoreClassModelESOnlineSession::fetch($Params['user_parameters']['id']);
+$chat = erLhcoreClassModelESOnlineSession::fetch($Params['user_parameters']['id'], $Params['user_parameters']['index']);
 $chat->removeThis();
 
 erLhcoreClassModule::redirect('elasticsearch/listos');

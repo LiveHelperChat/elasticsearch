@@ -2,19 +2,23 @@
 
 class erLhcoreClassElasticSearchUpdate
 {
-    public static function getElasticStatus($definition)
+    public static function getElasticStatus($definition, $indexSingle = null)
     {
         $typeStatus = array();
 
-        $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
-        
-        $mainIndex = $settings['index'];
-        $additional_indexes = $settings['additional_indexes'];
-        
-        $elasticIndexs = array_merge(array(
-            $mainIndex
-        ), $additional_indexes);
-        
+        if ($indexSingle === null) {
+            $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
+
+            $mainIndex = $settings['index'];
+            $additional_indexes = $settings['additional_indexes'];
+
+            $elasticIndexs = array_merge(array(
+                $mainIndex
+            ), $additional_indexes);
+        } else {
+            $elasticIndexs[] = $indexSingle;
+        }
+
         foreach ($elasticIndexs as $elasticIndex) {
             
             $elasticData = erLhcoreClassElasticClient::getHandler()->indices()->getMapping(array(
@@ -22,12 +26,12 @@ class erLhcoreClassElasticSearchUpdate
             ));
 
             $currentMappingData = $elasticData[$elasticIndex]['mappings'];
-            
+
             if (isset($definition[$elasticIndex])) {
                 foreach ($definition[$elasticIndex]['types'] as $type => $typeDefinition) {
-                    
+
                     if (isset($currentMappingData[$type])) {
-                        
+
                         $status = array();
                         
                         $currentTypeProperties = $currentMappingData[$type]['properties'];
@@ -60,7 +64,7 @@ class erLhcoreClassElasticSearchUpdate
                             $typeStatus[$type]['status'] = implode(', ', $status);
                         }
                     } else {
-                        
+
                         // Add types
                         $typeStatus[$type]['error'] = true;
                         $typeStatus[$type]['status'] = 'type add in index ' . $elasticIndex;
@@ -101,12 +105,12 @@ class erLhcoreClassElasticSearchUpdate
         return $typeStatus;
     }
 
-    public static function doElasticUpdate($definition)
+    public static function doElasticUpdate($definition, $indexSingle = null)
     {
         $errorMessages = array();
         
-        $updateInformation = self::getElasticStatus($definition);
-        
+        $updateInformation = self::getElasticStatus($definition, $indexSingle);
+
         foreach ($updateInformation as $type => $typeData) {
             
             if ($typeData['error'] == true) {
