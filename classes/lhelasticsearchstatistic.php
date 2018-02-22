@@ -466,17 +466,19 @@ class erLhcoreClassElasticSearchStatistic
         
         $paramsOrig = $params;
         if ($aggr == 'month') {
-            $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+                $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            }
         } else {
             if (! isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
                 $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
             }
         }
-        
+
         self::formatFilter($paramsOrig['filter'], $sparams);
-        
+
         $response = $elasticSearchHandler->search($sparams);
-        
+
         $keyStatus = array(
             erLhcoreClassModelChat::STATUS_CLOSED_CHAT => 'closed',
             erLhcoreClassModelChat::STATUS_ACTIVE_CHAT => 'active',
@@ -543,7 +545,9 @@ class erLhcoreClassElasticSearchStatistic
         $paramsOrig = $params;
         
         if ($aggr == 'month') {
-            $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+                $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            }
         } else {
             if (! isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
                 $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
@@ -593,7 +597,9 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
         
         $paramsOrig = $params;
-        $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+        if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+            $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+        }
         $paramsOrig['filter']['filtergt']['wait_time'] = 0;
         $paramsOrig['filter']['filterlt']['wait_time'] = 600;
         
