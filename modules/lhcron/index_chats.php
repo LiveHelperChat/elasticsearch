@@ -1,6 +1,6 @@
 <?php
 
-// /usr/bin/php56 cron.php -s site_admin -e elasticsearch -c cron/index_chats -p <last_chat_id>
+// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_chats -p <last_chat_id>
 
 if (is_numeric($cronjobPathOption->value)) {
     $lastId = (int)$cronjobPathOption->value;

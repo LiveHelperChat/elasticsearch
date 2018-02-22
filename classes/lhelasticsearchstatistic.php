@@ -8,7 +8,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         self::formatFilter($params['filter'], $sparams);
@@ -133,7 +133,7 @@ class erLhcoreClassElasticSearchStatistic
             }
             
             $sparams = array();
-            $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+            $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
             $sparams['type'] = erLhcoreClassModelESPendingChat::$elasticType;
           
             if (! isset($filterParams['filter']['filtergte']['itime']) && ! isset($filterParams['filter']['filterlte']['itime'])) {
@@ -194,7 +194,7 @@ class erLhcoreClassElasticSearchStatistic
             }
 
             $sparams = array();
-            $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+            $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
             $sparams['type'] = erLhcoreClassModelESOnlineOperator::$elasticType;
 
             if (isset($filterParams['filter']['filterin']['lh_chat.dep_id'])) {
@@ -293,7 +293,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
 
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
 
         self::formatFilter($params['filter'], $sparams);
@@ -329,7 +329,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         self::formatFilter($params['filter'], $sparams);
@@ -365,7 +365,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         $params['filter']['filterlt']['wait_time'] = 600;
@@ -405,7 +405,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         $params['filter']['filtergt']['chat_duration'] = 0;
@@ -450,7 +450,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
@@ -524,7 +524,7 @@ class erLhcoreClassElasticSearchStatistic
         }
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESMsg::$elasticType;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
@@ -581,7 +581,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
@@ -622,7 +622,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESMsg::$elasticType;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
@@ -665,7 +665,7 @@ class erLhcoreClassElasticSearchStatistic
         }
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         $sparams['body']['aggs']['avg_wait_time']['avg']['field'] = 'chat_duration';
         $sparams['body']['size'] = 0;
@@ -691,7 +691,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
 
         if (!isset($params['filter']['filtergte']['time'])) {
@@ -754,7 +754,7 @@ class erLhcoreClassElasticSearchStatistic
     public static function statisticGetlast24hstatistic($params)
     {
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         $sparamsItem = $sparams;
@@ -830,7 +830,7 @@ class erLhcoreClassElasticSearchStatistic
         $numberOfChats = array();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         self::formatFilter($params['filter'], $sparams);
@@ -879,7 +879,7 @@ class erLhcoreClassElasticSearchStatistic
         
         // Chat statistic aggregation
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         
         self::formatFilter($params['filter'], $sparams);
@@ -981,7 +981,7 @@ class erLhcoreClassElasticSearchStatistic
 
         // Chat statistic aggregation
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
 
         if (!empty($params['user_filter'])) {
@@ -1045,7 +1045,7 @@ class erLhcoreClassElasticSearchStatistic
 
         // Online hours aggregration
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESOnlineSession::$elasticType;
 
         $userIdFilter = array_keys($usersStats);
@@ -1146,7 +1146,7 @@ class erLhcoreClassElasticSearchStatistic
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'];
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
         $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;

@@ -3,7 +3,11 @@
 trait erLhcoreClassElasticTrait
 {
 
+    // Index name used for storage
     static $indexName = null;
+
+    // Index name used for searching
+    static $indexNameSearch = null;
 
     public function setState(array $properties)
     {
@@ -15,7 +19,7 @@ trait erLhcoreClassElasticTrait
     public function saveThis()
     {
         $this->beforeSave();
-        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, self::$indexName, self::$elasticType);
+        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
         $this->afterSave();
         $this->clearCache();
     }
@@ -23,7 +27,7 @@ trait erLhcoreClassElasticTrait
     public function updateThis()
     {
         $this->beforeUpdate();
-        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, self::$indexName, self::$elasticType);
+        erLhcoreClassElasticClient::saveThis(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
         $this->afterUpdate();
         $this->clearCache();
     }
@@ -31,7 +35,7 @@ trait erLhcoreClassElasticTrait
     public function removeThis()
     {
         $this->beforeRemove();
-        erLhcoreClassElasticClient::removeObj(self::getSession(), $this, self::$indexName, self::$elasticType);
+        erLhcoreClassElasticClient::removeObj(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
         $this->afterRemove();
         $this->clearCache();
     }
@@ -88,19 +92,20 @@ trait erLhcoreClassElasticTrait
                 }
             } else {
                 self::$indexName = $settings['index'];
+                self::$indexNameSearch = $settings['index_search'];
             }
         }
         
         return $dbHandler;
     }
 
-    public static function fetch($id, $useCache = true)
+    public static function fetch($id, $indexName = null, $useCache = true)
     {
         if (isset($GLOBALS[__CLASS__ . $id]) && $useCache == true)
             return $GLOBALS[__CLASS__ . $id];
         
         try {
-            $GLOBALS[__CLASS__ . $id] = erLhcoreClassElasticClient::load(self::getSession(), __CLASS__, $id, self::$indexName, self::$elasticType);
+            $GLOBALS[__CLASS__ . $id] = erLhcoreClassElasticClient::load(self::getSession(), __CLASS__, $id, ($indexName === null ? self::$indexName : $indexName), self::$elasticType);
         } catch (Exception $e) {
             $GLOBALS[__CLASS__ . $id] = false;
         }
@@ -160,7 +165,7 @@ trait erLhcoreClassElasticTrait
         $searchHandler = self::getSession();
         
         $paramsDefault = array(
-            'index' => self::$indexName,
+            'index' => self::$indexNameSearch,
             'type' => self::$elasticType
         );
         $params = array_merge($paramsDefault, $params);
@@ -194,8 +199,8 @@ trait erLhcoreClassElasticTrait
         }
         
         $searchHandler = self::getSession();
-        
-        $params['index'] = self::$indexName;
+
+        $params['index'] = self::$indexNameSearch;
         $params['type'] = self::$elasticType;
         
         // Convert pagination parameters to elastic one
@@ -229,7 +234,7 @@ trait erLhcoreClassElasticTrait
     public static function mGet($ids)
     {
         $searchHandler = self::getSession();
-        
+
         $params['index'] = self::$indexName;
         $params['type'] = self::$elasticType;
         $params['body']['ids'] = array_values($ids);
@@ -240,27 +245,58 @@ trait erLhcoreClassElasticTrait
     public static function bulkSave(& $objects, $paramsExecution = array())
     {
         $searchHandler = self::getSession();
-        
-        $params['index'] = self::$indexName;
-        $params['type'] = self::$elasticType;
-        
-        $operations = array();
-        
-        foreach ($objects as $object) {
-            if ($object->id == null) {
-                $object->beforeSave();
-                $operations[] = "{ \"index\":  {} }";
-            } else {
-                $object->beforeUpdate();
-                $operations[] = '{ "index":  { "_id": "' . $object->id . '"} }';
-            }
-            $operations[] = json_encode($object->getState());
-        }
 
-        if (! empty($operations)) {
-            $operations[] = "";
-            $params['body'] = implode("\n", $operations);
-            return erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objects, $paramsExecution);
+        if (!isset($paramsExecution['custom_index']))
+        {
+            $params['index'] = self::$indexName;
+            $params['type'] = self::$elasticType;
+
+            $operations = array();
+
+            foreach ($objects as $object) {
+                if ($object->id == null) {
+                    $object->beforeSave();
+                    $operations[] = "{ \"index\":  {} }";
+                } else {
+                    $object->beforeUpdate();
+                    $operations[] = '{ "index":  { "_id": "' . $object->id . '"} }';
+                }
+                $operations[] = json_encode($object->getState());
+            }
+
+            if (! empty($operations)) {
+                $operations[] = "";
+                $params['body'] = implode("\n", $operations);
+                return erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objects, $paramsExecution);
+            }
+
+        } else {
+
+            foreach ($objects as $index => $objectCollection)
+            {
+                $params['index'] = $index;
+                $params['type'] = self::$elasticType;
+
+                $operations = array();
+
+                foreach ($objectCollection as $object) {
+                    if ($object->id == null) {
+                        $object->beforeSave();
+                        $operations[] = "{ \"index\":  {} }";
+                    } else {
+                        $object->beforeUpdate();
+                        $operations[] = '{ "index":  { "_id": "' . $object->id . '"} }';
+                    }
+                    $operations[] = json_encode($object->getState());
+                }
+
+                if (! empty($operations)) {
+                    $operations[] = "";
+                    $params['body'] = implode("\n", $operations);
+
+                    erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objectCollection, $paramsExecution);
+                }
+            }
         }
     }
 

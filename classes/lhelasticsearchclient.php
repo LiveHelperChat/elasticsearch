@@ -13,8 +13,7 @@ class erLhcoreClassElasticClient {
 	private static $handler = null;
 	
 	public static function saveThis($handler, & $obj, $indexName, $indexType) {
-		
-		$create = true; // if false means update
+
 		$updateParams = array();
 		$updateParams['index'] = $indexName;
 		$updateParams['type'] = $indexType;
@@ -22,7 +21,6 @@ class erLhcoreClassElasticClient {
 		try {
 			if ($obj->id !== null) {
 				$updateParams['id'] = $obj->id;
-				$create = false;
 				$updateParams['body']['doc'] = $obj->getState();
 				$handler->update($updateParams);
 			} else {
@@ -52,13 +50,14 @@ class erLhcoreClassElasticClient {
 		self::$lastSearchCount = 0;
 		
 		$response = $handler->search($params);
+
 		$returnObjects = array();
-		if (isset($response['hits']['hits']) && !empty($response['hits']['hits'])){			
+		if (isset($response['hits']['hits']) && !empty($response['hits']['hits'])) {
 			foreach ($response['hits']['hits'] as $doc) {
 				$obj = new $className();
 				$obj->setState($doc['_source']);
 				$obj->id = $doc['_id'];
-				$obj->meta_data = array('score' => $doc['_score']);	
+				$obj->meta_data = array('score' => $doc['_score'], 'index' => $doc['_index']);
 				$returnObjects[$obj->id] = $obj;
 			}
 			
@@ -86,8 +85,49 @@ class erLhcoreClassElasticClient {
 	    return $returnObjects;
 	}
 	
+	public static function indexExists($handler, $index) {
+	    static $indexChecked = array();
+
+	    if (in_array($index,$indexChecked)) {
+            return ;
+        }
+
+        $indexChecked[] = $index;
+
+        if ($handler->indices()->exists(array('index' => $index)) == false) {
+
+            $handler->indices()->create(array(
+                'index' => $index
+            ));
+
+            $contentData = file_get_contents('extension/elasticsearch/doc/structure_elastic.json');
+
+            $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
+
+            $contentAdditionalData = array();
+            foreach ($settings['additional_indexes'] as $key => $index) {
+                if (file_exists('extension/elasticsearch/doc/update_elastic/structure_' . $key . '.json')) {
+                    $content = file_get_contents('doc/update_elastic/structure_' . $key . '.json');
+                    $contentAdditionalData[$index] = json_decode($content, true);
+                }
+            }
+
+            $contentData = array($index => json_decode($contentData, true));
+
+            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.getelasticstructure', array(
+                'structure' => & $contentData,
+                'index_original' => $settings['index'],
+                'index_new' => $index,
+            ));
+            
+            erLhcoreClassElasticSearchUpdate::doElasticUpdate($contentData, $index);
+        }
+    }
+	
 	public static function bulkSave($handler, $params, & $objects, $paramsExecution = array())
-	{	    
+	{
+	    self::indexExists($handler, $params['index']);
+
 	    $action = $handler->bulk($params);
 	    
 	    if (erConfigClassLhConfig::getInstance()->getSetting( 'site', 'debug_output' ) == true) {	    
@@ -137,7 +177,7 @@ class erLhcoreClassElasticClient {
 			
 		$params['size'] = 1;
 		$response = $handler->search($params);
-				
+
 		$documentsCount = 0;
 		if (isset($response['hits']['total']) && !empty($response['hits']['total'])) {			
 			$documentsCount = $response['hits']['total'];
@@ -165,10 +205,11 @@ class erLhcoreClassElasticClient {
 		$retDoc = $handler->get($getParams);
 		
 		if (isset($retDoc['found']) && $retDoc['found'] == 1)
-		{			
+		{
 			$obj = new $className();
 			$obj->setState($retDoc['_source']);
 			$obj->id = $retDoc['_id'];
+			$obj->meta_data = array('index' => $retDoc['_index']);
 			return $obj;
 		} else {
 			throw new Exception($className.' with id '.$id.' ['.$indexName.']['.$indexType.'] could not be found!');

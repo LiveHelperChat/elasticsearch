@@ -1,6 +1,6 @@
 <?php
 
-// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_chats -p <archive_id>_<last_chat_id>
+// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_archive_chats -p <archive_id>_<last_chat_id>
 
 list($archiveId, $lastId) = explode('_',$cronjobPathOption->value);
 

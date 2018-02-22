@@ -24,6 +24,15 @@
         <label>Last indexed message Id</label>
         <input type="text" class="form-control" name="last_index_msg_id" value="<?php isset($es_options['last_index_msg_id']) ? print $es_options['last_index_msg_id'] : ''?>" />
     </div>
+
+    <div class="form-group">
+        <label>Index</label>
+        <select name="indexType" class="form-control">
+            <option value="static" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'static') ? print 'selected="selected"' : ''?> >Static</option>
+            <option value="daily" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'daily') ? print 'selected="selected"' : ''?> >Daily</option>
+            <option value="monthly" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'monthly') ? print 'selected="selected"' : ''?> >Monthly</option>
+        </select>
+    </div>
         
     <input type="submit" class="btn btn-default" name="StoreOptions" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/buttons','Save'); ?>" />
 

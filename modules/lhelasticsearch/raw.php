@@ -2,7 +2,7 @@
 
 $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/raw.tpl.php');
 
-$tpl->set('item', erLhcoreClassModelESChat::fetch($Params['user_parameters']['id']));
+$tpl->set('item', erLhcoreClassModelESChat::fetch($Params['user_parameters']['id'], $Params['user_parameters']['index']));
 
 $Result['content'] = $tpl->fetch();
 $Result['path'] = array(

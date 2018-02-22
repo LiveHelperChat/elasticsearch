@@ -3,7 +3,8 @@
 return array (
 		'host' 			=> 'localhost',//'localhost',		
 		'port' 			=> '9200',
-		'index' 		=> 'chat',	
+		'index' 		=> 'chat-',
+        'index_search' 	=> 'chat-*',
 	    'additional_indexes' => array(
 	        
 	    ),

@@ -19,7 +19,7 @@ $ViewList['list'] = array(
 );
 
 $ViewList['raw'] = array(
-    'params' => array('id'),
+    'params' => array('index','id'),
     'functions' => array('configure')
 );
 
@@ -59,6 +59,24 @@ $ViewList['options'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['indices'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
+$ViewList['deleteindice'] = array(
+    'params' => array('indice'),
+    'uparams' => array('csfr'),
+    'functions' => array('configure')
+);
+
+$ViewList['getmapping'] = array(
+    'params' => array('indice'),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
 $ViewList['listmsg'] = array(
     'params' => array('chat_id'),
     'uparams' => array(),
@@ -72,25 +90,25 @@ $ViewList['elastic'] = array(
 );
 
 $ViewList['delete'] = array(
-    'params' => array('id'),
+    'params' => array('index','id'),
     'uparams' => array('csfr'),
     'functions' => array('configure')
 );
 
 $ViewList['deleteop'] = array(
-    'params' => array('id'),
+    'params' => array('index','id'),
     'uparams' => array('csfr'),
     'functions' => array('configure')
 );
 
 $ViewList['deleteos'] = array(
-    'params' => array('id'),
+    'params' => array('index','id'),
     'uparams' => array('csfr'),
     'functions' => array('configure')
 );
 
 $ViewList['deletepc'] = array(
-    'params' => array('id'),
+    'params' => array('index','id'),
     'uparams' => array('csfr'),
     'functions' => array('configure')
 );

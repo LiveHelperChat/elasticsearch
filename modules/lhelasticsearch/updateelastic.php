@@ -29,7 +29,9 @@ if (in_array($action, array(
     ), $contentAdditionalData);
     
     erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.getelasticstructure', array(
-        'structure' => & $contentData
+        'structure' => & $contentData,
+        'index_original' => $settings['index'],
+        'index_new' => $settings['index'],
     ));
     
     if ($elasticIndexExist == true) {
