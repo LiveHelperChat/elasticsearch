@@ -34,7 +34,8 @@ class erLhcoreClassElasticSearchIndex
             $esChat->cls_time = $item->cls_time * 1000;
                         
             if ($item->ip != '') {
-                $esChat->ip = $item->ip;
+                $firstIp = explode(',',str_replace(' ','',$item->ip))[0];
+                $esChat->ip = $firstIp;
             }
             
             $esChat->user_id = $item->user_id;
