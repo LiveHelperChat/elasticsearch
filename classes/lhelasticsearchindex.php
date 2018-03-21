@@ -412,4 +412,81 @@ class erLhcoreClassElasticSearchIndex
             erLhcoreClassModelESMsg::bulkSave($objectsSave, array('custom_index' => true));
         }
     }
+
+    public static function hasPreviousMessages($params)
+    {
+        if ($params['has_messages'] === false) {
+
+            $chat = $params['chat'];
+
+            if ((int)erLhcoreClassModelChatConfig::fetch('elasticsearch_options')->data['use_es_prev_chats'] == 1) {
+                $sparams['body']['query']['bool']['must'][]['term']['nick_keyword'] = $chat->nick;
+            } else {
+                if (($online_user = $chat->online_user) !== false) {
+                    $sparams['body']['query']['bool']['must'][]['term']['online_user_id'] = $online_user->id;
+                } else {
+                    return array(
+                        'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                        'has_messages' => false
+                    );
+                }
+            }
+
+            $sparams['body']['query']['bool']['must'][]['range']['chat_id']['lt'] = $chat->id;
+
+            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats', array(
+                'chat' => $chat,
+                'sparams' => & $sparams
+            ));
+
+            $previousChat = erLhcoreClassModelESChat::findOne(array(
+                'offset' => 0,
+                'limit' => 1,
+                'body' => array_merge(array(
+                    'sort' => array(
+                        'time' => array(
+                            'order' => 'desc'
+                        )
+                    )
+                ), $sparams['body'])
+            ));
+
+            if ($previousChat instanceof erLhcoreClassModelESChat) {
+                return array(
+                     'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                     'has_messages' => true,
+                     'message_id' => 0,
+                     'chat_history' => erLhcoreClassModelChat::fetch($previousChat->chat_id)
+                );
+            } else {
+                return array(
+                    'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                    'has_messages' => false
+                );
+            }
+        }
+    }
+
+    public static function getChatHistory($params)
+    {
+        $result = self::hasPreviousMessages(array(
+                'has_messages' => false,
+                'chat' => $params['chat']
+            )
+        );
+
+        $response = array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+        );
+
+        if ($result['has_messages'] == true) {
+            $response['has_messages'] = true;
+            $response['chat'] = $result['chat_history'];
+        } else {
+            $response['has_messages'] = false;
+            $response['chat'] = null;
+        }
+
+        return $response;
+    }
 }

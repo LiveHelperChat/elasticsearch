@@ -20,6 +20,8 @@ class erLhcoreClassExtensionElasticsearch
     	$dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');
         $dispatcher->listen('chat.modified', 'erLhcoreClassElasticSearchIndex::indexChatModify');
 
+        $dispatcher->listen('chat.workflow.has_previous_messages', 'erLhcoreClassElasticSearchIndex::hasPreviousMessages');
+        $dispatcher->listen('chat.workflow.get_chat_history', 'erLhcoreClassElasticSearchIndex::getChatHistory');
 
     	$dispatcher->listen('statistic.valid_tabs', 'erLhcoreClassElasticSearchStatistic::appendStatisticTab');
     	$dispatcher->listen('statistic.process_tab', 'erLhcoreClassElasticSearchStatistic::processTab');
