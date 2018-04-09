@@ -49,7 +49,6 @@ echo "\n==Indexing chats== \n";
 $totalIndex = 0;
 
 $db = ezcDbInstance::get();
-$db->beginTransaction();
 
 for ($i = 0; $i < 100; $i++) {
     $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index LIMIT :limit FOR UPDATE ');
@@ -73,8 +72,6 @@ for ($i = 0; $i < 100; $i++) {
         break;
     }
 }
-
-$db->commit();
 
 echo "total indexed chats - {$totalIndex}\n";
 

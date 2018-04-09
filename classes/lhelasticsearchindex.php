@@ -213,10 +213,18 @@ class erLhcoreClassElasticSearchIndex
 
     public static function indexChatDelay($params)
     {
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
         $db = ezcDbInstance::get();
         $stmt = $db->prepare('INSERT IGNORE INTO lhc_lheschat_index (`chat_id`) VALUES (:chat_id)');
         $stmt->bindValue(':chat_id', $params['chat']->id, PDO::PARAM_STR);
         $stmt->execute();
+
+        // Schedule background worker for instant indexing
+        if (isset($dataOptions['use_php_resque']) && $dataOptions['use_php_resque'] == 1) {
+            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        }
     }
 
     public static function indexChatModify($params)

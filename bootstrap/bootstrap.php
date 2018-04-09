@@ -64,9 +64,10 @@ class erLhcoreClassExtensionElasticsearch
             'erLhcoreClassModelESOnlineSession'  => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlinesession.php',
             'erLhcoreClassModelESPendingChat'    => 'extension/elasticsearch/classes/erlhcoreclassmodelespendingchat.php',
             'erLhcoreClassModelESOnlineOperator' => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlineoperator.php',
-            'erLhcoreClassElasticSearchIndex'    => 'extension/elasticsearch/classes/lhelasticsearchindex.php'
+            'erLhcoreClassElasticSearchIndex'    => 'extension/elasticsearch/classes/lhelasticsearchindex.php',
+            'erLhcoreClassElasticSearchWorker'   => 'extension/elasticsearch/classes/lhqueueelasticsearchworker.php'
         );
-        
+
         if (key_exists($className, $classesArray)) {
             include_once $classesArray[$className];
         }

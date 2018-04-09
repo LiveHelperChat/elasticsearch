@@ -19,6 +19,10 @@
     <div class="form-group">
         <label><input type="checkbox" value="on" name="use_es_prev_chats_id" <?php isset($es_options['use_es_prev_chats_id']) && ($es_options['use_es_prev_chats_id'] == true) ? print 'checked="checked"' : ''?> /> Use Elastic Search for previous chats. Search By Chat ID.</label><br/>
     </div>
+
+    <div class="form-group">
+        <label><input type="checkbox" value="on" name="use_php_resque" <?php isset($es_options['use_php_resque']) && ($es_options['use_php_resque'] == true) ? print 'checked="checked"' : ''?> /> Use PHP Resque for chats indexing</label><br/>
+    </div>
     
     <div class="form-group">
         <label>Last indexed message Id</label>
