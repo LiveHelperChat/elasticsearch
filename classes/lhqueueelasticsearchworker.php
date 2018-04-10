@@ -17,7 +17,7 @@ class erLhcoreClassElasticSearchWorker {
         $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         if (!empty($chatsId)) {
-           
+
             $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
 
             if (!empty($chats)) {

@@ -427,7 +427,18 @@ class erLhcoreClassElasticSearchIndex
 
             $chat = $params['chat'];
 
-            if ((int)erLhcoreClassModelChatConfig::fetch('elasticsearch_options')->data['use_es_prev_chats'] == 1) {
+            if (($online_user = $chat->online_user) !== false) {
+                $sparams['body']['query']['bool']['must'][]['term']['online_user_id'] = $online_user->id;
+            } elseif ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined' && (int)erLhcoreClassModelChatConfig::fetch('elasticsearch_options')->data['use_es_prev_chats'] == 1) {
+                $sparams['body']['query']['bool']['must'][]['term']['nick_keyword'] = $chat->nick;
+            } else {
+                return array(
+                    'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                    'has_messages' => false
+                );
+            }
+
+            /*if ((int)erLhcoreClassModelChatConfig::fetch('elasticsearch_options')->data['use_es_prev_chats'] == 1) {
                 $sparams['body']['query']['bool']['must'][]['term']['nick_keyword'] = $chat->nick;
             } else {
                 if (($online_user = $chat->online_user) !== false) {
@@ -438,7 +449,7 @@ class erLhcoreClassElasticSearchIndex
                         'has_messages' => false
                     );
                 }
-            }
+            }*/
 
             $sparams['body']['query']['bool']['must'][]['range']['chat_id']['lt'] = $chat->id;
 
