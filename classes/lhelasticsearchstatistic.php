@@ -160,9 +160,8 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['from'] = 0;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'itime';
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $groupByData['interval'];
-            
-            $dateTime = new DateTime("now");
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
+
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
             
             $sparams['body']['aggs']['chats_over_time']['aggs']['chat_status']['terms']['field'] = 'status';
             $response = $elasticSearchHandler->search($sparams);
@@ -211,9 +210,8 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['from'] = 0;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'itime';
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $groupByData['interval'];
-            
-            $dateTime = new DateTime("now");
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
+
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
             $response = $elasticSearchHandler->search($sparams);
 
             foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
@@ -443,6 +441,16 @@ class erLhcoreClassElasticSearchStatistic
         );
     }
 
+    public static function getTimeZone() {
+
+        if (date_default_timezone_get()) {
+           return date_default_timezone_get();
+        } else {
+            $dateTime = new DateTime("now");
+            return $dateTime->getOffset() / 60 / 60;
+        }
+    }
+
     public static function statisticGetnumberofchatspermonth($params, $aggr = 'month')
     {
         $numberOfChats = array();
@@ -460,10 +468,9 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = 'status';
         $sparams['body']['aggs']['chats_over_time']['aggs']['unanswered_aggr']['filter']['term']['unanswered_chat'] = 1;
         $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_aggr']['terms']['field'] = 'chat_initiator';
-        
-        $dateTime = new DateTime("now");
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
-        
+
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+
         $paramsOrig = $params;
         if ($aggr == 'month') {
             if (!isset($paramsOrig['filter']['filtergte']['time'])) {
@@ -490,10 +497,10 @@ class erLhcoreClassElasticSearchStatistic
             erLhcoreClassModelChat::CHAT_INITIATOR_DEFAULT => 'chatinitdefault',
             erLhcoreClassModelChat::CHAT_INITIATOR_PROACTIVE => 'chatinitproact'
         );
-        
+
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
             $keyDateUnix = $bucket['key'] / 1000;
-            
+
             foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
                 if (isset($keyStatus[$bucketStatus['key']])) {
                     $numberOfChats[$keyDateUnix][$keyStatus[$bucketStatus['key']]] = $bucketStatus['doc_count'];
@@ -538,9 +545,8 @@ class erLhcoreClassElasticSearchStatistic
             - 1,
             - 2
         );
-        
-        $dateTime = new DateTime("now");
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
+
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         
         $paramsOrig = $params;
         
@@ -566,7 +572,7 @@ class erLhcoreClassElasticSearchStatistic
                 $numberOfChats[$keyDateUnix]['msg_system'] = $bucket['msg_system']['doc_count'];
             }
         }
-        
+
         return array(
             'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
             'list' => $numberOfChats
@@ -592,9 +598,8 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 'month';
         $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['avg']['field'] = 'wait_time';
-        
-        $dateTime = new DateTime("now");
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
+
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         
         $paramsOrig = $params;
         if (!isset($paramsOrig['filter']['filtergte']['time'])) {
@@ -850,9 +855,8 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 'day';
         $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['avg']['field'] = 'wait_time';
-        
-        $dateTime = new DateTime("now");
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = $dateTime->getOffset() / 60 / 60;
+
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         
         $sparams['body']['query']['bool']['must'][]['range']['wait_time']['gt'] = 0;
         $sparams['body']['query']['bool']['must'][]['range']['wait_time']['lt'] = 600;
