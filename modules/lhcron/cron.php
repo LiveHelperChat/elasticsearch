@@ -57,16 +57,17 @@ for ($i = 0; $i < 100; $i++) {
     $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
     
     if (!empty($chatsId)) {
+
+        // Delete indexed chat's records
+        $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+        $stmt->execute();
+
         $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
         
         if (!empty($chats)){
             $totalIndex+= count($chats);
             erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
         }
-        
-        // Delete indexed chat's records
-        $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
-        $stmt->execute();
 
     } else {
         break;
