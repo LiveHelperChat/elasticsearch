@@ -39,6 +39,10 @@ trait erLhcoreClassElasticTrait
         $this->afterRemove();
         $this->clearCache();
     }
+    
+    public function removeThisOnly(){
+        erLhcoreClassElasticClient::removeObj(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
+    }
 
     public function beforeSave()
     {}

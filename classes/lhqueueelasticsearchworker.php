@@ -18,15 +18,15 @@ class erLhcoreClassElasticSearchWorker {
 
         if (!empty($chatsId)) {
 
+            // Delete indexed chat's records
+            $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+            $stmt->execute();
+
             $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
 
             if (!empty($chats)) {
                 erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
             }
-
-            // Delete indexed chat's records
-            $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
-            $stmt->execute();
         }
 
         if (count($chatsId) == 100) {
