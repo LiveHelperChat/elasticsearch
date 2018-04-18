@@ -51,6 +51,8 @@ $totalIndex = 0;
 $db = ezcDbInstance::get();
 
 for ($i = 0; $i < 100; $i++) {
+
+    $db->beginTransaction();
     $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index LIMIT :limit FOR UPDATE ');
     $stmt->bindValue(':limit',100,PDO::PARAM_INT);
     $stmt->execute();
@@ -61,6 +63,7 @@ for ($i = 0; $i < 100; $i++) {
         // Delete indexed chat's records
         $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
         $stmt->execute();
+        $db->commit();
 
         $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
         
@@ -70,6 +73,7 @@ for ($i = 0; $i < 100; $i++) {
         }
 
     } else {
+        $db->rollback();
         break;
     }
 }

@@ -11,6 +11,7 @@ class erLhcoreClassElasticSearchWorker {
         $db = ezcDbInstance::get();
         $db->reconnect(); // Because it timeouts automatically, this calls to reconnect to database, this is implemented in 2.52v
 
+        $db->beginTransaction();
         $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index LIMIT :limit FOR UPDATE ');
         $stmt->bindValue(':limit',100,PDO::PARAM_INT);
         $stmt->execute();
@@ -21,12 +22,15 @@ class erLhcoreClassElasticSearchWorker {
             // Delete indexed chat's records
             $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
             $stmt->execute();
+            $db->commit();
 
             $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
 
             if (!empty($chats)) {
                 erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
             }
+        } else {
+            $db->rollback();
         }
 
         if (count($chatsId) == 100) {
