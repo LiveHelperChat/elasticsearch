@@ -427,36 +427,39 @@ class erLhcoreClassElasticSearchIndex
 
             $chat = $params['chat'];
 
+            $ignoreFilter = false;
+
             if (($online_user = $chat->online_user) !== false) {
                 $sparams['body']['query']['bool']['must'][]['term']['online_user_id'] = $online_user->id;
             } elseif ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined' && (int)erLhcoreClassModelChatConfig::fetch('elasticsearch_options')->data['use_es_prev_chats'] == 1) {
                 $sparams['body']['query']['bool']['must'][]['term']['nick_keyword'] = $chat->nick;
             } else {
-                return array(
-                    'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
-                    'has_messages' => false
-                );
-            }
+                $sparams = array();
 
-            /*if ((int)erLhcoreClassModelChatConfig::fetch('elasticsearch_options')->data['use_es_prev_chats'] == 1) {
-                $sparams['body']['query']['bool']['must'][]['term']['nick_keyword'] = $chat->nick;
-            } else {
-                if (($online_user = $chat->online_user) !== false) {
-                    $sparams['body']['query']['bool']['must'][]['term']['online_user_id'] = $online_user->id;
-                } else {
+                erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats_abstract', array(
+                    'chat' => $chat,
+                    'sparams' => & $sparams
+                ));
+
+                if (empty($sparams)){
                     return array(
                         'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
                         'has_messages' => false
                     );
+                } else {
+                    $ignoreFilter = true;
                 }
-            }*/
+            }
 
-            $sparams['body']['query']['bool']['must'][]['range']['chat_id']['lt'] = $chat->id;
+            if ($ignoreFilter == false) {
 
-            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats', array(
-                'chat' => $chat,
-                'sparams' => & $sparams
-            ));
+                $sparams['body']['query']['bool']['must'][]['range']['chat_id']['lt'] = $chat->id;
+
+                erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats', array(
+                    'chat' => $chat,
+                    'sparams' => & $sparams
+                ));
+            }
 
             $previousChat = erLhcoreClassModelESChat::findOne(array(
                 'offset' => 0,
