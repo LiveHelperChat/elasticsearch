@@ -461,17 +461,25 @@ class erLhcoreClassElasticSearchIndex
                 ));
             }
 
-            $previousChat = erLhcoreClassModelESChat::findOne(array(
-                'offset' => 0,
-                'limit' => 1,
-                'body' => array_merge(array(
-                    'sort' => array(
-                        'time' => array(
-                            'order' => 'desc'
+            try {
+                $previousChat = erLhcoreClassModelESChat::findOne(array(
+                    'offset' => 0,
+                    'limit' => 1,
+                    'body' => array_merge(array(
+                        'sort' => array(
+                            'time' => array(
+                                'order' => 'desc'
+                            )
                         )
-                    )
-                ), $sparams['body'])
-            ));
+                    ), $sparams['body'])
+                ));
+            } catch (Exception $e) {
+                error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+                return array(
+                    'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                    'has_messages' => false
+                );
+            }
 
             if ($previousChat instanceof erLhcoreClassModelESChat) {
                 return array(
