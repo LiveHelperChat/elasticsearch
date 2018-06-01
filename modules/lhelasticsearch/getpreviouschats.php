@@ -13,17 +13,22 @@ if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined')
         'sparams' => & $sparams
     ));
 
-    $previousChats = erLhcoreClassModelESChat::getList(array(
-        'offset' => 0,
-        'limit' => 50,
-        'body' => array_merge(array(
-            'sort' => array(
-                'time' => array(
-                    'order' => 'desc'
+    try {
+        $previousChats = erLhcoreClassModelESChat::getList(array(
+            'offset' => 0,
+            'limit' => 50,
+            'body' => array_merge(array(
+                'sort' => array(
+                    'time' => array(
+                        'order' => 'desc'
+                    )
                 )
-            )
-        ), $sparams['body'])
-    ));
+            ), $sparams['body'])
+        ));
+    } catch (Exception $e) {
+        error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+        $previousChats = array();
+    }
 
     $chatIds = array();
 
