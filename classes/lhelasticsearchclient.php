@@ -85,7 +85,7 @@ class erLhcoreClassElasticClient {
 	    return $returnObjects;
 	}
 	
-	public static function indexExists($handler, $index) {
+	public static function indexExists($handler, $index, $forceUpdate = false) {
 	    static $indexChecked = array();
 
 	    if (in_array($index,$indexChecked)) {
@@ -94,11 +94,13 @@ class erLhcoreClassElasticClient {
 
         $indexChecked[] = $index;
 
-        if ($handler->indices()->exists(array('index' => $index)) == false) {
+        if ( ($indexExists = $handler->indices()->exists(array('index' => $index))) == false || $forceUpdate == true) {
 
-            $handler->indices()->create(array(
-                'index' => $index
-            ));
+            if ($indexExists == false) {
+                $handler->indices()->create(array(
+                    'index' => $index
+                ));
+            }
 
             $contentData = file_get_contents('extension/elasticsearch/doc/structure_elastic.json');
 

@@ -3,7 +3,7 @@
 // Run once a day
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate
 
-echo "Indexing online sessions\n";
+echo "Creating index\n";
 
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $dataOptions = (array)$esOptions->data;
