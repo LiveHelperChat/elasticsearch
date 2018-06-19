@@ -20,6 +20,9 @@ if (!(isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1)) {
         $esOptions->value = serialize($dataOptions);
         $esOptions->saveThis();
         echo "We found that elastic search is dead, informing!\n";
+        
+        $CacheManager = erConfigClassLhCacheConfig::getInstance();
+        $CacheManager->expireCache(true);
 
         if (isset($dataOptions['report_email_es']) && !empty($dataOptions))
         {
