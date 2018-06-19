@@ -20,6 +20,24 @@ if (!(isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1)) {
         $esOptions->value = serialize($dataOptions);
         $esOptions->saveThis();
         echo "We found that elastic search is dead, informing!\n";
+
+        if (isset($dataOptions['report_email_es']) && !empty($dataOptions))
+        {
+            $mail = new PHPMailer();
+            $mail->CharSet = "UTF-8";
+            $mail->FromName = 'Live Helper Chat Elastic Search';
+            $mail->Subject = 'Elastic Search was disabled, because of an error';
+            $mail->Body = "Elastic Search returned an error - \n" . $e->getMessage();
+
+            $emailRecipient = explode(',',$dataOptions['report_email_es']);
+
+            foreach ($emailRecipient as $receiver) {
+                $mail->AddAddress( trim($receiver) );
+            }
+
+            erLhcoreClassChatMail::setupSMTP($mail);
+            $mail->Send();
+        }
     }
 
 } else {
