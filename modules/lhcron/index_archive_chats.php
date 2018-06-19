@@ -2,6 +2,14 @@
 
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_archive_chats -p <archive_id>_<last_chat_id>
 
+$esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+$dataOptions = (array)$esOptions->data;
+
+if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
+    echo "Elastic Search is disabled!\n";
+    exit;
+}
+
 list($archiveId, $lastId) = explode('_',$cronjobPathOption->value);
 
 $archive = erLhcoreClassModelChatArchiveRange::fetch($archiveId);

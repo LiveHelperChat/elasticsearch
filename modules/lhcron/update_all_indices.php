@@ -2,6 +2,14 @@
 
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/update_indices
 
+$esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+$dataOptions = (array)$esOptions->data;
+
+if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
+    echo "Elastic Search is disabled!\n";
+    exit;
+}
+
 echo "Updating all indices\n";
 
 foreach (erLhcoreClassElasticClient::getHandler()->indices()->getAliases(array('index' => 'chat*')) as $indice => $data) {

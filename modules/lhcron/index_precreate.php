@@ -3,6 +3,14 @@
 // Run once a day
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate
 
+$esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+$dataOptions = (array)$esOptions->data;
+
+if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
+    echo "Elastic Search is disabled!\n";
+    exit;
+}
+
 echo "Creating index\n";
 
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');

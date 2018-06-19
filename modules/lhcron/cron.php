@@ -4,8 +4,6 @@
 
 echo "==Indexing messages== \n";
 
-erLhcoreClassElasticSearchIndex::$ts = time();
-
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $data = (array)$esOptions->data;
 
@@ -13,6 +11,13 @@ if (!isset($data['last_index_msg_id'])) {
     echo "Please set last message id in back office\n";
     exit;
 }
+
+if (isset($data['disable_es']) && $data['disable_es'] == 1) {
+    echo "Elastic Search is disabled!\n";
+    exit;
+}
+
+erLhcoreClassElasticSearchIndex::$ts = time();
 
 $pageLimit = 500;
 

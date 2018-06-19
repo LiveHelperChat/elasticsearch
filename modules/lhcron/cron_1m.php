@@ -2,8 +2,6 @@
 // Run me every minute
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/cron_1m
 
-erLhcoreClassElasticSearchIndex::$ts = time();
-
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $data = (array)$esOptions->data;
 
@@ -11,6 +9,13 @@ if (isset($data['last_index_date_pending']) && $data['last_index_date_pending'] 
     echo "This minute was already indexed!\n";
     exit;
 }
+
+if (isset($data['disable_es']) && $data['disable_es'] == 1) {
+    echo "Elastic Search is disabled!\n";
+    exit;
+}
+
+erLhcoreClassElasticSearchIndex::$ts = time();
 
 echo "==Indexing pending chats== \n";
 
