@@ -1,5 +1,13 @@
 <?php
 
+$esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+$dataOptions = (array)$esOptions->data;
+
+if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
+    echo json_encode(array('result' => ''));
+    exit;
+}
+
 $chat = erLhcoreClassModelChat::fetch($Params['user_parameters']['chat_id']);
 
 $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/getpreviouschats.tpl.php');

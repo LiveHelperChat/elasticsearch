@@ -23,11 +23,18 @@ if ( isset($_POST['StoreOptions']) ) {
         'use_es_prev_chats_id' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
+        'disable_es' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+        ),
         'indexType' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'string'
+        ),
+        'report_email_es' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
         )
     );
-      
+
+
     $form = new ezcInputForm( INPUT_POST, $definition );
     $Errors = array();
             
@@ -35,6 +42,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['use_es_statistic'] = 1;
     } else {
         $data['use_es_statistic'] = 0;
+    }
+
+    if ( $form->hasValidData( 'disable_es' ) && $form->disable_es == true ) {
+        $data['disable_es'] = 1;
+    } else {
+        $data['disable_es'] = 0;
     }
 
     if ( $form->hasValidData( 'use_es_prev_chats' ) && $form->use_es_prev_chats == true ) {
@@ -65,6 +78,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['index_type'] = $form->indexType ;
     } else {
         $data['index_type'] = 'static';
+    }
+
+    if ( $form->hasValidData( 'report_email_es' )) {
+        $data['report_email_es'] = $form->report_email_es ;
+    } else {
+        $data['report_email_es'] = '';
     }
      
     $esOptions->explain = '';

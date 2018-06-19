@@ -2,6 +2,13 @@
 
 $action = (string) $Params['user_parameters_unordered']['action'];
 
+$esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+$dataOptions = (array)$esOptions->data;
+if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
+    echo json_encode(array('result' => 'Elastic Search is disabled!'));
+    exit;
+}
+
 if (in_array($action, array(
     'statuselastic',
     'updateelastic',

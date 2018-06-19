@@ -37,7 +37,21 @@
             <option value="monthly" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'monthly') ? print 'selected="selected"' : ''?> >Monthly</option>
         </select>
     </div>
-        
+    <hr>
+    <h4>Failover</h4>
+    <div class="form-group">
+        <label><input type="checkbox" value="on" name="disable_es" <?php isset($es_options['disable_es']) && ($es_options['disable_es'] == true) ? print 'checked="checked"' : ''?> /> Disable Elastic Search. Systems set's this automatically if cronjob detects that Elastic Search is down for whatever reason.</label><br/>
+    </div>
+
+    <div class="form-group">
+        <label>Report unavailable Elastic Search to these e-mails. Separated by comma</label>
+        <input type="text" class="form-control" name="report_email_es" value="<?php isset($es_options['report_email_es']) ? print htmlspecialchars($es_options['report_email_es']) : ''?>" />
+    </div>
+
+    <?php if (isset($es_options['fail_reason']) && !empty($es_options['fail_reason'])) : ?>
+    <p><?php echo htmlspecialchars($es_options['fail_reason'])?></p>
+    <?php endif; ?>
+
     <input type="submit" class="btn btn-default" name="StoreOptions" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/buttons','Save'); ?>" />
 
 </form>
