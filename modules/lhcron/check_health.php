@@ -1,14 +1,13 @@
 <?php
 // Run me every 1 minute
-// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/check_health
+// /usr/bin/php72 cron.php -s site_admin -e elasticsearch -c cron/check_health
 
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $dataOptions = (array)$esOptions->data;
 
 if (!(isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1)) {
-
     try {
-        erLhcoreClassElasticClient::getHandler()->indices()->getAliases(array('index' => 'chat*'));
+        print_r(erLhcoreClassElasticClient::getHandler()->Cluster()->health(array('client' => array('timeout' => 40, 'connect_timeout' => 40))));
         echo "Elastic Search is alive\n";
     } catch (Exception $e) {
         $dataOptions['disable_es'] = 1;
