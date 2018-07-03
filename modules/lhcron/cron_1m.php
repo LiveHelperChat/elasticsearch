@@ -27,12 +27,12 @@ $totalIndex = 0;
 
 $pageLimit = 100;
 
-$parts = ceil(erLhcoreClassModelChat::getCount(array('filter' => array('status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT)))/$pageLimit);
+$parts = ceil(erLhcoreClassModelChat::getCount(array('use_index' => 'status', 'filter' => array('status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT)))/$pageLimit);
 
 for ($i = 0; $i < $parts; $i++) {
 
     echo "Pending chats records - ",($i + 1),"\n";
-    $items = erLhcoreClassModelChat::getList(array('filter' => array('status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
+    $items = erLhcoreClassModelChat::getList(array('use_index' => 'status', 'filter' => array('status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
 
     erLhcoreClassElasticSearchIndex::indexPendingChats(array('items' => $items));
     
@@ -47,12 +47,12 @@ $totalIndex = 0;
 
 $pageLimit = 100;
 
-$parts = ceil(erLhcoreClassModelChat::getCount(array('filter' => array('status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT)))/$pageLimit);
+$parts = ceil(erLhcoreClassModelChat::getCount(array('use_index' => 'status', 'filter' => array('status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT)))/$pageLimit);
 
 for ($i = 0; $i < $parts; $i++) {
 
     echo "Pending chats records",($i + 1),"\n";
-    $items = erLhcoreClassModelChat::getList(array('filter' => array('status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
+    $items = erLhcoreClassModelChat::getList(array('use_index' => 'status', 'filter' => array('status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
 
     erLhcoreClassElasticSearchIndex::indexPendingChats(array('items' => $items));
 
