@@ -118,7 +118,7 @@ echo "total indexed OS - {$totalIndex}\n";
 
 echo "\n==Reindexing failed chats==\n";
 
-$stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index WHERE status = 1 LIMIT :limit FOR UPDATE ');
+$stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index WHERE status = 1 LIMIT :limit');
 $stmt->bindValue(':limit',100,PDO::PARAM_INT);
 $stmt->execute();
 $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
