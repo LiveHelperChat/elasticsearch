@@ -13,7 +13,7 @@ class erLhcoreClassElasticSearchWorker {
 
         $db->beginTransaction();
         try {
-            $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index LIMIT :limit FOR UPDATE ');
+            $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index WHERE status = 0 LIMIT :limit FOR UPDATE ');
             $stmt->bindValue(':limit',100,PDO::PARAM_INT);
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -24,7 +24,7 @@ class erLhcoreClassElasticSearchWorker {
 
         if (!empty($chatsId)) {
             // Delete indexed chat's records
-            $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+            $stmt = $db->prepare('UPDATE lhc_lheschat_index SET status = 1 WHERE chat_id IN (' . implode(',', $chatsId) . ')');
             $stmt->execute();
             $db->commit();
 
@@ -34,17 +34,13 @@ class erLhcoreClassElasticSearchWorker {
                 try {
                     erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
                 } catch (Exception $e) {
-
-                    foreach ($chatsId as $chatId) {
-                        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lheschat_index (`chat_id`) VALUES (:chat_id)');
-                        $stmt->bindValue(':chat_id', $chatId, PDO::PARAM_STR);
-                        $stmt->execute();
-                    }
-
                     error_log($e->getMessage() . "\n" . $e->getTraceAsString());
                     return;
                 }
             }
+
+            $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+            $stmt->execute();
 
         } else {
             $db->rollback();

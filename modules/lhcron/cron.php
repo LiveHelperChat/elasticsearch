@@ -58,24 +58,33 @@ $db = ezcDbInstance::get();
 for ($i = 0; $i < 100; $i++) {
 
     $db->beginTransaction();
-    $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index LIMIT :limit FOR UPDATE ');
+    $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index WHERE status = 0 LIMIT :limit FOR UPDATE ');
     $stmt->bindValue(':limit',100,PDO::PARAM_INT);
     $stmt->execute();
     $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
     
     if (!empty($chatsId)) {
 
-        // Delete indexed chat's records
-        $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+        // Update records as being pending indexing
+        $stmt = $db->prepare('UPDATE lhc_lheschat_index SET status = 1 WHERE chat_id IN (' . implode(',', $chatsId) . ')');
         $stmt->execute();
         $db->commit();
 
         $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
-        
-        if (!empty($chats)){
-            $totalIndex+= count($chats);
-            erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+
+        try {
+            if (!empty($chats)){
+                $totalIndex+= count($chats);
+                erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage(),"\n";
+            error_log($e->getMessage() . "\n" . $e->getTraceAsString());
         }
+
+        // Delete chats if all ok
+        $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+        $stmt->execute();
 
     } else {
         $db->rollback();
@@ -106,5 +115,37 @@ for ($i = 0; $i < $parts; $i++) {
 }
 
 echo "total indexed OS - {$totalIndex}\n";
+
+echo "\n==Reindexing failed chats==\n";
+
+$stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index WHERE status = 1 LIMIT :limit FOR UPDATE ');
+$stmt->bindValue(':limit',100,PDO::PARAM_INT);
+$stmt->execute();
+$chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$totalIndex = 0;
+
+if (!empty($chatsId)) {
+
+    $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
+
+    try {
+
+        if (!empty($chats)){
+            $totalIndex+= count($chats);
+            erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+        }
+
+        // Delete chats if all ok
+        $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+        $stmt->execute();
+
+    } catch (Exception $e) {
+        echo $e->getMessage(),"\n";
+        error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+    }
+}
+
+echo "total re-indexed chats - {$totalIndex}\n";
 
 ?>

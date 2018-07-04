@@ -159,9 +159,7 @@ class erLhcoreClassElasticClient {
 	    
 	    // Log bulk save errors
 	    if (isset($action['errors']) && $action['errors'] == true) {
-	        if (erConfigClassLhConfig::getInstance()->getSetting( 'site', 'debug_output' ) == true) {
-	           //erLhcoreClassLog::write(print_r(array('log' => json_encode($action), 'function' => 'bulk_save_error'),true));
-	        }
+	        erLhcoreClassLog::write(print_r(array('log' => json_encode($action), 'function' => 'bulk_save_error'),true));
 	    }
 	    	    
 	    return $action;

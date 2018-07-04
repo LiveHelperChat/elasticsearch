@@ -35,7 +35,9 @@ class erLhcoreClassElasticSearchIndex
                         
             if ($item->ip != '') {
                 $firstIp = explode(',',str_replace(' ','',$item->ip))[0];
-                $esChat->ip = $firstIp;
+                if (strpos($firstIp,'x') === false) { // chat ip was not anonymized
+                    $esChat->ip = $firstIp;
+                }
             }
             
             $esChat->user_id = $item->user_id;

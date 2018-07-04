@@ -16,11 +16,12 @@ class erLhcoreClassExtensionElasticsearch
 	
     	$dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
 
-        if (!(isset($this->settings_personal['disable_es']) && $this->settings_personal['disable_es'] == 1)) {
-            $dispatcher->listen('chat.close', 'erLhcoreClassElasticSearchIndex::indexChatDelay');
-            $dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');
-            $dispatcher->listen('chat.modified', 'erLhcoreClassElasticSearchIndex::indexChatModify');
+        $dispatcher->listen('chat.close', 'erLhcoreClassElasticSearchIndex::indexChatDelay');
+        $dispatcher->listen('chat.modified', 'erLhcoreClassElasticSearchIndex::indexChatModify');
 
+        if (!(isset($this->settings_personal['disable_es']) && $this->settings_personal['disable_es'] == 1)) {
+
+            $dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');
             $dispatcher->listen('chat.workflow.has_previous_messages', 'erLhcoreClassElasticSearchIndex::hasPreviousMessages');
             $dispatcher->listen('chat.workflow.get_chat_history', 'erLhcoreClassElasticSearchIndex::getChatHistory');
 
@@ -46,12 +47,12 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('statistic.getagentstatistic', 'erLhcoreClassElasticSearchStatistic::statisticGetagentstatistic');
                 $dispatcher->listen('statistic.getperformancestatistic', 'erLhcoreClassElasticSearchStatistic::statisticGetperformancestatistic');
             }
-
-            spl_autoload_register(array(
-                $this,
-                'autoload'
-            ), true, false);
         }
+
+        spl_autoload_register(array(
+            $this,
+            'autoload'
+        ), true, false);
     }
     
     public function autoload($className)
