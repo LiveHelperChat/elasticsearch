@@ -7,7 +7,7 @@ $dataOptions = (array)$esOptions->data;
 
 if (!(isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1)) {
     try {
-        print_r(erLhcoreClassElasticClient::getHandler()->Cluster()->health(array('client' => array('timeout' => 40, 'connect_timeout' => 40))));
+        print_r(erLhcoreClassElasticClient::getHandler()->Cluster()->health(array('client' => array('timeout' => 80, 'connect_timeout' => 80))));
         echo "Elastic Search is alive\n";
     } catch (Exception $e) {
         $dataOptions['disable_es'] = 1;
