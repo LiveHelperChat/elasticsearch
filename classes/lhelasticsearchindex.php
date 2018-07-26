@@ -106,6 +106,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->usaccept = $item->usaccept;
             $esChat->lsync = $item->lsync;
             $esChat->auto_responder_id = $item->auto_responder_id;
+            $esChat->invitation_id = $item->invitation_id;
 
             // Extensions can append custom value
             erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.indexchat', array(

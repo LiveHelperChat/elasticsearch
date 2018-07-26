@@ -70,6 +70,9 @@
 			"chat_duration": {
 			    "type": "integer"
 			},
+			"invitation_id": {
+			    "type": "integer"
+			},
 			"transfer_timeout_ts": {
 			    "type": "integer"
 			},

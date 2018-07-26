@@ -72,6 +72,10 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = (int)trim($filterParams['input_form']->department_id);
     }
 
+    if (trim($filterParams['input_form']->invitation_id) != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['invitation_id'] = (int)trim($filterParams['input_form']->invitation_id);
+    }
+
     if (trim($filterParams['input_form']->department_group_id) != '') {
         $db = ezcDbInstance::get();
         $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
