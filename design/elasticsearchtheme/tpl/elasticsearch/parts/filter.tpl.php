@@ -1,6 +1,6 @@
 
 
-<form action="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>/(tab)/chats#/chats" method="get" name="SearchFormRight">
+<form action="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>/(tab)/chats#/chats" autocomplete="off" method="get" name="SearchFormRight">
 	<input type="hidden" name="doSearch" value="1">
 	<div class="row">
 		
