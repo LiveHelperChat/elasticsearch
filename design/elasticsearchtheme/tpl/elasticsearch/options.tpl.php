@@ -39,6 +39,11 @@
     </div>
     <hr>
     <h4>Failover</h4>
+
+    <div class="form-group">
+        <label><input type="checkbox" value="on" name="auto_enable" <?php isset($es_options['auto_enable']) && ($es_options['auto_enable'] == true) ? print 'checked="checked"' : ''?> /> Enable elastic search automatically.</label><br/>
+    </div>
+
     <div class="form-group">
         <label><input type="checkbox" value="on" name="disable_es" <?php isset($es_options['disable_es']) && ($es_options['disable_es'] == true) ? print 'checked="checked"' : ''?> /> Disable Elastic Search. Systems set's this automatically if cronjob detects that Elastic Search is down for whatever reason.</label><br/>
     </div>

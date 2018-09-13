@@ -26,6 +26,9 @@ if ( isset($_POST['StoreOptions']) ) {
         'disable_es' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
+        'auto_enable' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+        ),
         'indexType' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'string'
         ),
@@ -48,6 +51,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['disable_es'] = 1;
     } else {
         $data['disable_es'] = 0;
+    }
+
+    if ( $form->hasValidData( 'auto_enable' ) && $form->auto_enable == true ) {
+        $data['auto_enable'] = 1;
+    } else {
+        $data['auto_enable'] = 0;
     }
 
     if ( $form->hasValidData( 'use_es_prev_chats' ) && $form->use_es_prev_chats == true ) {
