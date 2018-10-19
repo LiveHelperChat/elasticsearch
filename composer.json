@@ -15,7 +15,7 @@
         "email": "remdex@mgmail.com"      
     },
     "require": {       
-        "elasticsearch/elasticsearch": "~5.0",
+        "elasticsearch/elasticsearch": "~6.0",
         "aws/aws-sdk-php": "3.x"
     },
     "minimum-stability": "dev",       
