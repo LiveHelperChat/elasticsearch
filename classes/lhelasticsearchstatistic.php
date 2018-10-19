@@ -140,6 +140,8 @@ class erLhcoreClassElasticSearchStatistic
                 $filterParams['filter']['filtergte']['itime'] = time()-(24*3600);
             }
 
+            erLhcoreClassChatStatistic::formatUserFilter($filterParams);
+
             $filterChats = $filterParams;
 
             if (isset($filterChats['filter']['filterin']['lh_chat.user_id'])) {
@@ -150,9 +152,9 @@ class erLhcoreClassElasticSearchStatistic
                 unset($filterChats['filter']['filter']['user_id']);
             }
 
-            self::formatFilter($filterChats['filter'], $sparams);
-
-            erLhcoreClassChatStatistic::formatUserFilter($filterParams);
+            if (isset($filterChats['filter']['filterin']['user_id'])) {
+                unset($filterChats['filter']['filterin']['user_id']);
+            }
 
             self::formatFilter($filterChats['filter'], $sparams);
 
@@ -165,7 +167,8 @@ class erLhcoreClassElasticSearchStatistic
             
             $sparams['body']['aggs']['chats_over_time']['aggs']['chat_status']['terms']['field'] = 'status';
             $response = $elasticSearchHandler->search($sparams);
-            
+
+
             $numberOfChats = array();
            
             $keyStatus = array(
@@ -196,9 +199,35 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
             $sparams['type'] = erLhcoreClassModelESOnlineOperator::$elasticType;
 
-            if (isset($filterParams['filter']['filterin']['lh_chat.dep_id'])) {
+            if (isset($filterParams['filter']['filterin']['lh_chat.user_id']) && isset($filterParams['filter']['filterin']['user_id'])) {
+                $mergedIds = array_unique(array_intersect($filterParams['filter']['filterin']['lh_chat.user_id'], $filterParams['filter']['filterin']['user_id']));
+                if (!empty($mergedIds)){
+                    $filterParams['filter']['filterin']['user_id'] = $mergedIds;
+                } else {
+                    $filterParams['filter']['filterin']['user_id'] = array(-1);
+                }
+                unset($filterParams['filter']['filterin']['lh_chat.user_id']);
+            }
+
+            if (isset($filterParams['filter']['filterin']['lh_chat.dep_id']) && isset($filterParams['filter']['filterin']['dep_id'])) {
+
+                $mergedIds = array_unique(array_intersect($filterParams['filter']['filterin']['lh_chat.dep_id'], $filterParams['filter']['filterin']['dep_id']));
+
+                if (!empty($mergedIds)){
+                    $filterParams['filter']['filterinm']['dep_ids'] = $mergedIds;
+                } else {
+                    $filterParams['filter']['filterinm']['dep_ids'] = array(-1);
+                }
+
+                unset($filterParams['filter']['filterin']['lh_chat.dep_id']);
+                unset($filterParams['filter']['filterin']['dep_id']);
+
+            } else if (isset($filterParams['filter']['filterin']['lh_chat.dep_id'])) {
                 $filterParams['filter']['filterinm']['dep_ids'] = $filterParams['filter']['filterin']['lh_chat.dep_id'];
                 unset($filterParams['filter']['filterin']['lh_chat.dep_id']);
+            } else if (isset($filterParams['filter']['filterin']['dep_id'])) {
+                $filterParams['filter']['filterinm']['dep_ids'] = $filterParams['filter']['filterin']['dep_id'];
+                unset($filterParams['filter']['filterin']['dep_id']);
             } elseif (isset($filterParams['filter']['filter']['dep_id'])) {
                 $filterParams['filter']['filterm']['dep_ids'] = $filterParams['filter']['filter']['dep_id'];
                 unset($filterParams['filter']['filter']['dep_id']);

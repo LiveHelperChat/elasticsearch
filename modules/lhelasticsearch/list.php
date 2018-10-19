@@ -100,6 +100,44 @@ if ($tab == 'chats') {
         }
     }
 
+    if (isset($filterParams['input']->group_ids) && is_array($filterParams['input']->group_ids) && !empty($filterParams['input']->group_ids)) {
+
+        erLhcoreClassChat::validateFilterIn($filterParams['input']->group_ids);
+
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare('SELECT user_id FROM lh_groupuser WHERE group_id IN (' . implode(',',$filterParams['input']->group_ids) .')');
+        $stmt->execute();
+        $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!empty($userIds)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['user_id'] = $userIds;
+        }
+    }
+
+    if (isset($filterParams['input']->department_group_ids) && is_array($filterParams['input']->department_group_ids) && !empty($filterParams['input']->department_group_ids)) {
+
+        erLhcoreClassChat::validateFilterIn($filterParams['input']->department_group_ids);
+
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id IN (' . implode(',',$filterParams['input']->department_group_ids) . ')');
+        $stmt->execute();
+        $depIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!empty($depIds)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $depIds;
+        }
+    }
+
+    if (isset($filterParams['input']->department_ids) && is_array($filterParams['input']->department_ids) && !empty($filterParams['input']->department_ids)) {
+        erLhcoreClassChat::validateFilterIn($filterParams['input']->department_ids);
+        $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $filterParams['input']->department_ids;
+    }
+
+    if (isset($filterParams['input']->user_ids) && is_array($filterParams['input']->user_ids) && !empty($filterParams['input']->user_ids)) {
+        erLhcoreClassChat::validateFilterIn($filterParams['input']->user_ids);
+        $sparams['body']['query']['bool']['must'][]['terms']['user_id'] = $filterParams['input']->user_ids;
+    }
+
     if (isset($filterParams['filter']['filtergte']['time'])) {
         $sparams['body']['query']['bool']['must'][]['range']['time']['gte'] = $filterParams['filter']['filtergte']['time'] * 1000;
     }

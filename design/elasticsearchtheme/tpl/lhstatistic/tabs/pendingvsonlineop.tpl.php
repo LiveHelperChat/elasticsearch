@@ -5,10 +5,10 @@
     <div class="col-md-3">
         <div class="form-group">
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','User');?></label>
-            <?php echo erLhcoreClassRenderHelper::renderCombobox( array (
-                'input_name'     => 'user_id',
+            <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                'input_name'     => 'user_ids[]',
                 'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select user'),
-                'selected_id'    => $input->user_id,
+                'selected_id'    => $input->user_ids,
                 'css_class'      => 'form-control',
                 'display_name'   => 'name_official',
                 'list_function'  => 'erLhcoreClassModelUser::getUserList'
@@ -19,10 +19,10 @@
     <div class="col-md-3">
         <div class="form-group">
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','User group');?></label>
-            <?php echo erLhcoreClassRenderHelper::renderCombobox( array (
-                'input_name'     => 'group_id',
+            <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                'input_name'     => 'group_ids[]',
                 'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select group'),
-                'selected_id'    => $input->group_id,
+                'selected_id'    => $input->group_ids,
                 'css_class'      => 'form-control',
                 'display_name'   => 'name',
                 'list_function'  => 'erLhcoreClassModelGroup::getList'
@@ -35,7 +35,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range from');?></label>
 			<div class="row">
 				<div class="col-md-12">
-					<input type="text" class="form-control" name="timefrom" id="id_timefrom" placeholder="E.g <?php echo date('Y-m-d',time()-24*3600)?>" value="<?php echo htmlspecialchars($input->timefrom == null ? date('Y-m-d',time()-24*3600) : $input->timefrom )?>" />
+					<input type="text" class="form-control input-sm" name="timefrom" id="id_timefrom" placeholder="E.g <?php echo date('Y-m-d',time()-24*3600)?>" value="<?php echo htmlspecialchars($input->timefrom == null ? date('Y-m-d',time()-24*3600) : $input->timefrom )?>" />
 				</div>							
 			</div>
 		</div>
@@ -46,7 +46,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Hour and minute from');?></label>
 		<div class="row">				
 			<div class="col-md-6">
-			    <select name="timefrom_hours" class="form-control">
+			    <select name="timefrom_hours" class="form-control input-sm">
 			        <option value="">Select hour</option>
 			        <?php for ($i = 0; $i <= 23; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timefrom_hours) && $input->timefrom_hours === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> h.</option>
@@ -54,7 +54,7 @@
 			    </select>
 			</div>
 			<div class="col-md-6">
-			    <select name="timefrom_minutes" class="form-control">
+			    <select name="timefrom_minutes" class="form-control input-sm">
 			        <option value="">Select minute</option>
 			        <?php for ($i = 0; $i <= 59; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timefrom_minutes) && $input->timefrom_minutes === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> m.</option>
@@ -70,7 +70,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range to');?></label>
 			<div class="row">
 				<div class="col-md-12">
-					<input type="text" class="form-control" name="timeto" id="id_timeto" placeholder="E.g <?php echo date('Y-m-d')?>" value="<?php echo htmlspecialchars($input->timeto)?>" />
+					<input type="text" class="form-control input-sm" name="timeto" id="id_timeto" placeholder="E.g <?php echo date('Y-m-d')?>" value="<?php echo htmlspecialchars($input->timeto)?>" />
 				</div>							
 			</div>
 		</div>
@@ -81,7 +81,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Hour and minute to');?></label>
 	    <div class="row">				
 			<div class="col-md-6">
-			    <select name="timeto_hours" class="form-control">
+			    <select name="timeto_hours" class="form-control input-sm">
 			        <option value="">Select hour</option>
 			        <?php for ($i = 0; $i <= 23; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timeto_hours) && $input->timeto_hours === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> h.</option>
@@ -89,7 +89,7 @@
 			    </select>
 			</div>
 			<div class="col-md-6">
-			    <select name="timeto_minutes" class="form-control">
+			    <select name="timeto_minutes" class="form-control input-sm">
 			        <option value="">Select minute</option>
 			        <?php for ($i = 0; $i <= 59; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timeto_minutes) && $input->timeto_minutes === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> m.</option>
@@ -103,26 +103,28 @@
 	<div class="col-md-3">
 	   <div class="form-group">
     	<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department');?></label>
-    	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
-                    'input_name'     => 'department_id',
-    				'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department'),
-                    'selected_id'    => $input->department_id,	
-    	            'css_class'      => 'form-control',			
-                    'list_function'  => 'erLhcoreClassModelDepartament::getList'
-            )); ?> 
+           <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+               'input_name'     => 'department_ids[]',
+               'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department'),
+               'selected_id'    => $input->department_ids,
+               'css_class'      => 'form-control',
+               'display_name'   => 'name',
+               'list_function'  => 'erLhcoreClassModelDepartament::getList'
+           )); ?>
         </div>
     </div>
 
     <div class="col-md-3">
 	   <div class="form-group">
-    	<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department group');?></label>
-    	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
-                    'input_name'     => 'department_group_id',
-    				'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department group'),
-                    'selected_id'    => $input->department_group_id,	
-    	            'css_class'      => 'form-control',			
-                    'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList'
-            )); ?> 
+    	   <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department group');?></label>
+           <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+               'input_name'     => 'department_group_ids[]',
+               'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department group'),
+               'selected_id'    => $input->department_group_ids,
+               'css_class'      => 'form-control',
+               'display_name'   => 'name',
+               'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList'
+           )); ?>
         </div>   
     </div> 
     
@@ -133,7 +135,7 @@
     	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
                     'input_name'     => 'group_by',
                     'selected_id'    => $input->group_by,	
-    	            'css_class'      => 'form-control',			
+    	            'css_class'      => 'form-control input-sm',
                     'list_function'  => 'erLhcoreClassElasticSearchStatistic::getGroupBy'
             )); ?> 
         </div>   
@@ -141,16 +143,20 @@
 
     <div class="col-md-2">
         <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose what to display')?></label>
-        <ul class="nav">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true">Display <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="PendingChats"> Pending chats</label></li>
-                    <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('ActiveChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="ActiveChats"> Active chats</label></li>
-                    <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('OnlineOperators',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="OnlineOperators"> Online operators</label></li>
-                </ul>
-            </li>
-        </ul>
+        <div class="btn-block-department">
+            <ul class="nav">
+                <li class="dropdown">
+
+                    <button type="button" class="btn btn-default btn-block btn-sm dropdown-toggle btn-department-dropdown" data-toggle="dropdown" aria-expanded="false">Display <span class="caret"></span></button>
+
+                    <ul class="dropdown-menu" role="menu">
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="PendingChats"> Pending chats</label></li>
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('ActiveChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="ActiveChats"> Active chats</label></li>
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('OnlineOperators',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="OnlineOperators"> Online operators</label></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div class="col-md-12">
@@ -169,6 +175,9 @@
 		$('#id_timefrom,#id_timeto').fdatepicker({
 			format: 'yyyy-mm-dd'
 		});
+        $(".btn-block-department").on("click", "[data-stopPropagation]", function(e) {
+            e.stopPropagation();
+        });
 	});
 </script>	
 						
