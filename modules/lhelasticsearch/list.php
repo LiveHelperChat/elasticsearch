@@ -51,7 +51,9 @@ if ($tab == 'chats') {
     $sparams = array(
         'body' => array()
     );
-    
+
+    $dateFilter = array();
+
     if (trim($filterParams['input_form']->chat_id) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = (int)trim($filterParams['input_form']->chat_id);
     }
@@ -140,10 +142,12 @@ if ($tab == 'chats') {
 
     if (isset($filterParams['filter']['filtergte']['time'])) {
         $sparams['body']['query']['bool']['must'][]['range']['time']['gte'] = $filterParams['filter']['filtergte']['time'] * 1000;
+        $dateFilter['gte'] = $filterParams['filter']['filtergte']['time'];
     }
 
     if (isset($filterParams['filter']['filterlte']['time'])) {
         $sparams['body']['query']['bool']['must'][]['range']['time']['lte'] = $filterParams['filter']['filterlte']['time'] * 1000;
+        $dateFilter['lte'] = $filterParams['filter']['filterlte']['time'];
     }
     
     if (isset($filterParams['filter']['filtergt']['chat_duration'])) {
@@ -206,7 +210,7 @@ if ($tab == 'chats') {
 
     $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
 
-    $total = erLhcoreClassModelESChat::getCount($sparams);
+    $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
     $tpl->set('total_literal',$total);
 
     $pages = new lhPaginator();
@@ -216,14 +220,14 @@ if ($tab == 'chats') {
     $pages->paginate();
 
     if ($pages->items_total > 0) {
-
         $chats = erLhcoreClassModelESChat::getList(array(
             'offset' => $pages->low,
             'limit' => $pages->items_per_page,
             'body' => array_merge(array(
                 'sort' => $sort
             ), $sparams['body'])
-        ));
+        ),
+        array('date_index' => $dateFilter));
 
         $chatIds = array();
         foreach ($chats as $prevChat) {

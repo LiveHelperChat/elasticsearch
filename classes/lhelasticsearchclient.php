@@ -221,7 +221,7 @@ class erLhcoreClassElasticClient {
 			throw new Exception($className.' with id '.$id.' ['.$indexName.']['.$indexType.'] could not be found!');
 		}	
 	}
-
+		
 	public static function getHandler() {
 		
 		if (is_null(self::$handler)) {

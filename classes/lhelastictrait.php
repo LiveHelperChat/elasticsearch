@@ -145,7 +145,7 @@ trait erLhcoreClassElasticTrait
         return false;
     }
 
-    public static function getCount($params = array())
+    public static function getCount($params = array(), $executionParams = array())
     {
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
             $sql = erLhcoreClassModuleFunctions::multi_implode(',', $params);
@@ -172,8 +172,19 @@ trait erLhcoreClassElasticTrait
             'index' => self::$indexNameSearch,
             'type' => self::$elasticType
         );
+
         $params = array_merge($paramsDefault, $params);
-        
+
+        $params['ignore_unavailable'] = true;
+
+        $indexSearch = '';
+
+        if (isset($executionParams['date_index']) && !empty($executionParams['date_index'])) {
+            $indexSearch = self::extractIndexFilter($executionParams['date_index']);
+        }
+
+        $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch;
+
         $result = erLhcoreClassElasticClient::searchObjectsCount($searchHandler, $params);
         
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
@@ -183,12 +194,68 @@ trait erLhcoreClassElasticTrait
         return $result;
     }
 
-    public static function getList($params = array())
+    public static function extractIndexFilter($dataFilter) {
+
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
+        $indexSave = 'static';
+
+        if (isset($dataOptions['index_type'])) {
+            if ($dataOptions['index_type'] == 'daily') {
+                $indexSave = 'daily';
+            } elseif ($dataOptions['index_type'] == 'monthly') {
+                $indexSave =  'monthly';
+            }
+        }
+        $indexes = array();
+
+        if ($indexSave == 'static') {
+            return '';
+        }
+
+        if (isset($dataFilter['gte']) && !isset($dataFilter['lte'])) {
+            $days = ceil((time()-$dataFilter['gte'])/(24*3600));
+
+            if ($days < 31 && $indexSave == 'daily') {
+                for ($i = 0; $i <= $days; $i++) {
+                    $indexes[] = self::$indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
+                }
+            } else {
+                $months = ceil((time()-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
+                for ($i = 0; $i <= $months; $i++) {
+                    $indexes[] = self::$indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
+                }
+            }
+        } elseif (isset($dataFilter['gte']) && isset($dataFilter['lte'])){
+            $days = ceil(($dataFilter['lte']-$dataFilter['gte'])/(24*3600));
+
+            if ($days < 31 && $indexSave == 'daily') {
+                for ($i = 0; $i <= $days; $i++) {
+                    $indexes[] = self::$indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
+                }
+            } else {
+                $months = ceil(($dataFilter['lte']-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
+                for ($i = 0; $i <= $months; $i++) {
+                    $indexes[] = self::$indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
+                }
+            }
+        }
+
+        if (!empty($indexes)) {
+            $indexes[] = self::$indexName;
+        }
+
+        return implode(',',array_unique($indexes));
+    }
+
+    public static function getList($params = array(), $executionParams = array())
     {
         $paramsDefault = array(
             'limit' => 1000,
             'offset' => 0
         );
+        
         $params = array_merge($paramsDefault, $params);
         
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
@@ -204,7 +271,16 @@ trait erLhcoreClassElasticTrait
         
         $searchHandler = self::getSession();
 
-        $params['index'] = self::$indexNameSearch;
+        $indexSearch = '';
+
+        if (isset($executionParams['date_index']) && !empty($executionParams['date_index'])) {
+            $indexSearch = self::extractIndexFilter($executionParams['date_index']);
+        }
+
+        $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch;
+
+        $params['ignore_unavailable'] = true;
+
         $params['type'] = self::$elasticType;
         
         // Convert pagination parameters to elastic one
@@ -221,7 +297,7 @@ trait erLhcoreClassElasticTrait
             }
             unset($params['offset']);
         }
-        
+
         $objects = erLhcoreClassElasticClient::searchObjects($searchHandler, $params, __CLASS__);
         
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
