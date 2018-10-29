@@ -13,7 +13,7 @@ $ViewList['index'] = array(
 
 $ViewList['list'] = array(
     'params' => array(),
-    'uparams' => array('ds','department_ids','department_group_ids','user_ids','group_ids','invitation_id','attr_int_1','attr_int_2','attr_int_3','attr_int_4','attr_int_5','attr_int_6','attr_int_7','attr_int_8','attr_int_9','search_in','sort_chat','keyword','tab','chat_id','message_text','nick','sort_msg','email','user_id','department_id','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours','department_group_id','group_id'),
+    'uparams' => array('exact_match','ds','department_ids','department_group_ids','user_ids','group_ids','invitation_id','attr_int_1','attr_int_2','attr_int_3','attr_int_4','attr_int_5','attr_int_6','attr_int_7','attr_int_8','attr_int_9','search_in','sort_chat','keyword','tab','chat_id','message_text','nick','sort_msg','email','user_id','department_id','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours','department_group_id','group_id'),
     'multiple_arguments' => array(
         'search_in',
         'department_ids',
