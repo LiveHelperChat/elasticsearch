@@ -187,7 +187,7 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
 
         $sparams['body']['highlight']['order'] = 'score';
-        $sparams['body']['highlight']['fragment_size'] = 100;
+        $sparams['body']['highlight']['fragment_size'] = 40;
         $sparams['body']['highlight']['number_of_fragments'] = 1;
         $sparams['body']['highlight']['fields']['msg_operator'] = new stdClass();
         $sparams['body']['highlight']['fields']['msg_visitor'] = new stdClass();
