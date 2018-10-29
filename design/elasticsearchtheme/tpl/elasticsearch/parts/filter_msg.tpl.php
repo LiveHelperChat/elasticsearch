@@ -5,7 +5,7 @@
 <?php endif; ?>
 
 <form action="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>/(tab)/messages#/messages" autocomplete="off" method="get" name="SearchFormRight">
-	<input type="hidden" name="doSearch" value="1">
+	<input type="hidden" name="ds" value="1">
 	<div class="row">	
 		<div class="col-md-2">
 		  <div class="form-group">

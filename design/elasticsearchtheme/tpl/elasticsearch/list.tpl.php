@@ -9,7 +9,7 @@
 	<div role="tabpanel" class="tab-pane <?php if ($tab == '' || $tab == 'chats') : ?>active<?php endif;?>" id="chats">
 		<?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter.tpl.php')); ?>
 	   	<?php if ($tab == 'chats') : ?>
-            <?php if ($pages->items_total > 0): ?>           
+            <?php if (isset($pages) && $pages->items_total > 0): ?>
             	<table class="table">
             		<thead>
             			<tr>
@@ -73,7 +73,10 @@
             	<?php include(erLhcoreClassDesign::designtpl('lhkernel/paginator.tpl.php')); ?>
             
             <?php else: ?>
-            	<p><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/text','No records found')?></p>
+
+            <br>
+            <div class="alert alert-info"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','No records were found or search was not executed yet!')?></div>
+
             <?php endif; ?>
         <?php endif; ?>
     </div>
@@ -111,7 +114,8 @@
         	<?php include(erLhcoreClassDesign::designtpl('lhkernel/paginator.tpl.php')); ?>
             
             <?php else: ?>
-            	<p><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/text','No records found')?></p>
+                <br>
+                <div class="alert alert-info"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','No records were found or search was not executed yet!')?></div>
             <?php endif; ?>
         <?php endif; ?>
         

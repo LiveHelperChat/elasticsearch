@@ -7,7 +7,7 @@ $tab = (isset($Params['user_parameters_unordered']['tab']) && in_array($Params['
 $tpl->set('tab', $tab);
 
 // Chats filter
-if (isset($_GET['doSearch'])) {
+if (isset($_GET['ds'])) {
     $filterParams = erLhcoreClassSearchHandler::getParams(array(
         'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_list.php',
         'format_filter' => true,
@@ -27,7 +27,7 @@ if (isset($_GET['doSearch'])) {
 $tpl->set('input', $filterParams['input_form']);
 
 // Messages filter
-if (isset($_GET['doSearch'])) {
+if (isset($_GET['ds'])) {
     $filterParamsMsg = erLhcoreClassSearchHandler::getParams(array(
         'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_msg.php',
         'format_filter' => true,
@@ -210,36 +210,39 @@ if ($tab == 'chats') {
 
     $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
 
-    $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
-    $tpl->set('total_literal',$total);
+    if ($filterParams['input_form']->ds == 1)
+    {
+        $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
+        $tpl->set('total_literal',$total);
 
-    $pages = new lhPaginator();
-    $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') . $append;
-    $pages->items_total = $total > 9000 ? 9000 : $total;
-    $pages->setItemsPerPage(30);
-    $pages->paginate();
+        $pages = new lhPaginator();
+        $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') . $append;
+        $pages->items_total = $total > 9000 ? 9000 : $total;
+        $pages->setItemsPerPage(30);
+        $pages->paginate();
 
-    if ($pages->items_total > 0) {
-        $chats = erLhcoreClassModelESChat::getList(array(
-            'offset' => $pages->low,
-            'limit' => $pages->items_per_page,
-            'body' => array_merge(array(
-                'sort' => $sort
-            ), $sparams['body'])
-        ),
-        array('date_index' => $dateFilter));
+        if ($pages->items_total > 0) {
+            $chats = erLhcoreClassModelESChat::getList(array(
+                'offset' => $pages->low,
+                'limit' => $pages->items_per_page,
+                'body' => array_merge(array(
+                    'sort' => $sort
+                ), $sparams['body'])
+            ),
+                array('date_index' => $dateFilter));
 
-        $chatIds = array();
-        foreach ($chats as $prevChat) {
-            $chatIds[$prevChat->chat_id] = array();
+            $chatIds = array();
+            foreach ($chats as $prevChat) {
+                $chatIds[$prevChat->chat_id] = array();
+            }
+            erLhcoreClassChatArcive::setArchiveAttribute($chatIds);
+            $tpl->set('itemsArchive', $chatIds);
+            $tpl->set('items', $chats);
         }
-        erLhcoreClassChatArcive::setArchiveAttribute($chatIds);
-        $tpl->set('itemsArchive', $chatIds);
-        $tpl->set('items', $chats);
+
+        $tpl->set('pages', $pages);
     }
-    
-    $tpl->set('pages', $pages);
-        
+
 } else {
     
     $sparams = array(
@@ -249,37 +252,40 @@ if ($tab == 'chats') {
     if ($filterParamsMsg['input_form']->message_text != '') {
         $sparams['body']['query']['bool']['must'][]['match']['msg'] = $filterParamsMsg['input_form']->message_text;
     }
-    
-    $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParamsMsg['input_form']);
-    
-    $total = erLhcoreClassModelESMsg::getCount($sparams);
-    $tpl->set('total_literal',$total);
 
-    $pages = new lhPaginator();
-    $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') .'/(tab)/messages' . $append;
-    $pages->items_total = $total > 9000 ? 9000 : $total;
-    $pages->setItemsPerPage(30);
-    $pages->paginate();
+    if ($filterParamsMsg['input_form']->ds == 1)
+    {
+        $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParamsMsg['input_form']);
 
-    if ($filterParamsMsg['input_form']->sort_msg == 'asc') {
-        $sort = array('time' => array('order' => 'asc'));
-    } elseif ($filterParamsMsg['input_form']->sort_msg == 'desc'){
-        $sort = array('time' => array('order' => 'desc'));
-    } else {
-        $sort = array('_score' => array('order' => 'desc'));
+        $total = erLhcoreClassModelESMsg::getCount($sparams);
+        $tpl->set('total_literal',$total);
+
+        $pages = new lhPaginator();
+        $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') .'/(tab)/messages' . $append;
+        $pages->items_total = $total > 9000 ? 9000 : $total;
+        $pages->setItemsPerPage(30);
+        $pages->paginate();
+
+        if ($filterParamsMsg['input_form']->sort_msg == 'asc') {
+            $sort = array('time' => array('order' => 'asc'));
+        } elseif ($filterParamsMsg['input_form']->sort_msg == 'desc'){
+            $sort = array('time' => array('order' => 'desc'));
+        } else {
+            $sort = array('_score' => array('order' => 'desc'));
+        }
+
+        if ($pages->items_total > 0) {
+            $tpl->set('items', erLhcoreClassModelESMsg::getList(array(
+                'offset' => $pages->low,
+                'limit' => $pages->items_per_page,
+                'body' => array_merge(array(
+                    'sort' => $sort
+                ), $sparams['body'])
+            )));
+        }
+
+        $tpl->set('pages', $pages);
     }
-
-    if ($pages->items_total > 0) {
-        $tpl->set('items', erLhcoreClassModelESMsg::getList(array(
-            'offset' => $pages->low,
-            'limit' => $pages->items_per_page,
-            'body' => array_merge(array(
-                'sort' => $sort
-            ), $sparams['body'])
-        )));
-    }
-    
-    $tpl->set('pages', $pages);        
 }
 
 $Result['content'] = $tpl->fetch();

@@ -1,7 +1,7 @@
 
 
 <form action="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>/(tab)/chats#/chats" autocomplete="off" method="get" name="SearchFormRight">
-	<input type="hidden" name="doSearch" value="1">
+	<input type="hidden" name="ds" value="1">
 	<div class="row">
 		
 		<div class="col-md-2">
@@ -71,7 +71,7 @@
 			<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range from');?></label>
     			<div class="row">
     				<div class="col-md-12">
-    					<input type="text" class="form-control input-sm" name="timefrom" id="id_timefrom" placeholder="E.g <?php echo date('Y-m-d',time()-7*24*3600)?>" value="<?php echo htmlspecialchars($input->timefrom)?>" />
+    					<input type="text" class="form-control input-sm" name="timefrom" id="id_timefrom" placeholder="E.g <?php echo date('Y-m-d',time()-7*24*3600)?>" value="<?php echo $input->ds === null ? date('Y-m-d',time()-(31*24*3600)) : htmlspecialchars($input->timefrom)?>" />
     				</div>							
     			</div>
 			</div>
@@ -281,22 +281,20 @@
                     </div>
                 </div>
 
-
-
             </div>
         </div>
 
         <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/custom_filter_attr_multiinclude.tpl.php')); ?>
 	</div>
 	
-	<?php if ($tab == 'chats') : ?>
+	<?php if ($tab == 'chats' && isset($total_literal)) : ?>
     <div class="pull-right">
         Records in total - <?php echo $total_literal;?>
     </div>
     <?php endif; ?>
 
 	<div class="btn-group" role="group" aria-label="...">
-		<input type="submit" name="doSearch" class="btn btn-default btn-sm" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
+		<input type="submit" name="doSearchSubmit" class="btn btn-default btn-sm" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
 	</div>
 </form>
 <script>
