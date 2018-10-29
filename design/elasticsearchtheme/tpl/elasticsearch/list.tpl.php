@@ -27,7 +27,7 @@
             		        <td nowrap="nowrap">
             		        <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
 
-                            <?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>
+                            <?php $chatArchivePreview = false; if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : $chatArchivePreview = true;?>
                                 <a href="#" onclick="lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>)"><i class="material-icons">info_outline</i></a>
                             <?php else : ?>
                                 <a href="#" onclick="lhc.previewChat(<?php echo $item->chat_id?>)"><i class="material-icons">info_outline</i></a>
@@ -43,7 +43,7 @@
                             </td>
                             <td>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
-                                <div class="abbr-list-general">
+                                <div class="abbr-list-general action-image" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>)<?php endif;?>">
                                     <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode($fields,"\n")))); ?>
                                         <div>
                                             <?php if ($field == 'msg_system') : ?>
