@@ -163,26 +163,35 @@ if ($tab == 'chats') {
     }
 
     if (trim($filterParams['input_form']->keyword) != '') {
-        
+
+        $exactMatch = $filterParams['input_form']->exact_match == 1 ? 'match_phrase' : 'match';
+
         if (empty($filterParams['input_form']->search_in) || in_array(1,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][]['match']['msg_visitor'] = $filterParams['input_form']->keyword;
-            $sparams['body']['query']['bool']['should'][]['match']['msg_operator'] = $filterParams['input_form']->keyword;
-            $sparams['body']['query']['bool']['should'][]['match']['msg_system'] = $filterParams['input_form']->keyword;            
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $filterParams['input_form']->keyword;
         } else {
             if (in_array(2,$filterParams['input_form']->search_in)) {
-                $sparams['body']['query']['bool']['should'][]['match']['msg_visitor'] = $filterParams['input_form']->keyword;
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $filterParams['input_form']->keyword;
             }
             
             if (in_array(3,$filterParams['input_form']->search_in)) {
-                $sparams['body']['query']['bool']['should'][]['match']['msg_operator'] = $filterParams['input_form']->keyword;
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $filterParams['input_form']->keyword;
             }
             
             if (in_array(4,$filterParams['input_form']->search_in)) {
-                $sparams['body']['query']['bool']['should'][]['match']['msg_system'] = $filterParams['input_form']->keyword;
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $filterParams['input_form']->keyword;
             }
         }
-        
+
         $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
+
+        $sparams['body']['highlight']['order'] = 'score';
+        $sparams['body']['highlight']['fragment_size'] = 100;
+        $sparams['body']['highlight']['number_of_fragments'] = 1;
+        $sparams['body']['highlight']['fields']['msg_operator'] = new stdClass();
+        $sparams['body']['highlight']['fields']['msg_visitor'] = new stdClass();
+        $sparams['body']['highlight']['fields']['msg_system'] = new stdClass();
     }
 
     erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.chatsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));

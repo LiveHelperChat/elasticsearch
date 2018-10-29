@@ -13,12 +13,13 @@
             	<table class="table">
             		<thead>
             			<tr>
-            			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
-            			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Nick')?></th>
-            			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
-            			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','IP')?></th>
-            			    <th width="15%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Index')?></th>
-            			    <th></th>
+            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
+            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Nick')?></th>
+            			    <th width="94%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
+            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
+            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','IP')?></th>
+            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Index')?></th>
+            			    <th width="1%"></th>
             			</tr>  
             		</thead>
             		<?php foreach ($items as $item) : ?>
@@ -37,8 +38,27 @@
             		        <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/raw')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
             		        
             		        </td>
-            		        <td><?php echo htmlspecialchars($item->nick)?></td>
-            		        <td><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
+            		        <td nowrap="nowrap">
+                                <?php echo htmlspecialchars($item->nick)?>
+                            </td>
+                            <td>
+                                <?php if (isset($item->meta_data['highlight'])) : ?>
+                                <div class="abbr-list-general">
+                                    <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode($fields,"\n")))); ?>
+                                        <div>
+                                            <?php if ($field == 'msg_system') : ?>
+                                                <i>System:</i>
+                                            <?php elseif ($field == 'msg_operator') : ?>
+                                                <i>Operator:</i>
+                                            <?php else : ?>
+                                                <i>Visitor:</i>
+                                            <?php endif; ?>
+                                            <?php echo $highlightText;?></div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <?php endif; ?>
+                            </td>
+            		        <td nowrap="nowrap"><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
             		        <td><?php echo htmlspecialchars($item->ip)?></td>
             		        <td><?php echo htmlspecialchars($item->meta_data['index'])?></td>
             		        <td>

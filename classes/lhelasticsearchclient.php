@@ -57,7 +57,13 @@ class erLhcoreClassElasticClient {
 				$obj = new $className();
 				$obj->setState($doc['_source']);
 				$obj->id = $doc['_id'];
-				$obj->meta_data = array('score' => $doc['_score'], 'index' => $doc['_index']);
+
+				$metaData = array('score' => $doc['_score'], 'index' => $doc['_index']);
+				if (isset($doc['highlight'])) {
+                    $metaData['highlight'] = $doc['highlight'];
+                }
+
+				$obj->meta_data = $metaData;
 				$returnObjects[$obj->id] = $obj;
 			}
 			
