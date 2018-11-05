@@ -194,10 +194,14 @@ trait erLhcoreClassElasticTrait
         return $result;
     }
 
-    public static function extractIndexFilter($dataFilter) {
+    public static function extractIndexFilter($dataFilter, $indexName = null) {
 
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
         $dataOptions = (array)$esOptions->data;
+
+        if ($indexName == null) {
+            $indexName = self::$indexName;
+        }
 
         $indexSave = 'static';
 
@@ -219,12 +223,12 @@ trait erLhcoreClassElasticTrait
 
             if ($days < 31 && $indexSave == 'daily') {
                 for ($i = 0; $i <= $days; $i++) {
-                    $indexes[] = self::$indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
+                    $indexes[] = $indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
                 }
             } else {
                 $months = ceil((time()-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
                 for ($i = 0; $i <= $months; $i++) {
-                    $indexes[] = self::$indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
+                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
                 }
             }
         } elseif (isset($dataFilter['gte']) && isset($dataFilter['lte'])){
@@ -232,18 +236,18 @@ trait erLhcoreClassElasticTrait
 
             if ($days < 31 && $indexSave == 'daily') {
                 for ($i = 0; $i <= $days; $i++) {
-                    $indexes[] = self::$indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
+                    $indexes[] = $indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
                 }
             } else {
                 $months = ceil(($dataFilter['lte']-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
                 for ($i = 0; $i <= $months; $i++) {
-                    $indexes[] = self::$indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
+                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
                 }
             }
         }
 
         if (!empty($indexes)) {
-            $indexes[] = self::$indexName;
+            $indexes[] = $indexName;
         }
 
         return implode(',',array_unique($indexes));
