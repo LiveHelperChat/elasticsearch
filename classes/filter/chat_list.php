@@ -26,6 +26,18 @@ $fieldsSearch['nick'] = array (
     )
 );
 
+$fieldsSearch['uagent'] = array (
+    'type' => 'text',
+    'trans' => 'Sort by',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'like',
+    'filter_table_field' => 'uagent',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+    )
+);
+
 $fieldsSearch['keyword'] = array (
     'type' => 'text',
     'trans' => 'Sort by',

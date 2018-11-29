@@ -166,6 +166,10 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['range']['wait_time']['lte'] = (int)$filterParams['filter']['filterlte']['wait_time'];
     }
 
+    if (trim($filterParams['input_form']->uagent) != '') {
+        $sparams['body']['query']['bool']['must'][]['match']['uagent'] = $filterParams['input_form']->uagent;
+    }
+
     if (trim($filterParams['input_form']->keyword) != '') {
 
         $exactMatch = $filterParams['input_form']->exact_match == 1 ? 'match_phrase' : 'match';

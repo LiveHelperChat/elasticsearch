@@ -250,7 +250,14 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','User agent');?></label>
+                        <input type="text" class="form-control input-sm" name="uagent" value="<?php echo htmlspecialchars($input->uagent)?>" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
                     <div class="form-group">
                         <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Keyword messages');?></label>
                         <input type="text" class="form-control input-sm" name="keyword" value="<?php echo htmlspecialchars($input->keyword)?>" />
