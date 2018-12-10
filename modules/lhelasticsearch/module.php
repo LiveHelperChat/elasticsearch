@@ -1,6 +1,6 @@
 <?php
 
-$Module = array( "name" => "PHP-Resque",
+$Module = array( "name" => "Elastic Search",
 				 'variable_params' => true );
 
 $ViewList = array();
@@ -13,7 +13,7 @@ $ViewList['index'] = array(
 
 $ViewList['list'] = array(
     'params' => array(),
-    'uparams' => array('uagent','exact_match','ds','department_ids','department_group_ids','user_ids','group_ids','invitation_id','attr_int_1','attr_int_2','attr_int_3','attr_int_4','attr_int_5','attr_int_6','attr_int_7','attr_int_8','attr_int_9','search_in','sort_chat','keyword','tab','chat_id','message_text','nick','sort_msg','email','user_id','department_id','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours','department_group_id','group_id'),
+    'uparams' => array('uagent','exact_match','ds','department_ids','department_group_ids','user_ids','group_ids','invitation_id','attr_int_1','attr_int_2','attr_int_3','attr_int_4','attr_int_5','attr_int_6','attr_int_7','attr_int_8','attr_int_9','attr_int_10','attr_int_11','attr_int_12','attr_int_13','attr_int_14','attr_int_15','search_in','sort_chat','keyword','tab','chat_id','message_text','nick','sort_msg','email','user_id','department_id','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours','department_group_id','group_id'),
     'multiple_arguments' => array(
         'search_in',
         'department_ids',
@@ -21,12 +21,12 @@ $ViewList['list'] = array(
         'user_ids',
         'group_ids'
     ),
-    'functions' => array('configure')
+    'functions' => array('use')
 );
 
 $ViewList['raw'] = array(
     'params' => array('index','id'),
-    'functions' => array('configure')
+    'functions' => array('use')
 );
 
 $ViewList['getpreviouschats'] = array(
@@ -131,5 +131,5 @@ $ViewList['updateelastic'] = array(
     'functions' => array('configure')
 );
 
-$FunctionList['use'] = array('explain' => 'Allow operator to use PHP-Resque module');
-$FunctionList['configure'] = array('explain' => 'Allow operator to configure PHP-Resque module');
+$FunctionList['use'] = array('explain' => 'Allow operator to use Elastic Search module');
+$FunctionList['configure'] = array('explain' => 'Allow operator to configure Elastic Search module');

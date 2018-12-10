@@ -219,6 +219,9 @@ trait erLhcoreClassElasticTrait
         }
 
         if (isset($dataFilter['gte']) && !isset($dataFilter['lte'])) {
+
+            $dataFilter['gte'] = $dataFilter['gte'] - (24*3600);
+
             $days = ceil((time()-$dataFilter['gte'])/(24*3600));
 
             if ($days < 31 && $indexSave == 'daily') {
@@ -231,7 +234,13 @@ trait erLhcoreClassElasticTrait
                     $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
                 }
             }
+
+
         } elseif (isset($dataFilter['gte']) && isset($dataFilter['lte'])){
+
+            $dataFilter['gte'] = $dataFilter['gte'] - (24*3600);
+            $dataFilter['lte'] = $dataFilter['lte'] + (24*3600);
+
             $days = ceil(($dataFilter['lte']-$dataFilter['gte'])/(24*3600));
 
             if ($days < 31 && $indexSave == 'daily') {
