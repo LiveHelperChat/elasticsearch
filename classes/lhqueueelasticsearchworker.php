@@ -11,6 +11,14 @@ class erLhcoreClassElasticSearchWorker {
         $db = ezcDbInstance::get();
         $db->reconnect(); // Because it timeouts automatically, this calls to reconnect to database, this is implemented in 2.52v
 
+        $esOptions = erLhcoreClassChat::getSession()->load( 'erLhcoreClassModelChatConfig', 'elasticsearch_options' );
+        $data = (array)$esOptions->data;
+
+        if (isset($data['disable_es']) && $data['disable_es'] == 1) {
+            error_log('Elastic search disabled in erLhcoreClassElasticSearchWorker');
+            return;
+        }
+
         $db->beginTransaction();
         try {
             $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index WHERE status = 0 LIMIT :limit FOR UPDATE ');
@@ -37,6 +45,14 @@ class erLhcoreClassElasticSearchWorker {
                     error_log($e->getMessage() . "\n" . $e->getTraceAsString());
                     return;
                 }
+            }
+
+            $esOptions = erLhcoreClassChat::getSession()->load( 'erLhcoreClassModelChatConfig', 'elasticsearch_options' );
+            $data = (array)$esOptions->data;
+
+            if (isset($data['disable_es']) && $data['disable_es'] == 1) {
+                error_log('Elastic search disabled in erLhcoreClassElasticSearchWorker');
+                return;
             }
 
             $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
