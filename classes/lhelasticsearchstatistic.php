@@ -655,6 +655,7 @@ class erLhcoreClassElasticSearchStatistic
             $numberOfChats[$keyDateUnix]['msg_user'] = 0;
             $numberOfChats[$keyDateUnix]['msg_operator'] = 0;
             $numberOfChats[$keyDateUnix]['msg_system'] = 0;
+            $numberOfChats[$keyDateUnix]['msg_bot'] = 0;
         }
         
         $sparams = array();
@@ -667,10 +668,8 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
         
         $sparams['body']['aggs']['chats_over_time']['aggs']['msg_user']['filter']['term']['user_id'] = 0;
-        $sparams['body']['aggs']['chats_over_time']['aggs']['msg_system']['filter']['terms']['user_id'] = array(
-            - 1,
-            - 2
-        );
+        $sparams['body']['aggs']['chats_over_time']['aggs']['msg_system']['filter']['term']['user_id'] = -1;
+        $sparams['body']['aggs']['chats_over_time']['aggs']['msg_bot']['filter']['term']['user_id'] = -2;
 
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
 
@@ -702,6 +701,7 @@ class erLhcoreClassElasticSearchStatistic
                 $numberOfChats[$keyDateUnix]['msg_operator'] = $bucket['doc_count'] - $bucket['msg_user']['doc_count'] - $bucket['msg_system']['doc_count'];
                 $numberOfChats[$keyDateUnix]['msg_user'] = $bucket['msg_user']['doc_count'];
                 $numberOfChats[$keyDateUnix]['msg_system'] = $bucket['msg_system']['doc_count'];
+                $numberOfChats[$keyDateUnix]['msg_bot'] = $bucket['msg_bot']['doc_count'];
             }
         }
 
