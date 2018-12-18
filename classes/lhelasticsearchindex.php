@@ -148,9 +148,9 @@ class erLhcoreClassElasticSearchIndex
                 $indexSave = $esChat->meta_data['index'];
             } else if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
-                    $indexSave = erLhcoreClassModelESChat::$indexName . date('Y.m.d',$item->time);
+                    $indexSave = erLhcoreClassModelESChat::$indexName . gmdate('Y.m.d',$item->time);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
-                    $indexSave = erLhcoreClassModelESChat::$indexName . date('Y.m',$item->time);
+                    $indexSave = erLhcoreClassModelESChat::$indexName . gmdate('Y.m',$item->time);
                 }
             }
 
