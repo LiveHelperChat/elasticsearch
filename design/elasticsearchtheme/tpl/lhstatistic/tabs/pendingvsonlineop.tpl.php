@@ -35,7 +35,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range from');?></label>
 			<div class="row">
 				<div class="col-md-12">
-					<input type="text" class="form-control input-sm" name="timefrom" id="id_timefrom" placeholder="E.g <?php echo date('Y-m-d',time()-24*3600)?>" value="<?php echo htmlspecialchars($input->timefrom == null ? date('Y-m-d',time()-24*3600) : $input->timefrom )?>" />
+					<input type="text" class="form-control form-control-sm" name="timefrom" id="id_timefrom" placeholder="E.g <?php echo date('Y-m-d',time()-24*3600)?>" value="<?php echo htmlspecialchars($input->timefrom == null ? date('Y-m-d',time()-24*3600) : $input->timefrom )?>" />
 				</div>							
 			</div>
 		</div>
@@ -46,7 +46,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Hour and minute from');?></label>
 		<div class="row">				
 			<div class="col-md-6">
-			    <select name="timefrom_hours" class="form-control input-sm">
+			    <select name="timefrom_hours" class="form-control form-control-sm">
 			        <option value="">Select hour</option>
 			        <?php for ($i = 0; $i <= 23; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timefrom_hours) && $input->timefrom_hours === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> h.</option>
@@ -54,7 +54,7 @@
 			    </select>
 			</div>
 			<div class="col-md-6">
-			    <select name="timefrom_minutes" class="form-control input-sm">
+			    <select name="timefrom_minutes" class="form-control form-control-sm">
 			        <option value="">Select minute</option>
 			        <?php for ($i = 0; $i <= 59; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timefrom_minutes) && $input->timefrom_minutes === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> m.</option>
@@ -70,7 +70,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range to');?></label>
 			<div class="row">
 				<div class="col-md-12">
-					<input type="text" class="form-control input-sm" name="timeto" id="id_timeto" placeholder="E.g <?php echo date('Y-m-d')?>" value="<?php echo htmlspecialchars($input->timeto)?>" />
+					<input type="text" class="form-control form-control-sm" name="timeto" id="id_timeto" placeholder="E.g <?php echo date('Y-m-d')?>" value="<?php echo htmlspecialchars($input->timeto)?>" />
 				</div>							
 			</div>
 		</div>
@@ -81,7 +81,7 @@
 		<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Hour and minute to');?></label>
 	    <div class="row">				
 			<div class="col-md-6">
-			    <select name="timeto_hours" class="form-control input-sm">
+			    <select name="timeto_hours" class="form-control form-control-sm">
 			        <option value="">Select hour</option>
 			        <?php for ($i = 0; $i <= 23; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timeto_hours) && $input->timeto_hours === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> h.</option>
@@ -89,7 +89,7 @@
 			    </select>
 			</div>
 			<div class="col-md-6">
-			    <select name="timeto_minutes" class="form-control input-sm">
+			    <select name="timeto_minutes" class="form-control form-control-sm">
 			        <option value="">Select minute</option>
 			        <?php for ($i = 0; $i <= 59; $i++) : ?>
 			            <option value="<?php echo $i?>" <?php if (isset($input->timeto_minutes) && $input->timeto_minutes === $i) : ?>selected="selected"<?php endif;?>><?php echo str_pad($i,2, '0', STR_PAD_LEFT);?> m.</option>
@@ -135,7 +135,7 @@
     	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
                     'input_name'     => 'group_by',
                     'selected_id'    => $input->group_by,	
-    	            'css_class'      => 'form-control input-sm',
+    	            'css_class'      => 'form-control form-control-sm',
                     'list_function'  => 'erLhcoreClassElasticSearchStatistic::getGroupBy'
             )); ?> 
         </div>   
@@ -147,7 +147,7 @@
             <ul class="nav">
                 <li class="dropdown">
 
-                    <button type="button" class="btn btn-default btn-block btn-sm dropdown-toggle btn-department-dropdown" data-toggle="dropdown" aria-expanded="false">Display <span class="caret"></span></button>
+                    <button type="button" class="btn btn-secondary btn-block btn-sm dropdown-toggle btn-department-dropdown" data-toggle="dropdown" aria-expanded="false">Display <span class="caret"></span></button>
 
                     <ul class="dropdown-menu" role="menu">
                         <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="PendingChats"> Pending chats</label></li>
@@ -161,8 +161,8 @@
 
     <div class="col-md-12">
         <div class="btn-group" role="group" aria-label="...">
-            <input type="submit" name="doSearch" class="btn btn-default" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
-            <a href="<?php echo erLhcoreClassDesign::baseurl('statistic/statistic')?>/(tab)/pendingvsonlineop/(xls)/1<?php echo erLhcoreClassSearchHandler::getURLAppendFromInput($input)?>" class="btn btn-default">Export XLS</a>
+            <input type="submit" name="doSearch" class="btn btn-secondary" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
+            <a href="<?php echo erLhcoreClassDesign::baseurl('statistic/statistic')?>/(tab)/pendingvsonlineop/(xls)/1<?php echo erLhcoreClassSearchHandler::getURLAppendFromInput($input)?>" class="btn btn-secondary">Export XLS</a>
         </div>
     </div>
 

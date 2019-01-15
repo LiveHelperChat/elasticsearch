@@ -1,8 +1,8 @@
 <h1><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat list')?></h1>
 
 <ul class="nav nav-pills" role="tablist">
-	<li role="presentation" <?php if ($tab == '' || $tab == 'chats') : ?> class="active" <?php endif;?>><a href="#chats" aria-controls="chats" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Chats');?></a></li>
-	<li role="presentation" <?php if ($tab == 'messages') : ?>class="active"<?php endif;?>><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab" ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Messages');?></a></li>
+	<li role="presentation" class="nav-item"><a class="nav-link<?php if ($tab == '' || $tab == 'chats') : ?> active<?php endif;?>" href="#chats" aria-controls="chats" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Chats');?></a></li>
+	<li role="presentation" class="nav-item"><a class="nav-link<?php if ($tab == 'messages') : ?> active<?php endif;?>" href="#messages" aria-controls="messages" role="tab" data-toggle="tab" ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Messages');?></a></li>
 </ul>
 
 <div class="tab-content">

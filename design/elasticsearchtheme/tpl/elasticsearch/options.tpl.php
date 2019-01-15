@@ -57,6 +57,6 @@
     <p><?php echo htmlspecialchars($es_options['fail_reason'])?></p>
     <?php endif; ?>
 
-    <input type="submit" class="btn btn-default" name="StoreOptions" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/buttons','Save'); ?>" />
+    <input type="submit" class="btn btn-secondary" name="StoreOptions" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/buttons','Save'); ?>" />
 
 </form>
