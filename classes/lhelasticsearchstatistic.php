@@ -1131,7 +1131,12 @@ class erLhcoreClassElasticSearchStatistic
         } elseif (isset($filterParams['input']->timefrom_include_hours) && is_numeric($filterParams['input']->timefrom_include_hours)) {
             $sparams['body']['query']['bool']['must'][]['range']['hour']['gte'] = (int)$filterParams['input']->timefrom_include_hours;
         }
-        
+
+        // Append extension custom aggregation
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getperformancestatistic', array(
+            'sparams' => & $sparams,
+        ));
+
         foreach ($params['ranges'] as $rangeData) {
             $rangeFilter = array();
             
