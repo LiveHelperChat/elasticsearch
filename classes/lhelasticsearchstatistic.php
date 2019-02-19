@@ -1166,7 +1166,7 @@ class erLhcoreClassElasticSearchStatistic
             
             $stats['rows'][] = array(
                 'from' => $bucket['from'],
-                'to' => isset($bucket['to']) ? $bucket['to'] : false,
+                'to' => isset($bucket['to']) ? ($bucket['to'] - 1) : false,
                 'tt' => $params['ranges'][$key]['tt'],
                 'started' => $bucket['doc_count'],
                 'abandoned' => $bucket['abandoned_chats']['doc_count']
