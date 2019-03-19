@@ -86,7 +86,7 @@ $ViewList['getmapping'] = array(
 $ViewList['listmsg'] = array(
     'params' => array('chat_id'),
     'uparams' => array(),
-    'functions' => array('configure')
+    'functions' => array('use')
 );
 
 $ViewList['elastic'] = array(
