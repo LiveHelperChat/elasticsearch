@@ -32,7 +32,8 @@ if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined')
                     )
                 )
             ), $sparams['body'])
-        ));
+        ),
+            array('date_index' => array('gte' => time()-6*31*24*3600)));
     } catch (Exception $e) {
         error_log($e->getMessage() . "\n" . $e->getTraceAsString());
         $previousChats = array();
@@ -45,7 +46,7 @@ if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined')
     }
 
     erLhcoreClassChatArcive::setArchiveAttribute($chatIds);
-    
+
     $tpl->set('chatsPrevArchives', $chatIds);
 
     $tpl->set('chatsPrev', $previousChats);

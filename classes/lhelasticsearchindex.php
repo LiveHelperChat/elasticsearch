@@ -9,13 +9,19 @@ class erLhcoreClassElasticSearchIndex
         $sparams = array();
         $sparams['body']['query']['bool']['must'][]['terms']['chat_id'] = array_keys($params['chats']);
         $sparams['limit'] = 1000;
-        $documents = erLhcoreClassModelESChat::getList($sparams);
-        
+
+        $dateRange = array();
+        foreach ($params['chats'] as $item) {
+            $dateRange[] = $item->time;
+        }
+
+        $documents = erLhcoreClassModelESChat::getList($sparams,array('date_index' => array('gte' => min($dateRange), 'lte' => max($dateRange))));
+
         $documentsReindexed = array();
         foreach ($documents as $document) {
             $documentsReindexed[$document->chat_id] = $document;
         }
-        
+
         $objectsSave = array();
 
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
@@ -27,28 +33,28 @@ class erLhcoreClassElasticSearchIndex
             } else {
                 $esChat = new erLhcoreClassModelESChat();
             }
-            
+
             $esChat->chat_id = $item->id;
             $esChat->time = $item->time * 1000;
             $esChat->pnd_time = $item->pnd_time * 1000;
             $esChat->cls_time = $item->cls_time * 1000;
-                        
+
             if ($item->ip != '') {
                 $firstIp = explode(',',str_replace(' ','',$item->ip))[0];
                 if (filter_var($firstIp, FILTER_VALIDATE_IP)) { // chat ip was not anonymized
                     $esChat->ip = $firstIp;
                 }
             }
-            
+
             $esChat->user_id = $item->user_id;
-            
+
             if (! empty($item->lon) && ! empty($item->lat)) {
                 $esChat->location = array(
                     (float) $item->lon,
                     (float) $item->lat
                 );
             }
-            
+
             $esChat->dep_id = $item->dep_id;
             $esChat->city = $item->city;
             $esChat->wait_time = $item->wait_time;
@@ -126,8 +132,8 @@ class erLhcoreClassElasticSearchIndex
 
             $esChat->msg_visitor = null;
             $esChat->msg_operator = null;
-            $esChat->msg_system = null; 
-            
+            $esChat->msg_system = null;
+
             foreach ($messagesChat as $messageChat) {
                 if ($messageChat->user_id == 0) {
                     $esChat->msg_visitor .= $messageChat->msg . "\n";
@@ -137,7 +143,7 @@ class erLhcoreClassElasticSearchIndex
                     $esChat->msg_system .= $messageChat->msg . "\n";
                 }
             }
-            
+
             $esChat->msg_system = trim($esChat->msg_system);
             $esChat->msg_operator = trim($esChat->msg_operator);
             $esChat->msg_visitor = trim($esChat->msg_visitor);
@@ -156,7 +162,7 @@ class erLhcoreClassElasticSearchIndex
 
             $objectsSave[$indexSave][] = $esChat;
         }
-        
+
         erLhcoreClassModelESChat::bulkSave($objectsSave, array('custom_index' => true));
     }
 
@@ -165,12 +171,17 @@ class erLhcoreClassElasticSearchIndex
         if (empty($params['items'])) {
             return;
         }
-        
+
+        $dateRange = array();
+        foreach ($params['items'] as $item) {
+            $dateRange[] = $item->time;
+        }
+
         $sparams = array();
         $sparams['body']['query']['bool']['must'][]['terms']['os_id'] = array_keys($params['items']);
         $sparams['limit'] = 1000;
-        $documents = erLhcoreClassModelESOnlineSession::getList($sparams);
-        
+        $documents = erLhcoreClassModelESOnlineSession::getList($sparams, array('date_index' => array('gte' => min($dateRange), 'lte' => max($dateRange))));
+
         $documentsReindexed = array();
         foreach ($documents as $document) {
             $documentsReindexed[$document->os_id] = $document;
@@ -192,7 +203,7 @@ class erLhcoreClassElasticSearchIndex
                 $osLog->os_id = $item->id;
                 $osLog->time = $item->time * 1000;
             }
-            
+
             $osLog->lactivity = $item->lactivity * 1000;
             $osLog->duration = $item->duration;
 
@@ -210,7 +221,7 @@ class erLhcoreClassElasticSearchIndex
 
             $objectsSave[$indexSave][] = $osLog;
         }
-        
+
         erLhcoreClassModelESOnlineSession::bulkSave($objectsSave, array('custom_index' => true));
     }
 
@@ -240,13 +251,14 @@ class erLhcoreClassElasticSearchIndex
     public static function indexChatDelete($params)
     {
         $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $params['chat']->id;
-        
+
         $chat = erLhcoreClassModelESChat::findOne(array(
             'offset' => 0,
             'limit' => 0,
             'body' => $sparams['body']
-        ));
-        
+        ),
+            array('date_index' => array('gte' => ($params['chat']->time - (31*24*3600)))));
+
         if ($chat instanceof erLhcoreClassModelESChat) {
             $chat->removeThis();
         }
@@ -290,7 +302,7 @@ class erLhcoreClassElasticSearchIndex
             erLhcoreClassModelESPendingChat::bulkSave($objectsSave, array('custom_index' => true));
         }
     }
-    
+
     public static function indexOnlineOperators()
     {
         $db = ezcDbInstance::get();
@@ -339,44 +351,47 @@ class erLhcoreClassElasticSearchIndex
 
         erLhcoreClassModelESOnlineOperator::bulkSave($objectsSave, array('custom_index' => true));
     }
-    
+
     public static function indexMessages($params)
     {
         $items = $params['messages'];
-        
+
         $chatsIds = array();
+        $dateRange = array();
         foreach ($items as $item) {
             $chatsIds[] = $item->chat_id;
+            $dateRange[] = $item->time;
         }
-        
+
         if (empty($chatsIds)) {
             return;
         }
-        
+
         $sql = "SELECT id, dep_id, user_id FROM lh_chat WHERE id IN (" . implode(',', $chatsIds) . ')';
-        
+
         $db = ezcDbInstance::get();
         $stmt = $db->prepare($sql);
         $stmt->execute();
         $chatsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         $infoChat = array();
-        
+
         foreach ($chatsData as $chatData) {
             $infoChat[$chatData['id']]['dep_id'] = $chatData['dep_id'];
             $infoChat[$chatData['id']]['user_id'] = $chatData['user_id'];
         }
-        
+
         $sparams = array();
         $sparams['body']['query']['bool']['must'][]['terms']['msg_id'] = array_keys($params['messages']);
         $sparams['limit'] = 1000;
-        $documents = erLhcoreClassModelESMsg::getList($sparams);
+
+        $documents = erLhcoreClassModelESMsg::getList($sparams, array('date_index' => array('gte' => min($dateRange), 'lte' => max($dateRange))));
 
         $documentsReindexed = array();
         foreach ($documents as $document) {
             $documentsReindexed[$document->msg_id] = $document;
         }
-        
+
         $objectsSave = array();
 
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
@@ -385,7 +400,7 @@ class erLhcoreClassElasticSearchIndex
         erLhcoreClassModelESMsg::getSession();
 
         foreach ($params['messages'] as $keyValue => $item) {
-            
+
             if (isset($documentsReindexed[$keyValue])) {
                 $esMsg = $documentsReindexed[$keyValue];
             } else {
@@ -475,7 +490,8 @@ class erLhcoreClassElasticSearchIndex
                             )
                         )
                     ), $sparams['body'])
-                ));
+                ),
+                    array('date_index' => array('gte' => ($chat->time - (31*24*3600)))));
             } catch (Exception $e) {
                 error_log($e->getMessage() . "\n" . $e->getTraceAsString());
                 return array(
@@ -486,10 +502,10 @@ class erLhcoreClassElasticSearchIndex
 
             if ($previousChat instanceof erLhcoreClassModelESChat) {
                 return array(
-                     'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
-                     'has_messages' => true,
-                     'message_id' => 0,
-                     'chat_history' => erLhcoreClassModelChat::fetch($previousChat->chat_id)
+                    'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                    'has_messages' => true,
+                    'message_id' => 0,
+                    'chat_history' => erLhcoreClassModelChat::fetch($previousChat->chat_id)
                 );
             } else {
                 return array(

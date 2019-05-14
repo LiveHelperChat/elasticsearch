@@ -39,7 +39,7 @@ trait erLhcoreClassElasticTrait
         $this->afterRemove();
         $this->clearCache();
     }
-    
+
     public function removeThisOnly(){
         erLhcoreClassElasticClient::removeObj(self::getSession(), $this, (isset($this->meta_data['index']) ? $this->meta_data['index'] : self::$indexName), self::$elasticType);
     }
@@ -67,11 +67,11 @@ trait erLhcoreClassElasticTrait
         $cache = CSCacheAPC::getMem();
         $cache->increaseCacheVersion('site_attributes_version_' . strtolower(__CLASS__));
         $cache->delete('object_' . strtolower(__CLASS__) . '_' . $this->id);
-        
+
         if (isset($GLOBALS[__CLASS__ . $this->id])) {
             unset($GLOBALS[__CLASS__ . $this->id]);
         }
-        
+
         $this->clearCacheClassLevel();
     }
 
@@ -81,11 +81,11 @@ trait erLhcoreClassElasticTrait
     public static function getSession()
     {
         static $dbHandler = false;
-        
+
         if ($dbHandler === false) {
-            
+
             $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
-            
+
             $dbHandler = erLhcoreClassElasticClient::getHandler();
             if (isset(self::$index) && self::$index != '') {
                 $additional_indexes = $settings['additional_indexes'];
@@ -99,7 +99,7 @@ trait erLhcoreClassElasticTrait
                 self::$indexNameSearch = $settings['index_search'];
             }
         }
-        
+
         return $dbHandler;
     }
 
@@ -107,13 +107,13 @@ trait erLhcoreClassElasticTrait
     {
         if (isset($GLOBALS[__CLASS__ . $id]) && $useCache == true)
             return $GLOBALS[__CLASS__ . $id];
-        
+
         try {
             $GLOBALS[__CLASS__ . $id] = erLhcoreClassElasticClient::load(self::getSession(), __CLASS__, $id, ($indexName === null ? self::$indexName : $indexName), self::$elasticType);
         } catch (Exception $e) {
             $GLOBALS[__CLASS__ . $id] = false;
         }
-        
+
         return $GLOBALS[__CLASS__ . $id];
     }
 
@@ -124,24 +124,24 @@ trait erLhcoreClassElasticTrait
     {
         $cache = CSCacheAPC::getMem();
         $cacheKey = 'object_' . strtolower(__CLASS__) . '_' . $id;
-        
+
         if (($object = $cache->restore($cacheKey)) === false) {
             $object = self::fetch($id, true);
             $cache->store($cacheKey, $object);
         }
-        
+
         return $object;
     }
 
-    public static function findOne($paramsSearch = array())
+    public static function findOne($paramsSearch = array(), $executionParams = array())
     {
         $paramsSearch['limit'] = 1;
-        $list = self::getList($paramsSearch);
+        $list = self::getList($paramsSearch, $executionParams);
         if (! empty($list)) {
             reset($list);
             return current($list);
         }
-        
+
         return false;
     }
 
@@ -149,25 +149,25 @@ trait erLhcoreClassElasticTrait
     {
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
             $sql = erLhcoreClassModuleFunctions::multi_implode(',', $params);
-            
+
             $cache = CSCacheAPC::getMem();
             $cacheKey = isset($params['cache_key']) ? md5($sql . $params['cache_key']) : md5('objects_count_' . strtolower(__CLASS__) . '_v_' . $cache->getCacheVersion('site_attributes_version_' . strtolower(__CLASS__)) . $sql);
-            
+
             if (($result = $cache->restore($cacheKey)) !== false) {
                 return $result;
             }
         }
-        
+
         if (isset($params['limit'])) {
             unset($params['limit']);
         }
-        
+
         if (isset($params['offset'])) {
             unset($params['offset']);
         }
-        
+
         $searchHandler = self::getSession();
-        
+
         $paramsDefault = array(
             'index' => self::$indexNameSearch,
             'type' => self::$elasticType
@@ -186,11 +186,11 @@ trait erLhcoreClassElasticTrait
         $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch;
 
         $result = erLhcoreClassElasticClient::searchObjectsCount($searchHandler, $params);
-        
+
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
             $cache->store($cacheKey, $result);
         }
-        
+
         return $result;
     }
 
@@ -268,20 +268,20 @@ trait erLhcoreClassElasticTrait
             'limit' => 1000,
             'offset' => 0
         );
-        
+
         $params = array_merge($paramsDefault, $params);
-        
+
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
             $sql = erLhcoreClassModuleFunctions::multi_implode(',', $params);
-            
+
             $cache = CSCacheAPC::getMem();
             $cacheKey = isset($params['cache_key']) ? md5($sql . $params['cache_key']) : md5('objects_list_' . strtolower(__CLASS__) . '_v_' . $cache->getCacheVersion('site_attributes_version_' . strtolower(__CLASS__)) . $sql);
-            
+
             if (($result = $cache->restore($cacheKey)) !== false) {
                 return $result;
             }
         }
-        
+
         $searchHandler = self::getSession();
 
         $indexSearch = '';
@@ -295,7 +295,7 @@ trait erLhcoreClassElasticTrait
         $params['ignore_unavailable'] = true;
 
         $params['type'] = self::$elasticType;
-        
+
         // Convert pagination parameters to elastic one
         if (isset($params['limit'])) {
             if ($params['limit'] > 0) {
@@ -303,7 +303,7 @@ trait erLhcoreClassElasticTrait
             }
             unset($params['limit']);
         }
-        
+
         if (isset($params['offset'])) {
             if ($params['offset'] > 0) {
                 $params['from'] = $params['offset'];
@@ -312,7 +312,7 @@ trait erLhcoreClassElasticTrait
         }
 
         $objects = erLhcoreClassElasticClient::searchObjects($searchHandler, $params, __CLASS__);
-        
+
         if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
             if (isset($params['sql_cache_timeout'])) {
                 $cache->store($cacheKey, $objects, $params['sql_cache_timeout']);
@@ -320,7 +320,7 @@ trait erLhcoreClassElasticTrait
                 $cache->store($cacheKey, $objects);
             }
         }
-        
+
         return $objects;
     }
 
@@ -331,7 +331,7 @@ trait erLhcoreClassElasticTrait
         $params['index'] = self::$indexName;
         $params['type'] = self::$elasticType;
         $params['body']['ids'] = array_values($ids);
-        
+
         return erLhcoreClassElasticClient::mGet($searchHandler, $params, __CLASS__);
     }
 

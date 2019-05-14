@@ -31,7 +31,8 @@ if (($online_user = $chat->online_user) !== false) {
                 )
             )
         ), $sparams['body'])
-    ));
+    ),
+        array('date_index' => array('gte' => time()-6*31*24*3600)));
 
     $chatIds = array();
 
