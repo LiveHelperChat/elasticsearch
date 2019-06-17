@@ -140,6 +140,10 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['terms']['user_id'] = $filterParams['input']->user_ids;
     }
 
+    if ($filterParams['input_form']->no_user == 1) {
+        $sparams['body']['query']['bool']['must'][]['term']['user_id'] = 0;
+    }
+
     if (isset($filterParams['filter']['filtergte']['time'])) {
         $sparams['body']['query']['bool']['must'][]['range']['time']['gte'] = $filterParams['filter']['filtergte']['time'] * 1000;
         $dateFilter['gte'] = $filterParams['filter']['filtergte']['time'];

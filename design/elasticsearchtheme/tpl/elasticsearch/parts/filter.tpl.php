@@ -285,6 +285,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <label><input type="checkbox" <?php if ($input->exact_match == true) : ?>checked="checked"<?php endif;?> name="exact_match" value="on" /> Exact match phrase</label>
+                        <label><input type="checkbox" <?php if ($input->no_user == true) : ?>checked="checked"<?php endif;?> name="no_user" value="on" /> No user assigned</label>
                     </div>
                 </div>
 

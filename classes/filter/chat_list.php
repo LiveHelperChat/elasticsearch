@@ -38,6 +38,18 @@ $fieldsSearch['uagent'] = array (
     )
 );
 
+$fieldsSearch['no_user'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'none',
+    'filter_table_field' => 'no_user',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+    )
+);
+
 $fieldsSearch['keyword'] = array (
     'type' => 'text',
     'trans' => 'Sort by',
