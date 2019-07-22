@@ -148,6 +148,12 @@ class erLhcoreClassElasticSearchIndex
             $esChat->msg_operator = trim($esChat->msg_operator);
             $esChat->msg_visitor = trim($esChat->msg_visitor);
 
+            // Has visitor file
+            $esChat->hvf = preg_match('/\[file="?(.*?)"?\]/is',$esChat->msg_visitor);
+
+            // Hast operator file
+            $esChat->hof = preg_match('/\[file="?(.*?)"?\]/is',$esChat->msg_operator);
+
             $indexSave = erLhcoreClassModelESChat::$indexName;
 
             if (isset($esChat->meta_data['index']) && $esChat->meta_data['index'] != '') {

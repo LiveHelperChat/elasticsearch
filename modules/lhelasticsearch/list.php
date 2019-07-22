@@ -174,6 +174,19 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['match']['uagent'] = $filterParams['input_form']->uagent;
     }
 
+    $filesFilter = array();
+    if ($filterParams['input_form']->hvf == 1) {
+        $filesFilter[]['term']['hvf'] = 1;
+    }
+
+    if ($filterParams['input_form']->hof == 1) {
+        $filesFilter[]['term']['hof'] = 1;
+    }
+
+    if (!empty($filesFilter)) {
+        $sparams['body']['query']['bool']['must'][]['bool']['should'] = $filesFilter;
+    }
+
     if (trim($filterParams['input_form']->keyword) != '') {
 
         $exactMatch = $filterParams['input_form']->exact_match == 1 ? 'match_phrase' : 'match';

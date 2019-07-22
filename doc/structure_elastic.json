@@ -215,8 +215,14 @@
 			},
 			"msg_system": {
 			    "type": "text"
-			}
-		},
+			},
+            "hvf": {
+              "type": "integer"
+            },
+            "hof": {
+              "type": "integer"
+            }
+        },
 		"lh_msg": {
 			"msg_id": {
 				"type": "long"

@@ -284,8 +284,10 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label><input type="checkbox" <?php if ($input->exact_match == true) : ?>checked="checked"<?php endif;?> name="exact_match" value="on" /> Exact match phrase</label>
-                        <label><input type="checkbox" <?php if ($input->no_user == true) : ?>checked="checked"<?php endif;?> name="no_user" value="on" /> No user assigned</label>
+                        <label><input type="checkbox" <?php if ($input->exact_match == true) : ?>checked="checked"<?php endif;?> name="exact_match" value="on" /> Exact match phrase</label><br/>
+                        <label><input type="checkbox" <?php if ($input->no_user == true) : ?>checked="checked"<?php endif;?> name="no_user" value="on" /> No user assigned</label><br/>
+                        <label><input type="checkbox" <?php if ($input->hof == true) : ?>checked="checked"<?php endif;?> name="hof" value="on" /> Has operator file</label><br/>
+                        <label><input type="checkbox" <?php if ($input->hvf == true) : ?>checked="checked"<?php endif;?> name="hvf" value="on" /> Has visitor file</label>
                     </div>
                 </div>
 
@@ -296,7 +298,7 @@
 	</div>
 	
 	<?php if ($tab == 'chats' && isset($total_literal)) : ?>
-    <div class="pull-right">
+    <div class="float-right">
         Records in total - <?php echo $total_literal;?>
     </div>
     <?php endif; ?>

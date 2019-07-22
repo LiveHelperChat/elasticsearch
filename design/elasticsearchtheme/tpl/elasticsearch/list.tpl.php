@@ -10,7 +10,7 @@
 		<?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter.tpl.php')); ?>
 	   	<?php if ($tab == 'chats') : ?>
             <?php if (isset($pages) && $pages->items_total > 0): ?>
-            	<table class="table">
+            	<table class="table mt-1">
             		<thead>
             			<tr>
             			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
