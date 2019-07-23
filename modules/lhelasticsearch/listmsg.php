@@ -23,9 +23,24 @@ $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $Params['user_p
 
 $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
 
+// Set date range for archive
+$itemsArchive[$Params['user_parameters']['chat_id']] = array();
+
+erLhcoreClassChatArcive::setArchiveAttribute($itemsArchive);
+
+if (isset($itemsArchive[$Params['user_parameters']['chat_id']]) && $itemsArchive[$Params['user_parameters']['chat_id']]['archive'] == true){
+    $archive = erLhcoreClassModelChatArchiveRange::fetch($itemsArchive[$Params['user_parameters']['chat_id']]['archive_id']);
+    $archive->setTables();
+    $chat = erLhcoreClassModelChatArchive::fetch($Params['user_parameters']['chat_id']);
+    $dateFilter['gte'] = $chat->time;
+} else {
+    $chat = erLhcoreClassModelChat::fetch($Params['user_parameters']['chat_id']);
+    $dateFilter['gte'] = $chat->time;
+}
+
 $pages = new lhPaginator();
 $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/listmsg') .'/' . $Params['user_parameters']['chat_id']  . $append;
-$pages->items_total = erLhcoreClassModelESMsg::getCount($sparams);
+$pages->items_total = erLhcoreClassModelESMsg::getCount($sparams, array('date_index' => $dateFilter));
 $pages->setItemsPerPage(30);
 $pages->paginate();
 
@@ -40,7 +55,8 @@ if ($pages->items_total > 0) {
                 )
             )
         ), $sparams['body'])
-    )));
+    ),array('date_index' => $dateFilter))
+    );
 }
 
 $tpl->set('pages', $pages);
