@@ -102,6 +102,15 @@ if ($tab == 'chats') {
         }
     }
 
+    if (isset($filterParams['input']->country_ids) && is_array($filterParams['input']->country_ids) && !empty($filterParams['input']->country_ids)) {
+
+        erLhcoreClassChat::validateFilterInString($filterParams['input']->country_ids);
+
+        if (!empty($filterParams['input']->country_ids)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['country_code'] = $filterParams['input']->country_ids;
+        }
+    }
+
     if (isset($filterParams['input']->group_ids) && is_array($filterParams['input']->group_ids) && !empty($filterParams['input']->group_ids)) {
 
         erLhcoreClassChat::validateFilterIn($filterParams['input']->group_ids);

@@ -146,6 +146,18 @@ $fieldsSearch['department_group_id'] = array (
     )
 );
 
+$fieldsSearch['country_ids'] = array (
+    'type' => 'text',
+    'trans' => 'Country IDS',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => false,
+    'filter_table_field' => 'country_ids',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'string', array(), FILTER_REQUIRE_ARRAY
+    )
+);
+
 $fieldsSearch['group_id'] = array (
     'type' => 'text',
     'trans' => 'Group',
