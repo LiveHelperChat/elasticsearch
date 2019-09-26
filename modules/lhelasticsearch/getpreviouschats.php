@@ -15,10 +15,12 @@ $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/getpreviouschats.tpl.ph
 if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined') {
 
     $sparams['body']['query']['bool']['must'][]['term']['nick_keyword'] = $chat->nick;
+    $dateIndex = array('date_index' => array('gte' => time()-6*31*24*3600));
 
     erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats', array(
         'chat' => $chat,
-        'sparams' => & $sparams
+        'sparams' => & $sparams,
+        'date_index' => & $dateIndex
     ));
 
     try {
@@ -32,8 +34,8 @@ if ($chat->nick != '' && $chat->nick != 'Visitor' && $chat->nick != 'undefined')
                     )
                 )
             ), $sparams['body'])
-        ),
-            array('date_index' => array('gte' => time()-6*31*24*3600)));
+        ), $dateIndex);
+
     } catch (Exception $e) {
         error_log($e->getMessage() . "\n" . $e->getTraceAsString());
         $previousChats = array();

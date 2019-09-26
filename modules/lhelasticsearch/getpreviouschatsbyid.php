@@ -16,9 +16,12 @@ if (($online_user = $chat->online_user) !== false) {
 
     $sparams['body']['query']['bool']['must'][]['term']['online_user_id'] = $online_user->id;
 
+    $dateIndex = array('date_index' => array('gte' => time()-6*31*24*3600));
+
     erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getpreviouschats', array(
         'chat' => $chat,
-        'sparams' => & $sparams
+        'sparams' => & $sparams,
+        'date_index' => & $dateIndex
     ));
 
     $previousChats = erLhcoreClassModelESChat::getList(array(
@@ -32,7 +35,7 @@ if (($online_user = $chat->online_user) !== false) {
             )
         ), $sparams['body'])
     ),
-        array('date_index' => array('gte' => time()-6*31*24*3600)));
+    $dateIndex);
 
     $chatIds = array();
 
