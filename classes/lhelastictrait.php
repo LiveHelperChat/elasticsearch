@@ -183,6 +183,10 @@ trait erLhcoreClassElasticTrait
             $indexSearch = self::extractIndexFilter($executionParams['date_index']);
         }
 
+        if (isset($executionParams['date_index']) && !empty($executionParams['date_index']) && isset($executionParams['append_days_index']) && $executionParams['append_days_index'] == true) {
+            $indexSearch = trim($indexSearch . ',' . self::extractIndexFilter($executionParams['date_index'], null, 'daily'),',');
+        }
+
         $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch;
 
         $result = erLhcoreClassElasticClient::searchObjectsCount($searchHandler, $params);
@@ -194,7 +198,7 @@ trait erLhcoreClassElasticTrait
         return $result;
     }
 
-    public static function extractIndexFilter($dataFilter, $indexName = null) {
+    public static function extractIndexFilter($dataFilter, $indexName = null, $forceIndexType = null) {
 
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
         $dataOptions = (array)$esOptions->data;
@@ -211,7 +215,12 @@ trait erLhcoreClassElasticTrait
             } elseif ($dataOptions['index_type'] == 'monthly') {
                 $indexSave =  'monthly';
             }
+
+            if ($forceIndexType != '') {
+                $indexSave = $forceIndexType;
+            }
         }
+
         $indexes = array();
 
         if ($indexSave == 'static') {
@@ -288,6 +297,10 @@ trait erLhcoreClassElasticTrait
 
         if (isset($executionParams['date_index']) && !empty($executionParams['date_index'])) {
             $indexSearch = self::extractIndexFilter($executionParams['date_index']);
+        }
+
+        if (isset($executionParams['date_index']) && !empty($executionParams['date_index']) && isset($executionParams['append_days_index']) && $executionParams['append_days_index'] == true) {
+            $indexSearch = trim($indexSearch . ',' . self::extractIndexFilter($executionParams['date_index'], null, 'daily'),',');
         }
 
         $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch;

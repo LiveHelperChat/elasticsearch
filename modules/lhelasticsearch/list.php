@@ -192,6 +192,12 @@ if ($tab == 'chats') {
         $filesFilter[]['term']['hof'] = 1;
     }
 
+    $append_days_index = false;
+
+    if ($filterParams['input_form']->adi == 'on') {
+        $append_days_index = true;
+    }
+
     if (!empty($filesFilter)) {
         $sparams['body']['query']['bool']['must'][]['bool']['should'] = $filesFilter;
     }
@@ -242,7 +248,7 @@ if ($tab == 'chats') {
 
     if ($filterParams['input_form']->ds == 1)
     {
-        $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
+        $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter, 'append_days_index' => $append_days_index));
         $tpl->set('total_literal',$total);
 
         $pages = new lhPaginator();
@@ -259,7 +265,7 @@ if ($tab == 'chats') {
                     'sort' => $sort
                 ), $sparams['body'])
             ),
-                array('date_index' => $dateFilter));
+            array('date_index' => $dateFilter, 'append_days_index' => $append_days_index));
 
             $chatIds = array();
             foreach ($chats as $prevChat) {
