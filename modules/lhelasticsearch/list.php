@@ -242,6 +242,31 @@ if ($tab == 'chats') {
 
     if ($filterParams['input_form']->ds == 1)
     {
+
+        if (trim($filterParams['input_form']->chat_id) != '') {
+
+            $chatDirect = erLhcoreClassModelChat::fetch((int)trim($filterParams['input_form']->chat_id));
+
+            if (!($chatDirect instanceof erLhcoreClassModelChat)) {
+                $chatArchive = erLhcoreClassChatArcive::fetchChatById((int)trim($filterParams['input_form']->chat_id));
+                if (is_array($chatArchive)) {
+                    $chatDirect = $chatArchive['chat'];
+                }
+            }
+
+            if (is_object($chatDirect)) {
+                $sparams = array(
+                    'body' => array()
+                );
+
+                $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = (int)trim($filterParams['input_form']->chat_id);
+
+                $dateFilter['gte'] = $chatDirect->time + 10;
+                $dateFilter['lte'] = $chatDirect->time - 10;
+            }
+        }
+
+
         $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
         $tpl->set('total_literal',$total);
 
