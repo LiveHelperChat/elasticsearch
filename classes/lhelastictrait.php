@@ -218,6 +218,11 @@ trait erLhcoreClassElasticTrait
             return '';
         }
 
+        $starPrepend = '';
+        if (isset($dataOptions['star_month_index']) && $dataOptions['star_month_index'] == 1){
+            $starPrepend = '*';
+        }
+
         if (isset($dataFilter['gte']) && !isset($dataFilter['lte'])) {
 
             $dataFilter['gte'] = $dataFilter['gte'] - (24*3600);
@@ -231,7 +236,7 @@ trait erLhcoreClassElasticTrait
             } else {
                 $months = ceil((time()-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
                 for ($i = 0; $i <= $months; $i++) {
-                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
+                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : $starPrepend);
                 }
             }
 
@@ -250,7 +255,7 @@ trait erLhcoreClassElasticTrait
             } else {
                 $months = ceil(($dataFilter['lte']-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
                 for ($i = 0; $i <= $months; $i++) {
-                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : '');
+                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : $starPrepend);
                 }
             }
         }

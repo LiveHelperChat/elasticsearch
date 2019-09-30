@@ -23,6 +23,10 @@
     <div class="form-group">
         <label><input type="checkbox" value="on" name="use_php_resque" <?php isset($es_options['use_php_resque']) && ($es_options['use_php_resque'] == true) ? print 'checked="checked"' : ''?> /> Use PHP Resque for chats indexing</label><br/>
     </div>
+
+    <div class="form-group">
+        <label><input type="checkbox" value="on" name="star_month_index" <?php isset($es_options['star_month_index']) && ($es_options['star_month_index'] == true) ? print 'checked="checked"' : ''?> /> Prepend star to month index</label><br/>
+    </div>
     
     <div class="form-group">
         <label>Last indexed message Id</label>

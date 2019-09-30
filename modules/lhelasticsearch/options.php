@@ -34,6 +34,9 @@ if ( isset($_POST['StoreOptions']) ) {
         ),
         'report_email_es' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+        ),
+        'star_month_index' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         )
     );
 
@@ -51,6 +54,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['disable_es'] = 1;
     } else {
         $data['disable_es'] = 0;
+    }
+
+    if ( $form->hasValidData( 'star_month_index' ) && $form->star_month_index == true ) {
+        $data['star_month_index'] = 1;
+    } else {
+        $data['star_month_index'] = 0;
     }
 
     if ( $form->hasValidData( 'auto_enable' ) && $form->auto_enable == true ) {
