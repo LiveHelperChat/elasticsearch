@@ -62,18 +62,6 @@ $fieldsSearch['hvf'] = array (
     )
 );
 
-$fieldsSearch['adi'] = array (
-    'type' => 'text',
-    'trans' => 'id',
-    'required' => false,
-    'valid_if_filled' => false,
-    'filter_type' => 'none',
-    'filter_table_field' => 'adi',
-    'validation_definition' => new ezcInputFormDefinitionElement (
-        ezcInputFormDefinitionElement::OPTIONAL, 'string'
-    )
-);
-
 $fieldsSearch['hof'] = array (
     'type' => 'text',
     'trans' => 'id',

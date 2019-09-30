@@ -303,9 +303,6 @@
                     </div>
                 </div>
 
-                <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/adi.tpl.php')); ?>
-
-
             </div>
         </div>
 
