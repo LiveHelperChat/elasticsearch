@@ -583,10 +583,18 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
-        
-        $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = 'status';
-        $sparams['body']['aggs']['chats_over_time']['aggs']['unanswered_aggr']['filter']['term']['unanswered_chat'] = 1;
-        $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_aggr']['terms']['field'] = 'chat_initiator';
+
+        if (is_array($params['params_execution']['charttypes']) && in_array('active',$params['params_execution']['charttypes'])) {
+            $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = 'status';
+        }
+
+        if (is_array($params['params_execution']['charttypes']) && in_array('proactivevsdefault', $params['params_execution']['charttypes'])) {
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_aggr']['terms']['field'] = 'chat_initiator';
+        }
+
+        if (is_array($params['params_execution']['charttypes']) && in_array('unanswered',$params['params_execution']['charttypes'])){
+            $sparams['body']['aggs']['chats_over_time']['aggs']['unanswered_aggr']['filter']['term']['unanswered_chat'] = 1;
+        }
 
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
 
@@ -626,17 +634,23 @@ class erLhcoreClassElasticSearchStatistic
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
             $keyDateUnix = $bucket['key'] / 1000;
 
-            foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
-                if (isset($keyStatus[$bucketStatus['key']])) {
-                    $numberOfChats[$keyDateUnix][$keyStatus[$bucketStatus['key']]] = $bucketStatus['doc_count'];
+            if (is_array($params['params_execution']['charttypes']) && in_array('active',$params['params_execution']['charttypes'])) {
+                foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
+                    if (isset($keyStatus[$bucketStatus['key']])) {
+                        $numberOfChats[$keyDateUnix][$keyStatus[$bucketStatus['key']]] = $bucketStatus['doc_count'];
+                    }
                 }
             }
-            
-            $numberOfChats[$keyDateUnix]['unanswered'] = $bucket['unanswered_aggr']['doc_count'];
-            
-            foreach ($bucket['chat_initiator_aggr']['buckets'] as $bucketStatus) {
-                if (isset($keyStatusInit[$bucketStatus['key']])) {
-                    $numberOfChats[$keyDateUnix][$keyStatusInit[$bucketStatus['key']]] = $bucketStatus['doc_count'];
+
+            if (is_array($params['params_execution']['charttypes']) && in_array('unanswered',$params['params_execution']['charttypes'])) {
+                $numberOfChats[$keyDateUnix]['unanswered'] = $bucket['unanswered_aggr']['doc_count'];
+            }
+
+            if (is_array($params['params_execution']['charttypes']) && in_array('proactivevsdefault', $params['params_execution']['charttypes'])) {
+                foreach ($bucket['chat_initiator_aggr']['buckets'] as $bucketStatus) {
+                    if (isset($keyStatusInit[$bucketStatus['key']])) {
+                        $numberOfChats[$keyDateUnix][$keyStatusInit[$bucketStatus['key']]] = $bucketStatus['doc_count'];
+                    }
                 }
             }
             
@@ -657,51 +671,53 @@ class erLhcoreClassElasticSearchStatistic
             $numberOfChats[$keyDateUnix]['msg_system'] = 0;
             $numberOfChats[$keyDateUnix]['msg_bot'] = 0;
         }
-        
-        $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
-        $sparams['type'] = erLhcoreClassModelESMsg::$elasticType;
-        $sparams['ignore_unavailable'] = true;
-        $sparams['body']['size'] = 0;
-        $sparams['body']['from'] = 0;
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
-        
-        $sparams['body']['aggs']['chats_over_time']['aggs']['msg_user']['filter']['term']['user_id'] = 0;
-        $sparams['body']['aggs']['chats_over_time']['aggs']['msg_system']['filter']['term']['user_id'] = -1;
-        $sparams['body']['aggs']['chats_over_time']['aggs']['msg_bot']['filter']['term']['user_id'] = -2;
 
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        if (is_array($params['params_execution']['charttypes']) && in_array('msgtype', $params['params_execution']['charttypes'])) {
+            $sparams = array();
+            $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
+            $sparams['type'] = erLhcoreClassModelESMsg::$elasticType;
+            $sparams['ignore_unavailable'] = true;
+            $sparams['body']['size'] = 0;
+            $sparams['body']['from'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
 
-        $paramsOrigIndex = $paramsOrig = $params;
-        
-        if ($aggr == 'month') {
-            if (!isset($paramsOrig['filter']['filtergte']['time'])) {
-                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            $sparams['body']['aggs']['chats_over_time']['aggs']['msg_user']['filter']['term']['user_id'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['msg_system']['filter']['term']['user_id'] = -1;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['msg_bot']['filter']['term']['user_id'] = -2;
+
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+
+            $paramsOrigIndex = $paramsOrig = $params;
+
+            if ($aggr == 'month') {
+                if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+                    $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+                }
+            } else {
+                if (!isset($paramsOrig['filter']['filtergte']['time']) && !isset($paramsOrig['filter']['filterlte']['time'])) {
+                    $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
+                }
             }
-        } else {
-            if (!isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
-                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
+
+            $indexSearch = self::getIndexByFilter($paramsOrigIndex['filter']);
+
+            if ($indexSearch != '') {
+                $sparams['index'] = $indexSearch;
             }
-        }
 
-        $indexSearch = self::getIndexByFilter($paramsOrigIndex['filter']);
+            self::formatFilter($paramsOrig['filter'], $sparams);
 
-        if ($indexSearch != '') {
-            $sparams['index'] = $indexSearch;
-        }
+            $response = $elasticSearchHandler->search($sparams);
 
-        self::formatFilter($paramsOrig['filter'], $sparams);
-        
-        $response = $elasticSearchHandler->search($sparams);
-        
-        foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
-            $keyDateUnix = $bucket['key'] / 1000;
-            if (isset($numberOfChats[$keyDateUnix])) {
-                $numberOfChats[$keyDateUnix]['msg_operator'] = $bucket['doc_count'] - $bucket['msg_user']['doc_count'] - $bucket['msg_system']['doc_count'];
-                $numberOfChats[$keyDateUnix]['msg_user'] = $bucket['msg_user']['doc_count'];
-                $numberOfChats[$keyDateUnix]['msg_system'] = $bucket['msg_system']['doc_count'];
-                $numberOfChats[$keyDateUnix]['msg_bot'] = $bucket['msg_bot']['doc_count'];
+            foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+                $keyDateUnix = $bucket['key'] / 1000;
+                if (isset($numberOfChats[$keyDateUnix])) {
+                    $numberOfChats[$keyDateUnix]['msg_operator'] = $bucket['doc_count'] - $bucket['msg_user']['doc_count'] - $bucket['msg_system']['doc_count'];
+                    $numberOfChats[$keyDateUnix]['msg_user'] = $bucket['msg_user']['doc_count'];
+                    $numberOfChats[$keyDateUnix]['msg_system'] = $bucket['msg_system']['doc_count'];
+                    $numberOfChats[$keyDateUnix]['msg_bot'] = $bucket['msg_bot']['doc_count'];
+                }
             }
         }
 
