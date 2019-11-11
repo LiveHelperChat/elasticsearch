@@ -1487,6 +1487,189 @@ class erLhcoreClassElasticSearchStatistic
         );
     }
 
+    public static function nickGroupingDateNickDay($params) {
+          return self::nickGroupingDateNick($params, 'day');
+    }
+
+    public static function nickGroupingDateNick($params, $aggr = 'month')
+    {
+        $numberOfChats = array();
+
+        $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+        $filterParams = $params['params_execution'];
+
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
+        $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+
+        $validGroupFields = array(
+            'nick' => 'nick_keyword',
+            'uagent' => 'uagent',
+            'device_type' => 'device_type',
+        );
+
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.validgroupfields', array('type' => 'elastic', 'fields' => & $validGroupFields));
+
+        if ($filterParams['group_field'] == 'device_type') {
+            return;
+        }
+
+        $attr = 'nick_keyword';
+        if (isset($filterParams['group_field']) && key_exists($filterParams['group_field'], $validGroupFields)) {
+            $attr = $validGroupFields[$filterParams['group_field']];
+        }
+
+       $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = $attr;
+       $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['size'] = 10;
+
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+
+        $paramsOrig = $paramsOrigIndex = $params;
+        if ($aggr == 'month') {
+            if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            }
+        } else {
+            if (! isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
+            }
+        }
+
+        $indexSearch = self::getIndexByFilter($paramsOrigIndex['filter']);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        self::formatFilter($paramsOrig['filter'], $sparams);
+
+        $response = $elasticSearchHandler->search($sparams);
+
+        foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+            $keyDateUnix = $bucket['key'] / 1000;
+
+            $returnArray = array();
+
+            foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
+
+                $returnArray['color'][] = json_encode(erLhcoreClassChatStatistic::colorFromString($bucketStatus['key']));
+
+                if ($attr == 'device_type') {
+                    $returnArray['nick'][] = json_encode($bucketStatus['key'] == 0 ? 'PC' : ($bucketStatus['key'] == 1 ? 'Mobile' : 'Table'));
+                } else {
+                    $returnArray['nick'][] = json_encode($bucketStatus['key']);
+                }
+
+                $returnArray['data'][] = $bucketStatus['doc_count'];
+            }
+
+            $numberOfChats[$keyDateUnix] = $returnArray;
+        }
+
+        $returnReversed = array();
+
+        $limitDays = count($numberOfChats);
+
+        if ($limitDays < 12) {
+            $limitDays = 12;
+        }
+
+        foreach ($numberOfChats as $dateIndex => $returnData) {
+            for ($i = 0; $i < $limitDays; $i++) {
+                $returnReversed[$i]['data'][] = isset($returnData['data'][$i]) ? $returnData['data'][$i] : 0;
+                $returnReversed[$i]['color'][] = isset($returnData['color'][$i]) ? $returnData['color'][$i] : '""';
+                $returnReversed[$i]['nick'][] = isset($returnData['nick'][$i]) ? $returnData['nick'][$i] : '""';
+            }
+        }
+
+        return array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+            'list' => array('labels' => $numberOfChats, 'data' => $returnReversed)
+        );
+    }
+
+    public static function nickGroupingDateDay($params)
+    {
+        return self::nickGroupingDate($params, 'day');
+    }
+
+    public static function nickGroupingDate($params, $aggr = 'month')
+    {
+        $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+        $filterParams = $params['params_execution'];
+
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'];
+        $sparams['type'] = erLhcoreClassModelESChat::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+
+        $validGroupFields = array(
+            'nick' => 'nick_keyword',
+            'uagent' => 'uagent',
+            'device_type' => 'device_type',
+        );
+
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.validgroupfields', array('type' => 'elastic', 'fields' => & $validGroupFields));
+
+        if ($filterParams['group_field'] == 'device_type') {
+            return;
+        }
+
+        $attr = 'nick_keyword';
+        if (isset($filterParams['group_field']) && key_exists($filterParams['group_field'], $validGroupFields)) {
+            $attr = $validGroupFields[$filterParams['group_field']];
+        }
+
+        $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['cardinality']['field'] = $attr;
+
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+
+        $paramsOrig = $paramsOrigIndex = $params;
+        if ($aggr == 'month') {
+            if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            }
+        } else {
+            if (! isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
+            }
+        }
+
+        $indexSearch = self::getIndexByFilter($paramsOrigIndex['filter']);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        self::formatFilter($paramsOrig['filter'], $sparams);
+
+        $response = $elasticSearchHandler->search($sparams);
+
+        $numberOfChats = array();
+
+        foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+            $keyDateUnix = $bucket['key'] / 1000;
+            $numberOfChats[$keyDateUnix] = array ();
+            $numberOfChats[$keyDateUnix]['unique'] = (int)$bucket['status_aggr']['value'];
+        }
+
+        return array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+            'list' => $numberOfChats
+        );
+    }
+
     public static function formatFilter($params, & $sparams)
     {
         $returnFilter = array();

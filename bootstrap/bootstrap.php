@@ -46,6 +46,14 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('statistic.gettoptodaysoperators', 'erLhcoreClassElasticSearchStatistic::statisticGettoptodaysoperators');
                 $dispatcher->listen('statistic.getagentstatistic', 'erLhcoreClassElasticSearchStatistic::statisticGetagentstatistic');
                 $dispatcher->listen('statistic.getperformancestatistic', 'erLhcoreClassElasticSearchStatistic::statisticGetperformancestatistic');
+
+                // Grouping charts by field and date
+                $dispatcher->listen('statistic.nickgroupingdatenick', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateNick');
+                $dispatcher->listen('statistic.nickgroupingdatenickday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateNickDay');
+
+                // Grouping charts by field
+                $dispatcher->listen('statistic.nickgroupingdate', 'erLhcoreClassElasticSearchStatistic::nickGroupingDate');
+                $dispatcher->listen('statistic.nickgroupingdateday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateDay');
             }
         }
 
