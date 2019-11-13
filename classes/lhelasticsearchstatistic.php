@@ -1549,6 +1549,8 @@ class erLhcoreClassElasticSearchStatistic
 
         self::formatFilter($paramsOrig['filter'], $sparams);
 
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.nickbroupingdatenick_filter', array('sparams' => & $sparams));
+
         $response = $elasticSearchHandler->search($sparams);
 
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
@@ -1653,6 +1655,8 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         self::formatFilter($paramsOrig['filter'], $sparams);
+
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.nickgroupingdate_filter', array('sparams' => & $sparams));
 
         $response = $elasticSearchHandler->search($sparams);
 
