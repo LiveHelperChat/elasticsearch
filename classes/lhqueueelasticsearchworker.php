@@ -26,7 +26,7 @@ class erLhcoreClassElasticSearchWorker {
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
-            error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+            // Someone is already processing. So we just ignore and retry later
             return;
         }
 
