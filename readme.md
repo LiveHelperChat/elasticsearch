@@ -1,6 +1,10 @@
 ### Author
 Remigijus Kiminas, Live Helper Chat
 
+### ElasticSearch versions support
+ - For ElasticSearch 7 use master branch
+ - For ElasticSearch 5-6 use master-5.x-6.x branch
+
 ## Description
 This plugin enables statistic generation using only Elastic Search. MySQL is not a good solution for statistic generation, but Elastic Search does great job on that.
  - Eliminates MySQL Queries in statistic generation
