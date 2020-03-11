@@ -4,7 +4,6 @@ $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/elastic.tpl.php');
 
 $command = isset($_POST['Query']) ? $_POST['Query'] : '';
 $index = isset($_POST['Index']) ? $_POST['Index'] : 'chat';
-$type = isset($_POST['Type']) ? $_POST['Type'] : 'lh_chat';
 $response = '';
 
 if (isset($_POST['doSearch']))
@@ -17,10 +16,7 @@ if (isset($_POST['doSearch']))
     
     // Index
     $sparams['index'] = $index;
-    
-    // Type
-    $sparams['type'] = $type;
-    
+
     // Client
     $esSearchHandler = erLhcoreClassElasticClient::getHandler();
     

@@ -2,105 +2,66 @@
 
 class erLhcoreClassElasticSearchUpdate
 {
-    public static function getElasticStatus($definition, $indexSingle = null)
+    public static function getElasticStatus($definition, $elasticIndex)
     {
         $typeStatus = array();
 
-        if ($indexSingle === null) {
-            $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
+        $elasticData = erLhcoreClassElasticClient::getHandler()->indices()->getMapping(array(
+            'index' => $elasticIndex
+        ));
 
-            $mainIndex = $settings['index'];
-            $additional_indexes = $settings['additional_indexes'];
+        $currentMappingData = $elasticData[$elasticIndex]['mappings'];
 
-            $elasticIndexs = array_merge(array(
-                $mainIndex
-            ), $additional_indexes);
+        $status = array();
+
+        if (isset( $currentMappingData['properties'])) {
+            $currentTypeProperties = $currentMappingData['properties'];
         } else {
-            $elasticIndexs[] = $indexSingle;
+            $currentTypeProperties = array();
         }
 
-        foreach ($elasticIndexs as $elasticIndex) {
-            
-            $elasticData = erLhcoreClassElasticClient::getHandler()->indices()->getMapping(array(
-                'index' => $elasticIndex
-            ));
+        // Add property
+        foreach ($definition as $property => $propertyData) {
 
-            $currentMappingData = $elasticData[$elasticIndex]['mappings'];
+            if (!isset($currentTypeProperties[$property])) {
 
-            if (isset($definition[$elasticIndex])) {
-                foreach ($definition[$elasticIndex]['types'] as $type => $typeDefinition) {
+                $status[] = '[' . $elasticIndex . '] [' . $property . '] property not found';
 
-                    if (isset($currentMappingData[$type])) {
+                $params = array(
+                    'index' => $elasticIndex,
+                    'body' => array(
+                        'properties' => array(
+                            $property => $propertyData
+                        )
+                    )
+                );
 
-                        $status = array();
-                        
-                        $currentTypeProperties = $currentMappingData[$type]['properties'];
-                        
-                        // Add property
-                        foreach ($typeDefinition as $property => $propertyData) {
-                            
-                            if (! isset($currentTypeProperties[$property])) {
-                                
-                                $status[] = '[' . $property . '] property not found';
-                                
-                                $params = array(
-                                    'index' => $elasticIndex,
-                                    'type' => $type,
-                                    'body' => array(
-                                        $type => array(
-                                            'properties' => array(
-                                                $property => $propertyData
-                                            )
-                                        )
-                                    )
-                                );
-                                
-                                $typeStatus[$type]['actions']['type_property_add'][] = $params;
-                            }
-                        }
-                                                                        
-                        if (! empty($status)) {
-                            $typeStatus[$type]['error'] = true;
-                            $typeStatus[$type]['status'] = implode(', ', $status);
-                        }
-                    } else {
-
-                        // Add types
-                        $typeStatus[$type]['error'] = true;
-                        $typeStatus[$type]['status'] = 'type add in index ' . $elasticIndex;
-                        
-                        $params = array(
-                            'index' => $elasticIndex,
-                            'type' => $type,
-                            'body' => array(
-                                $type => array(
-                                    'properties' => $typeDefinition
-                                )
-                            )
-                        );
-                        
-                        $typeStatus[$type]['actions']['type_add'][] = $params;
-                    }
-                }
-            }
-            
-            // Remove types
-            foreach (array_keys($currentMappingData) as $type) {
-                
-                if (! isset($definition[$elasticIndex]['types'][$type])) {
-                    
-                    $typeStatus[$type]['error'] = true;
-                    $typeStatus[$type]['status'] = 'type removed in index ' . $elasticIndex;
-                    
-                    $params = array(
-                        'index' => $elasticIndex,
-                        'type' => $type
-                    );
-                    
-                    $typeStatus[$type]['actions']['type_delete'][] = $params;
-                }
+                $typeStatus['_doc']['actions']['type_property_add'][] = $params;
             }
         }
+
+        if (! empty($status)) {
+            $typeStatus['_doc']['error'] = true;
+            $typeStatus['_doc']['status'] = implode(', ', $status);
+        }
+
+        // Remove types
+       foreach (array_keys($currentTypeProperties) as $type) {
+
+            if (! isset($definition[$type])) {
+
+                $typeStatus['_doc']['error'] = true;
+                $typeStatus['_doc']['status'] = 'type removed in index ' . $elasticIndex;
+
+                $params = array(
+                    'index' => $elasticIndex,
+                    'type' => $type
+                );
+
+                $typeStatus['_doc']['actions']['type_delete'][] = $params;
+            }
+        }
+
         
         return $typeStatus;
     }
@@ -118,9 +79,7 @@ class erLhcoreClassElasticSearchUpdate
                 foreach ($typeData['actions'] as $actionType => $actionParams) {
                     
                     foreach ($actionParams as $params) {
-                        
                         try {
-                            
                             if ($actionType == 'type_add') {
                                 erLhcoreClassElasticClient::getHandler()->indices()->putMapping($params);
                             } elseif ($actionType == 'type_delete') {
@@ -137,103 +96,6 @@ class erLhcoreClassElasticSearchUpdate
                 }
             }
         }
-        
         return $errorMessages;
-    }
-
-    public static function doCreateElasticIndex()
-    {        
-        $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
-        
-        $elasticIndex =$settings['index'];
-        
-        $indisis = array();
-        
-        if (erLhcoreClassElasticClient::getHandler()->indices()->exists(array(
-            'index' => $elasticIndex
-        )) == false) {
-            $indisis[] = erLhcoreClassElasticClient::getHandler()->indices()->create(array(
-                'index' => $elasticIndex
-            ));
-        }
-        
-        foreach ($settings['additional_indexes'] as $index) {
-            if (erLhcoreClassElasticClient::getHandler()->indices()->exists(array(
-                'index' => $index
-            )) == false) {
-                $indisis[] = erLhcoreClassElasticClient::getHandler()->indices()->create(array(
-                    'index' => $index
-                ));
-            }
-        }
-        
-        foreach ($indisis as $item) {
-            if ($item == false) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-
-    public static function doDeleteElasticIndex()
-    {                
-        $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
-        
-        $elasticIndex = $settings['index'];
-        
-        $indisis = array();
-        
-        if (erLhcoreClassElasticClient::getHandler()->indices()->exists(array(
-            'index' => $elasticIndex
-        )) == false) {
-            $indisis[] = erLhcoreClassElasticClient::getHandler()->indices()->delete(array(
-                'index' => $elasticIndex
-            ));
-        }
-        
-        foreach ($settings['additional_indexes'] as $index) {
-            if (erLhcoreClassElasticClient::getHandler()->indices()->exists(array(
-                'index' => $index
-            )) == false) {
-                $indisis[] = erLhcoreClassElasticClient::getHandler()->indices()->delete(array(
-                    'index' => $index
-                ));
-            }
-        }
-        
-        foreach ($indisis as $item) {
-            if ($item == false) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-
-    public static function elasticIndexExist()
-    {       
-        $settings = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings;
-        
-        $elasticIndex = $settings['index'];
-        
-        $indisis = array();
-        $indisis[] = erLhcoreClassElasticClient::getHandler()->indices()->exists(array(
-            'index' => $elasticIndex
-        ));
-        
-        foreach ($settings['additional_indexes'] as $index) {
-            $indisis[] = erLhcoreClassElasticClient::getHandler()->indices()->exists(array(
-                'index' => $index
-            ));
-        }
-        
-        foreach ($indisis as $item) {
-            if ($item == false) {
-                return false;
-            }
-        }
-        
-        return true;
     }
 }

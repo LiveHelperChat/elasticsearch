@@ -168,12 +168,7 @@ trait erLhcoreClassElasticTrait
 
         $searchHandler = self::getSession();
 
-        $paramsDefault = array(
-            'index' => self::$indexNameSearch,
-            'type' => self::$elasticType
-        );
-
-        $params = array_merge($paramsDefault, $params);
+        $params = array();
 
         $params['ignore_unavailable'] = true;
 
@@ -183,7 +178,7 @@ trait erLhcoreClassElasticTrait
             $indexSearch = self::extractIndexFilter($executionParams['date_index']);
         }
 
-        $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch;
+        $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch . '-' . self::$elasticType;
 
         $result = erLhcoreClassElasticClient::searchObjectsCount($searchHandler, $params);
 
@@ -194,7 +189,7 @@ trait erLhcoreClassElasticTrait
         return $result;
     }
 
-    public static function extractIndexFilter($dataFilter, $indexName = null) {
+    public static function extractIndexFilter($dataFilter, $indexName = null, $elasticType = null) {
 
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
         $dataOptions = (array)$esOptions->data;
@@ -231,12 +226,12 @@ trait erLhcoreClassElasticTrait
 
             if ($days < 31 && $indexSave == 'daily') {
                 for ($i = 0; $i <= $days; $i++) {
-                    $indexes[] = $indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
+                    $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
                 }
             } else {
                 $months = ceil((time()-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
                 for ($i = 0; $i <= $months; $i++) {
-                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : $starPrepend);
+                    $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : $starPrepend);
                 }
             }
 
@@ -250,12 +245,12 @@ trait erLhcoreClassElasticTrait
 
             if ($days < 31 && $indexSave == 'daily') {
                 for ($i = 0; $i <= $days; $i++) {
-                    $indexes[] = $indexName . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
+                    $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
                 }
             } else {
                 $months = ceil(($dataFilter['lte']-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
                 for ($i = 0; $i <= $months; $i++) {
-                    $indexes[] = $indexName . date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : $starPrepend);
+                    $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' .date('Y.m',$dataFilter['gte']+($i*28*24*3600)) . ($indexSave == 'daily' ? '*' : $starPrepend);
                 }
             }
         }
@@ -295,11 +290,9 @@ trait erLhcoreClassElasticTrait
             $indexSearch = self::extractIndexFilter($executionParams['date_index']);
         }
 
-        $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch;
+        $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch . '-' . self::$elasticType;
 
         $params['ignore_unavailable'] = true;
-
-        $params['type'] = self::$elasticType;
 
         // Convert pagination parameters to elastic one
         if (isset($params['limit'])) {
@@ -334,7 +327,6 @@ trait erLhcoreClassElasticTrait
         $searchHandler = self::getSession();
 
         $params['index'] = self::$indexName;
-        $params['type'] = self::$elasticType;
         $params['body']['ids'] = array_values($ids);
 
         return erLhcoreClassElasticClient::mGet($searchHandler, $params, __CLASS__);
@@ -347,7 +339,6 @@ trait erLhcoreClassElasticTrait
         if (!isset($paramsExecution['custom_index']))
         {
             $params['index'] = self::$indexName;
-            $params['type'] = self::$elasticType;
 
             $operations = array();
 
@@ -373,7 +364,6 @@ trait erLhcoreClassElasticTrait
             foreach ($objects as $index => $objectCollection)
             {
                 $params['index'] = $index;
-                $params['type'] = self::$elasticType;
 
                 $operations = array();
 
@@ -403,7 +393,6 @@ trait erLhcoreClassElasticTrait
         $searchHandler = self::getSession();
 
         $params['index'] = self::$indexName;
-        $params['type'] = self::$elasticType;
 
         $operations = array();
 
