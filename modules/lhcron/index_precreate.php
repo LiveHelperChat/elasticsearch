@@ -18,19 +18,19 @@ $dataOptions = (array)$esOptions->data;
 
 $settings = include ('extension/elasticsearch/settings/settings.ini.php');
 
-$settings['index'];
-
 $indexSave = null;
 
 if ($dataOptions['index_type'] == 'daily') {
-    $indexSave = $settings['index'] . date('Y.m.d',time()+24*3600);
+    $indexSave = $settings['index'];
+    $indexPrepend = date('Y.m.d',time()+24*3600);
 } elseif ($dataOptions['index_type'] == 'monthly') {
-    $indexSave = $settings['index'] . date('Y.m',time()+24*3600);
+    $indexSave = $settings['index'];
+    $indexPrepend = date('Y.m',time()+24*3600);
 }
 
 if ($indexSave !== null) {
     $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
     $esSearchHandler = erLhcoreClassElasticClient::getHandler();
-    erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave);
+    erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
     echo "Created index - ",$indexSave,"\n";
 }

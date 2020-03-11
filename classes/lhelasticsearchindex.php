@@ -12,7 +12,9 @@ class erLhcoreClassElasticSearchIndex
 
         $dateRange = array();
         foreach ($params['chats'] as $item) {
-            $dateRange[] = $item->time;
+            if ($item->time > 0) {
+                $dateRange[] = $item->time;
+            }
         }
 
         $documents = erLhcoreClassModelESChat::getList($sparams,array('date_index' => array('gte' => min($dateRange), 'lte' => max($dateRange))));
@@ -154,15 +156,15 @@ class erLhcoreClassElasticSearchIndex
             // Hast operator file
             $esChat->hof = preg_match('/\[file="?(.*?)"?\]/is',$esChat->msg_operator);
 
-            $indexSave = erLhcoreClassModelESChat::$indexName;
+            $indexSave = erLhcoreClassModelESChat::$indexName . '-' . erLhcoreClassModelESChat::$elasticType;
 
             if (isset($esChat->meta_data['index']) && $esChat->meta_data['index'] != '') {
                 $indexSave = $esChat->meta_data['index'];
             } else if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
-                    $indexSave = erLhcoreClassModelESChat::$indexName . gmdate('Y.m.d',$item->time);
+                    $indexSave = erLhcoreClassModelESChat::$indexName . '-' .erLhcoreClassModelESChat::$elasticType . '-' . gmdate('Y.m.d',$item->time);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
-                    $indexSave = erLhcoreClassModelESChat::$indexName . gmdate('Y.m',$item->time);
+                    $indexSave = erLhcoreClassModelESChat::$indexName . '-' .erLhcoreClassModelESChat::$elasticType . '-' . gmdate('Y.m',$item->time);
                 }
             }
 
@@ -180,7 +182,9 @@ class erLhcoreClassElasticSearchIndex
 
         $dateRange = array();
         foreach ($params['items'] as $item) {
-            $dateRange[] = $item->time;
+            if ($item->time > 0) {
+                $dateRange[] = $item->time;
+            }
         }
 
         $sparams = array();
@@ -213,15 +217,15 @@ class erLhcoreClassElasticSearchIndex
             $osLog->lactivity = $item->lactivity * 1000;
             $osLog->duration = $item->duration;
 
-            $indexSave = erLhcoreClassModelESOnlineSession::$indexName;
+            $indexSave = erLhcoreClassModelESOnlineSession::$indexName . '-' . erLhcoreClassModelESOnlineSession::$elasticType;
 
             if (isset($osLog->meta_data['index']) && $osLog->meta_data['index'] != '') {
                 $indexSave = $osLog->meta_data['index'];
             } else if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
-                    $indexSave = erLhcoreClassModelESOnlineSession::$indexName . date('Y.m.d',$item->time);
+                    $indexSave = erLhcoreClassModelESOnlineSession::$indexName . '-' . erLhcoreClassModelESOnlineSession::$elasticType . '-' . date('Y.m.d',$item->time);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
-                    $indexSave = erLhcoreClassModelESOnlineSession::$indexName . date('Y.m',$item->time);
+                    $indexSave = erLhcoreClassModelESOnlineSession::$indexName . '-' . erLhcoreClassModelESOnlineSession::$elasticType . '-' . date('Y.m',$item->time);
                 }
             }
 
@@ -291,13 +295,13 @@ class erLhcoreClassElasticSearchIndex
             $esChat->dep_id = $item->dep_id;
             $esChat->status = $item->status;
 
-            $indexSave = erLhcoreClassModelESPendingChat::$indexName;
+            $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType;
 
             if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
-                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . date('Y.m.d',$item->time);
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' . date('Y.m.d',$item->time);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
-                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . date('Y.m',$item->time);
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' .  date('Y.m',$item->time);
                 }
             }
 
@@ -342,13 +346,13 @@ class erLhcoreClassElasticSearchIndex
             $opEs->user_id = $userId;
             $opEs->itime = $ts;
 
-            $indexSave = erLhcoreClassModelESOnlineOperator::$indexName;
+            $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . '-' . erLhcoreClassModelESOnlineOperator::$elasticType;
 
             if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
-                    $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . date('Y.m.d', $opEs->itime/1000);
+                    $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . '-' . erLhcoreClassModelESOnlineOperator::$elasticType . '-' . date('Y.m.d', $opEs->itime/1000);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
-                    $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . date('Y.m',$opEs->itime/1000);
+                    $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . '-' . erLhcoreClassModelESOnlineOperator::$elasticType . '-' . date('Y.m',$opEs->itime/1000);
                 }
             }
 
@@ -366,7 +370,9 @@ class erLhcoreClassElasticSearchIndex
         $dateRange = array();
         foreach ($items as $item) {
             $chatsIds[] = $item->chat_id;
-            $dateRange[] = $item->time;
+            if ($item->time > 0) {
+                $dateRange[] = $item->time;
+            }
         }
 
         if (empty($chatsIds)) {
@@ -424,15 +430,15 @@ class erLhcoreClassElasticSearchIndex
                 $esMsg->dep_id = $infoChat[$item->chat_id]['dep_id'];
                 $esMsg->op_user_id = $infoChat[$item->chat_id]['user_id'];
 
-                $indexSave = erLhcoreClassModelESMsg::$indexName;
+                $indexSave = erLhcoreClassModelESMsg::$indexName . '-' . erLhcoreClassModelESMsg::$elasticType;
 
                 if (isset($esMsg->meta_data['index']) && $esMsg->meta_data['index'] != '') {
                     $indexSave = $esMsg->meta_data['index'];
                 } else if (isset($dataOptions['index_type'])) {
                     if ($dataOptions['index_type'] == 'daily') {
-                        $indexSave = erLhcoreClassModelESMsg::$indexName . date('Y.m.d', $item->time);
+                        $indexSave = erLhcoreClassModelESMsg::$indexName . '-' . erLhcoreClassModelESMsg::$elasticType . '-' . date('Y.m.d', $item->time);
                     } elseif ($dataOptions['index_type'] == 'monthly') {
-                        $indexSave = erLhcoreClassModelESMsg::$indexName . date('Y.m',$item->time);
+                        $indexSave = erLhcoreClassModelESMsg::$indexName . '-' . erLhcoreClassModelESMsg::$elasticType . '-' . date('Y.m',$item->time);
                     }
                 }
 

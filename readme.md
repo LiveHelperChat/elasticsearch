@@ -3,7 +3,7 @@ Remigijus Kiminas, Live Helper Chat
 
 ## Description
 This plugin enables statistic generation using only Elastic Search. MySQL is not a good solution for statistic generation, but Elastic Search does great job on that.
- - Eliminates MySQL Queries in statistic genreation
+ - Eliminates MySQL Queries in statistic generation
  - Allows to search withing messages with keyword
  - Allows to generate Online Operators/Active/Pending chat's chart
  
