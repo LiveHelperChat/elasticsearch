@@ -129,6 +129,10 @@ class erLhcoreClassElasticClient
                     'mapping' => & $mapping,
                 ));
 
+                if (isset($contentData[$index]['types'][$type])) {
+                    $mapping = array_merge($mapping, $contentData[$index]['types'][$type]);
+                }
+
                 erLhcoreClassElasticSearchUpdate::doElasticUpdate($mapping, $indexCurrent);
             }
         }

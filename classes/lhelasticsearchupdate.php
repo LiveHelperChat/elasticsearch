@@ -6,6 +6,7 @@ class erLhcoreClassElasticSearchUpdate
     {
         $typeStatus = array();
 
+
         $elasticData = erLhcoreClassElasticClient::getHandler()->indices()->getMapping(array(
             'index' => $elasticIndex
         ));
@@ -40,18 +41,11 @@ class erLhcoreClassElasticSearchUpdate
             }
         }
 
-        if (! empty($status)) {
-            $typeStatus['_doc']['error'] = true;
-            $typeStatus['_doc']['status'] = implode(', ', $status);
-        }
-
         // Remove types
        foreach (array_keys($currentTypeProperties) as $type) {
 
-            if (! isset($definition[$type])) {
-
-                $typeStatus['_doc']['error'] = true;
-                $typeStatus['_doc']['status'] = 'type removed in index ' . $elasticIndex;
+            if (!isset($definition[$type])) {
+                $status[] = 'type removed in index [' . $type . '] ' . $elasticIndex;
 
                 $params = array(
                     'index' => $elasticIndex,
@@ -62,6 +56,10 @@ class erLhcoreClassElasticSearchUpdate
             }
         }
 
+        if (!empty($status)) {
+            $typeStatus['_doc']['error'] = true;
+            $typeStatus['_doc']['status'] = implode(', ', $status);
+        }
         
         return $typeStatus;
     }
@@ -83,7 +81,7 @@ class erLhcoreClassElasticSearchUpdate
                             if ($actionType == 'type_add') {
                                 erLhcoreClassElasticClient::getHandler()->indices()->putMapping($params);
                             } elseif ($actionType == 'type_delete') {
-                                erLhcoreClassElasticClient::getHandler()->indices()->deleteMapping($params);
+                                // erLhcoreClassElasticClient::getHandler()->indices()->deleteMapping($params);
                             } elseif ($actionType == 'type_property_add') {
                                 erLhcoreClassElasticClient::getHandler()->indices()->putMapping($params);
                             } elseif ($actionType == 'type_property_delete') {

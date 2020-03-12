@@ -55,7 +55,21 @@ if (in_array($action, array(
             $missingIndexes[] = $elasticIndex;
             $elasticIndexExist = false;
         } else {
+
+            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.getelasticstructure', array(
+                'structure' => & $contentData,
+                'index_original' => $settings['index'],
+                'index_new' => $elasticIndex,
+                'type' => $type,
+                'mapping' => & $mapping,
+            ));
+
+            if (isset($contentData[$elasticIndex]['types'][$type])) {
+                $mapping = array_merge($mapping,$contentData[$elasticIndex]['types'][$type]);
+            }
+
             $types[] = erLhcoreClassElasticSearchUpdate::getElasticStatus($mapping, $elasticIndex);
+
         }
     }
 
