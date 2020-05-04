@@ -168,8 +168,6 @@ trait erLhcoreClassElasticTrait
 
         $searchHandler = self::getSession();
 
-        $params = array();
-
         $params['ignore_unavailable'] = true;
 
         $indexSearch = '';
