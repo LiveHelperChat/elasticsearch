@@ -166,6 +166,10 @@ trait erLhcoreClassElasticTrait
             unset($params['offset']);
         }
 
+        if (isset($params['body']['highlight'])) {
+            unset($params['body']['highlight']);
+        }
+
         $searchHandler = self::getSession();
 
         $params['ignore_unavailable'] = true;
