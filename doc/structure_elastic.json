@@ -22,6 +22,9 @@
 			"status_sub_sub": {
 				"type": "integer"
 			},
+            "gbot_id": {
+				"type": "integer"
+			},
 			"sender_user_id": {
 				"type": "integer"
 			},

@@ -76,6 +76,7 @@ class erLhcoreClassModelESChat
             'invitation_id' => $this->invitation_id,
             'hof' => $this->hof,
             'hvf' => $this->hvf,
+            'gbot_id' => $this->gbot_id,
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate', array(
@@ -193,4 +194,5 @@ class erLhcoreClassModelESChat
     public $invitation_id = null;
     public $hof = null;
     public $hvf = null;
+    public $gbot_id = null;
 }
