@@ -179,6 +179,27 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['range']['wait_time']['lte'] = (int)$filterParams['filter']['filterlte']['wait_time'];
     }
 
+    if ($filterParams['input_form']->has_operator == 1) {
+        $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+    }
+
+    if ($filterParams['input_form']->with_bot == 1) {
+        $sparams['body']['query']['bool']['must'][]['range']['gbot_id']['gt'] = (int)0;
+    }
+
+    if ($filterParams['input_form']->without_bot == 1) {
+        $sparams['body']['query']['bool']['must'][]['term']['gbot_id'] = 0;
+    }
+
+    if (isset($filterParams['input']->bot_ids) && is_array($filterParams['input']->bot_ids) && !empty($filterParams['input']->bot_ids)) {
+
+        erLhcoreClassChat::validateFilterInString($filterParams['input']->bot_ids);
+
+        if (!empty($filterParams['input']->bot_ids)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['gbot_id'] = $filterParams['input']->bot_ids;
+        }
+    }
+
     if (trim($filterParams['input_form']->uagent) != '') {
         $sparams['body']['query']['bool']['must'][]['match']['uagent'] = $filterParams['input_form']->uagent;
     }
