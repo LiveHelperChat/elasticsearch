@@ -704,7 +704,7 @@ class erLhcoreClassElasticSearchStatistic
             foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
                 $keyDateUnix = $bucket['key'] / 1000;
                 if (isset($numberOfChats[$keyDateUnix])) {
-                    $numberOfChats[$keyDateUnix]['msg_operator'] = $bucket['doc_count'] - $bucket['msg_user']['doc_count'] - $bucket['msg_system']['doc_count'];
+                    $numberOfChats[$keyDateUnix]['msg_operator'] = $bucket['doc_count'] - $bucket['msg_user']['doc_count'] - $bucket['msg_system']['doc_count'] - $bucket['msg_bot']['doc_count'];
                     $numberOfChats[$keyDateUnix]['msg_user'] = $bucket['msg_user']['doc_count'];
                     $numberOfChats[$keyDateUnix]['msg_system'] = $bucket['msg_system']['doc_count'];
                     $numberOfChats[$keyDateUnix]['msg_bot'] = $bucket['msg_bot']['doc_count'];
