@@ -843,7 +843,7 @@ class erLhcoreClassElasticSearchStatistic
         
         self::formatFilter($params['filter'], $sparams);
 
-        $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESMsg::$elasticType);
+        $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
 
         if ($indexSearch != '') {
             $sparams['index'] = $indexSearch;
