@@ -1221,8 +1221,16 @@ class erLhcoreClassElasticSearchStatistic
 
         // Subject aggregation
         if (isset($params['filter_original']['filterin']['subject_id']) && !empty($params['filter_original']['filterin']['subject_id'])) {
-            $sparams['body']['aggs']['group_by_user']['aggs']['subject_id']['aggs']['by_subject']['terms']['field'] = 'subject_id';
-            $sparams['body']['aggs']['group_by_user']['aggs']['subject_id']['filter']['terms']['subject_id'] = $params['filter_original']['filterin']['subject_id'];
+            $field = 'subject_id';
+
+            $statusWorkflow = erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getsubjectsstatistic_field', array('field' => $field));
+
+            if ($statusWorkflow !== false) {
+                $field = $statusWorkflow['field'];
+            }
+
+            $sparams['body']['aggs']['group_by_user']['aggs']['subject_id']['aggs']['by_subject']['terms']['field'] = $field;
+            $sparams['body']['aggs']['group_by_user']['aggs']['subject_id']['filter']['terms'][$field] = $params['filter_original']['filterin']['subject_id'];
         }
 
         // totalHoursOfOnlineDialogsByUser
@@ -1250,12 +1258,15 @@ class erLhcoreClassElasticSearchStatistic
         foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
 
             $subjectStats = array();
-            foreach ($bucket['subject_id']['by_subject']['buckets'] as $bucketSubject){
-                $subjectStats[] = array(
-                    'number_of_chats' => $bucketSubject['doc_count'],
-                    'subject_id' => $bucketSubject['key'],
-                    'perc' => round($bucketSubject['doc_count']/$bucket['doc_count']*10000) / 100
-                );
+
+            if (isset($bucket['subject_id']['by_subject']['buckets'])){
+                foreach ($bucket['subject_id']['by_subject']['buckets'] as $bucketSubject){
+                    $subjectStats[] = array(
+                        'number_of_chats' => $bucketSubject['doc_count'],
+                        'subject_id' => $bucketSubject['key'],
+                        'perc' => round($bucketSubject['doc_count']/$bucket['doc_count']*10000) / 100
+                    );
+                }
             }
 
             $statsValue = array(
@@ -1737,7 +1748,7 @@ class erLhcoreClassElasticSearchStatistic
 
         $field = 'subject_id';
 
-        $statusWorkflow = erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.getsubjectsstatistic_field', array('field' => $field));
+        $statusWorkflow = erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getsubjectsstatistic_field', array('field' => $field));
 
         if ($statusWorkflow !== false) {
             $field = $statusWorkflow['field'];
