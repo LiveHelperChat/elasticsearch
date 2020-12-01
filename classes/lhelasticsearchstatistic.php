@@ -1184,6 +1184,7 @@ class erLhcoreClassElasticSearchStatistic
 
     public static function statisticGetagentstatistic($params)
     {
+
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
 
         // Chat statistic aggregation
@@ -1217,7 +1218,13 @@ class erLhcoreClassElasticSearchStatistic
         
         // $filterOnline['filter']['usaccept'] = 0; erLhcoreClassChatStatistic::numberOfChatsDialogsByUser(30,$filterOnline);
         $sparams['body']['aggs']['group_by_user']['aggs']['us_accept']['filter']['term']['usaccept'] = 0;
-        
+
+        // Subject aggregation
+        if (isset($params['filter_original']['filterin']['subject_id']) && !empty($params['filter_original']['filterin']['subject_id'])) {
+            $sparams['body']['aggs']['group_by_user']['aggs']['subject_id']['aggs']['by_subject']['terms']['field'] = 'subject_id';
+            $sparams['body']['aggs']['group_by_user']['aggs']['subject_id']['filter']['terms']['subject_id'] = $params['filter_original']['filterin']['subject_id'];
+        }
+
         // totalHoursOfOnlineDialogsByUser
         $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['filter']['bool']['must'][]['term']['status'] = erLhcoreClassModelChat::STATUS_CLOSED_CHAT;
         $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['filter']['bool']['must'][]['range']['chat_duration']['gt'] = 0;
@@ -1242,12 +1249,22 @@ class erLhcoreClassElasticSearchStatistic
         $usersStats = array();
         foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
 
+            $subjectStats = array();
+            foreach ($bucket['subject_id']['by_subject']['buckets'] as $bucketSubject){
+                $subjectStats[] = array(
+                    'number_of_chats' => $bucketSubject['doc_count'],
+                    'subject_id' => $bucketSubject['key'],
+                    'perc' => round($bucketSubject['doc_count']/$bucket['doc_count']*10000) / 100
+                );
+            }
+
             $statsValue = array(
                 'total_chats' => $bucket['doc_count'],
                 'total_chats_usaccept' => $bucket['us_accept']['doc_count'],
                 'chat_duration_sum' => $bucket['closed_chats']['chat_duration_sum']['value'],
                 'chat_duration_avg' => $bucket['closed_chats']['chat_duration_avg']['value'],
-                'wait_time' => $bucket['avg_wait_time_filter']['wait_time']['value']
+                'wait_time' => $bucket['avg_wait_time_filter']['wait_time']['value'],
+                'subject_stats' => $subjectStats
             );
 
             // Append extension custom aggregation
@@ -1349,7 +1366,8 @@ class erLhcoreClassElasticSearchStatistic
                 'avgWaitTime' => $avgWaitTime,
                 'avgWaitTime_front' => ($avgWaitTime > 0 ? erLhcoreClassChat::formatSeconds($avgWaitTime) : ' 0 s.'),
                 'avgChatLength' => ($avgDuration > 0 ? erLhcoreClassChat::formatSeconds($avgDuration) : '0 s.'),
-                'avgChatLengthSeconds' => $avgDuration
+                'avgChatLengthSeconds' => $avgDuration,
+                'subject_stats' => (isset($usersStats[$user->id]['subject_stats']) ? $usersStats[$user->id]['subject_stats'] : array()),
             );
 
             // Allow extension append custom column
