@@ -13,6 +13,9 @@
 			"dep_id": {
 				"type": "integer"
 			},
+            "subject_id": {
+				"type": "integer"
+			},
 			"status": {
 				"type": "integer"
 			},

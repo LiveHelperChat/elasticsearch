@@ -117,6 +117,19 @@ class erLhcoreClassElasticSearchIndex
             $esChat->invitation_id = $item->invitation_id;
             $esChat->gbot_id = $item->gbot_id;
 
+            $esChat->subject_id = [];
+
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare("SELECT `subject_id` FROM `lh_abstract_subject_chat` WHERE `chat_id` = :chat_id");
+            $stmt->bindValue(':chat_id', $item->id,PDO::PARAM_INT);
+            $stmt->execute();
+            $subjectIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            if (!empty($subjectIds)) {
+                foreach ($subjectIds as $subjectId) {
+                    $esChat->subject_id[] = (int)$subjectId;
+                }
+            }
+
             // Extensions can append custom value
             erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.indexchat', array(
                 'chat' => & $esChat

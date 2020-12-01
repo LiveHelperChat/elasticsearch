@@ -1695,6 +1695,58 @@ class erLhcoreClassElasticSearchStatistic
         return $returnFilter;
     }
 
+    public static function statisticsubjectsStatistic($params) {
+        
+        $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+
+        self::formatFilter($params['filter'], $sparams);
+
+        if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
+            $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
+            $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
+            $params['filter']['filtergte']['time'] = $ts;
+        }
+
+        $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        $field = 'subject_id';
+
+        $statusWorkflow = erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.getsubjectsstatistic_field', array('field' => $field));
+
+        if ($statusWorkflow !== false) {
+            $field = $statusWorkflow['field'];
+        }
+        
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+        $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = $field;
+        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 40;
+
+        $response = $elasticSearchHandler->search($sparams);
+
+        $statsAggr = array();
+
+        foreach ($response['aggregations']['group_by_country_count']['buckets'] as $item) {
+            $statsAggr[] = array(
+                'number_of_chats' => $item['doc_count'],
+                'subject_id' => (trim($item['key']) == '' ? '-' : $item['key'])
+            );
+        }
+
+        return array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+            'list' => $statsAggr
+        );
+    }
+    
     public static function getPreviousChatsByChat($chat) {
 
     }

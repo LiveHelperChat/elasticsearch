@@ -44,3 +44,18 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
 
 #### Used to generate online operators/Active/Pending chat's chart [Optional]
 `* * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/cron_1m > cron_1m.txt /dev/null 2>&1`
+
+#### Using daily/monthly index
+
+I recommend if you are planning to have thousands of chats per day to use monthly index.
+
+If you are running daily/monthly index you should be running this cronjob daily.
+
+`5 12 * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/index_precreate`
+
+#### Monitoring Elasticsearch
+
+To receive notification about failure of Elasticsearch you can run this cronjob. It will automatically turn on/off Elasticsearch extension.
+
+`* * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/check_health`
+
