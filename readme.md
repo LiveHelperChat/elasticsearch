@@ -23,8 +23,15 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
 ## Install
 
 1. Put elasticsearch folder in extensions folder.
-2. copy settings.ini.default.php to settings.ini.php and edit settings
-2. Activate extension in settings/settings.ini.php file
+2. copy `extension/elasticsearch/settings.ini.default.php` to `extension/elasticsearch/settings.ini.php` and edit settings
+3. Activate extension in main settings `lhc_web/settings/settings.ini.php` file
+```
+'extensions' => 
+      array (
+        'elasticsearch'
+      ),
+```
+3. Install dependencies `composer install` from extension folder
 3. Go to back office and clear cache.
 4. Go to Modules -> Elastic Search
 5. Click create index and later update structure
