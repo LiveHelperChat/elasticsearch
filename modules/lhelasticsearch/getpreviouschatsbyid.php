@@ -8,11 +8,18 @@ if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
     exit;
 }
 
-$chat = erLhcoreClassModelChat::fetch($Params['user_parameters']['chat_id']);
+if (!empty($Params['user_parameters_unordered']['type']) && $Params['user_parameters_unordered']['type'] == 'ou') {
+    $online_user = erLhcoreClassModelChatOnlineUser::fetch($Params['user_parameters']['chat_id']);
+    $chat = new erLhcoreClassModelChat();
+    $chat->online_user_id = $online_user->id;
+} else {
+    $chat = erLhcoreClassModelChat::fetch($Params['user_parameters']['chat_id']);
+    $online_user = $chat->online_user;
+}
 
 $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/getpreviouschats.tpl.php');
 
-if (($online_user = $chat->online_user) !== false) {
+if ($online_user !== false) {
 
     $sparams['body']['query']['bool']['must'][]['term']['online_user_id'] = $online_user->id;
 

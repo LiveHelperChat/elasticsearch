@@ -43,7 +43,7 @@ $ViewList['getpreviouschats'] = array(
 
 $ViewList['getpreviouschatsbyid'] = array(
     'params' => array('chat_id'),
-    'uparams' => array(),
+    'uparams' => array('type'),
     'functions' => array('use')
 );
 
