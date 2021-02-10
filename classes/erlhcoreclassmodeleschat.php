@@ -57,6 +57,7 @@ class erLhcoreClassModelESChat
             'product_id' => $this->product_id,
             'last_op_msg_time' => $this->last_op_msg_time,
             'has_unread_op_messages' => $this->has_unread_op_messages,
+            'has_unread_messages' => $this->has_unread_messages,
             'unread_op_messages_informed' => $this->unread_op_messages_informed,
             'status_sub_sub' => $this->status_sub_sub,
             'status_sub_arg' => $this->status_sub_arg,
@@ -176,6 +177,7 @@ class erLhcoreClassModelESChat
     public $product_id = null;
     public $last_op_msg_time = null;
     public $has_unread_op_messages = null;
+    public $has_unread_messages = null;
     public $unread_op_messages_informed = null;
     public $status_sub_sub = null;
     public $status_sub_arg = null;
