@@ -34,6 +34,10 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
             $params['filter']['filtergte']['time'] = $ts;
         }
+        
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
 
@@ -286,8 +290,8 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['from'] = 0;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'itime';
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $groupByData['interval'];
-
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+
             $response = $elasticSearchHandler->search($sparams);
 
             if (isset($response['aggregations']['chats_over_time']['buckets']))
@@ -381,6 +385,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filtergte']['time'] = $ts;
         }
 
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
 
         if ($indexSearch != '') {
@@ -423,6 +431,10 @@ class erLhcoreClassElasticSearchStatistic
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
             $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
             $params['filter']['filtergte']['time'] = $ts;
+        }
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
         }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -469,6 +481,10 @@ class erLhcoreClassElasticSearchStatistic
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
             $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
             $params['filter']['filtergte']['time'] = $ts;
+        }
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
         }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -522,6 +538,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filtergte']['time'] = $ts;
         }
 
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
 
         if ($indexSearch != '') {
@@ -573,10 +593,20 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['ignore_unavailable'] = true;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
 
-        if (is_array($params['params_execution']['charttypes']) && in_array('active',$params['params_execution']['charttypes'])) {
+        if ($aggr != 'weekday') {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        } else {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        }
+
+        if (is_array($params['params_execution']['charttypes']) && (in_array('active',$params['params_execution']['charttypes']) || in_array('total_chats',$params['params_execution']['charttypes'])) ) {
             $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = 'status';
         }
 
@@ -588,7 +618,9 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['aggs']['chats_over_time']['aggs']['unanswered_aggr']['filter']['term']['unanswered_chat'] = 1;
         }
 
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
 
         $paramsOrig = $paramsOrigIndex = $params;
         if ($aggr == 'month') {
@@ -624,14 +656,22 @@ class erLhcoreClassElasticSearchStatistic
         );
 
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
-            $keyDateUnix = $bucket['key'] / 1000;
 
-            if (is_array($params['params_execution']['charttypes']) && in_array('active',$params['params_execution']['charttypes'])) {
+            if ($bucket['key'] > 10) {
+                $keyDateUnix = $bucket['key'] / 1000;
+            } else {
+                $keyDateUnix = $bucket['key'];
+            }
+
+            if (is_array($params['params_execution']['charttypes']) && (in_array('active',$params['params_execution']['charttypes']) || in_array('total_chats',$params['params_execution']['charttypes']))) {
+                $totalChats = 0;
                 foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
                     if (isset($keyStatus[$bucketStatus['key']])) {
                         $numberOfChats[$keyDateUnix][$keyStatus[$bucketStatus['key']]] = $bucketStatus['doc_count'];
+                        $totalChats += $bucketStatus['doc_count'];
                     }
                 }
+                $numberOfChats[$keyDateUnix]['total_chats'] = $totalChats;
             }
 
             if (is_array($params['params_execution']['charttypes']) && in_array('unanswered',$params['params_execution']['charttypes'])) {
@@ -670,14 +710,22 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['ignore_unavailable'] = true;
             $sparams['body']['size'] = 0;
             $sparams['body']['from'] = 0;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+
+            if ($aggr != 'weekday') {
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+            } else {
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+            }
 
             $sparams['body']['aggs']['chats_over_time']['aggs']['msg_user']['filter']['term']['user_id'] = 0;
             $sparams['body']['aggs']['chats_over_time']['aggs']['msg_system']['filter']['term']['user_id'] = -1;
             $sparams['body']['aggs']['chats_over_time']['aggs']['msg_bot']['filter']['term']['user_id'] = -2;
-
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
 
             $paramsOrigIndex = $paramsOrig = $params;
 
@@ -702,7 +750,13 @@ class erLhcoreClassElasticSearchStatistic
             $response = $elasticSearchHandler->search($sparams);
 
             foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
-                $keyDateUnix = $bucket['key'] / 1000;
+
+                if ($bucket['key'] > 10) {
+                    $keyDateUnix = $bucket['key'] / 1000;
+                } else {
+                    $keyDateUnix = $bucket['key'];
+                }
+
                 if (isset($numberOfChats[$keyDateUnix])) {
                     $numberOfChats[$keyDateUnix]['msg_operator'] = $bucket['doc_count'] - $bucket['msg_user']['doc_count'] - $bucket['msg_system']['doc_count'] - $bucket['msg_bot']['doc_count'];
                     $numberOfChats[$keyDateUnix]['msg_user'] = $bucket['msg_user']['doc_count'];
@@ -710,6 +764,12 @@ class erLhcoreClassElasticSearchStatistic
                     $numberOfChats[$keyDateUnix]['msg_bot'] = $bucket['msg_bot']['doc_count'];
                 }
             }
+        }
+
+        if ($aggr == 'weekday') {
+            $sundayData = $numberOfChats[0];
+            unset($numberOfChats[0]);
+            $numberOfChats[0] = $sundayData;
         }
 
         return array(
@@ -723,7 +783,7 @@ class erLhcoreClassElasticSearchStatistic
      * @param unknown $params            
      * @return multitype:string multitype:
      */
-    public static function statisticGetnumberofchatswaittime($params)
+    public static function statisticGetnumberofchatswaittime($params, $aggr = 'month')
     {
         $numberOfChats = array();
         
@@ -734,12 +794,25 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['ignore_unavailable'] = true;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 'month';
+
+        if ($aggr !== 'weekday') {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 'month';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        } else {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        }
+
         $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['avg']['field'] = 'wait_time';
 
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
-        
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
         $paramsOrig = $params;
         if (!isset($paramsOrig['filter']['filtergte']['time'])) {
             $params['filter']['filtergte']['time']= $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
@@ -759,9 +832,15 @@ class erLhcoreClassElasticSearchStatistic
         $response = $elasticSearchHandler->search($sparams);
         
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
-            $numberOfChats[$bucket['key'] / 1000] = (int) $bucket['avg_wait_time']['value'];
+            $numberOfChats[$bucket['key'] > 10 ? ($bucket['key'] / 1000) : $bucket['key']] = (int) $bucket['avg_wait_time']['value'];
         }
-        
+
+        if ($aggr == 'weekday') {
+            $sundayData = $numberOfChats[0];
+            unset($numberOfChats[0]);
+            $numberOfChats[0] = $sundayData;
+        }
+
         return array(
             'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
             'list' => $numberOfChats
@@ -792,6 +871,10 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         $params['filter']['filtergt']['user_id'] = 0;
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
 
         self::formatFilter($params['filter'], $sparams);
 
@@ -840,7 +923,11 @@ class erLhcoreClassElasticSearchStatistic
         $params['filter']['filtergt']['chat_duration'] = 0;
         $params['filter']['filterlt']['chat_duration'] = 60*60;
         $params['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_CLOSED_CHAT;
-        
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
         self::formatFilter($params['filter'], $sparams);
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -867,6 +954,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (!isset($params['filter']['filtergte']['time'])) {
             $params['filter']['filtergte']['time'] = mktime(0,0,0,date('m'),date('d')-$params['days'],date('y'));
+        }
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
         }
 
         $diffDays = ((isset($params['filter']['filterlte']['time']) ? $params['filter']['filterlte']['time'] : time())-$params['filter']['filtergte']['time'])/(24*3600);
@@ -918,6 +1009,16 @@ class erLhcoreClassElasticSearchStatistic
     public static function statisticGetnumberofchatsperday($params)
     {
         return self::statisticGetnumberofchatspermonth($params, 'day');
+    }
+
+    public static function statisticGetnumberofchatsperweekday($params)
+    {
+        return self::statisticGetnumberofchatspermonth($params, 'weekday');
+    }
+
+    public static function getNumberOfChatsWaitTimePerWeekDay($params)
+    {
+        return self::statisticGetnumberofchatswaittime($params, 'weekday');
     }
 
     /**
@@ -1008,7 +1109,11 @@ class erLhcoreClassElasticSearchStatistic
     public static function statisticGetnumberofchatswaittimeperday($params)
     {
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
-        
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
         $numberOfChats = array();
         
         $sparams = array();
@@ -1078,6 +1183,10 @@ class erLhcoreClassElasticSearchStatistic
             $ts = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
             $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
             $params['filter']['filtergte']['time'] = $ts;
+        }
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
         }
 
         $sparams['body']['size'] = 0;
@@ -1194,6 +1303,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (!empty($params['user_filter'])) {
             $params['filter']['filterin']['user_id'] = $params['user_filter'];
+        }
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
         }
 
         self::formatFilter($params['filter'], $sparams);
@@ -1413,6 +1526,10 @@ class erLhcoreClassElasticSearchStatistic
             $paramsIndex['filter']['filtergte']['time'] = $params['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
         }
 
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
         self::formatFilter($params['filter'], $sparams);
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -1506,6 +1623,10 @@ class erLhcoreClassElasticSearchStatistic
           return self::nickGroupingDateNick($params, 'day');
     }
 
+    public static function nickGroupingDateNickWeekDay($params) {
+          return self::nickGroupingDateNick($params, 'weekday');
+    }
+
     public static function nickGroupingDateNick($params, $aggr = 'month')
     {
         $numberOfChats = array();
@@ -1514,13 +1635,27 @@ class erLhcoreClassElasticSearchStatistic
 
         $filterParams = $params['params_execution'];
 
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
         $sparams = array();
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+
+        if ($aggr != 'weekday') {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        } else {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        }
 
         $validGroupFields = array(
             'nick' => 'nick_keyword',
@@ -1541,8 +1676,6 @@ class erLhcoreClassElasticSearchStatistic
 
        $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = $attr;
        $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['size'] = 10;
-
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
 
         $paramsOrig = $paramsOrigIndex = $params;
         if ($aggr == 'month') {
@@ -1568,7 +1701,13 @@ class erLhcoreClassElasticSearchStatistic
         $response = $elasticSearchHandler->search($sparams);
 
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
-            $keyDateUnix = $bucket['key'] / 1000;
+
+            if ($bucket['key'] > 10) {
+                $keyDateUnix = $bucket['key'] / 1000;
+            } else {
+                $keyDateUnix = $bucket['key'];
+            }
+
 
             $returnArray = array();
 
@@ -1586,6 +1725,12 @@ class erLhcoreClassElasticSearchStatistic
             }
 
             $numberOfChats[$keyDateUnix] = $returnArray;
+        }
+
+        if ($aggr == 'weekday') {
+            $sundayData = $numberOfChats[0];
+            unset($numberOfChats[0]);
+            $numberOfChats[0] = $sundayData;
         }
 
         $returnReversed = array();
@@ -1615,6 +1760,11 @@ class erLhcoreClassElasticSearchStatistic
         return self::nickGroupingDate($params, 'day');
     }
 
+    public static function nickGroupingDateWeekDay($params)
+    {
+        return self::nickGroupingDate($params, 'weekday');
+    }
+
     public static function nickGroupingDate($params, $aggr = 'month')
     {
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
@@ -1626,8 +1776,22 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['ignore_unavailable'] = true;
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+
+        if ($aggr != 'weekday') {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        } else {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        }
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
 
         $validGroupFields = array(
             'nick' => 'nick_keyword',
@@ -1676,9 +1840,21 @@ class erLhcoreClassElasticSearchStatistic
         $numberOfChats = array();
 
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
-            $keyDateUnix = $bucket['key'] / 1000;
+
+            if ($bucket['key'] > 10) {
+                $keyDateUnix = $bucket['key'] / 1000;
+            } else {
+                $keyDateUnix = $bucket['key'];
+            }
+
             $numberOfChats[$keyDateUnix] = array ();
             $numberOfChats[$keyDateUnix]['unique'] = (int)$bucket['status_aggr']['value'];
+        }
+
+        if ($aggr == 'weekday') {
+            $sundayData = $numberOfChats[0];
+            unset($numberOfChats[0]);
+            $numberOfChats[0] = $sundayData;
         }
 
         return array(
@@ -1731,6 +1907,10 @@ class erLhcoreClassElasticSearchStatistic
         $sparams = array();
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
 
         self::formatFilter($params['filter'], $sparams);
 

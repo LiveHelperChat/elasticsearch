@@ -116,6 +116,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->auto_responder_id = $item->auto_responder_id;
             $esChat->invitation_id = $item->invitation_id;
             $esChat->gbot_id = $item->gbot_id;
+            $esChat->abnd = (($item->user_id == 0 && $item->status_sub == erLhcoreClassModelChat::STATUS_SUB_USER_CLOSED_CHAT) || ($item->lsync < ($item->pnd_time + $item->wait_time))) ? 1 : 0;
 
             $esChat->subject_id = [];
 
@@ -393,7 +394,7 @@ class erLhcoreClassElasticSearchIndex
             return;
         }
 
-        $sql = "SELECT id, dep_id, user_id FROM lh_chat WHERE id IN (" . implode(',', $chatsIds) . ')';
+        $sql = "SELECT id, dep_id, user_id, gbot_id, status_sub FROM lh_chat WHERE id IN (" . implode(',', $chatsIds) . ')';
 
         $db = ezcDbInstance::get();
         $stmt = $db->prepare($sql);
@@ -405,6 +406,8 @@ class erLhcoreClassElasticSearchIndex
         foreach ($chatsData as $chatData) {
             $infoChat[$chatData['id']]['dep_id'] = $chatData['dep_id'];
             $infoChat[$chatData['id']]['user_id'] = $chatData['user_id'];
+            $infoChat[$chatData['id']]['gbot_id'] = $chatData['gbot_id'];
+            $infoChat[$chatData['id']]['status_sub'] = $chatData['status_sub'];
         }
 
         $sparams = array();
@@ -441,8 +444,10 @@ class erLhcoreClassElasticSearchIndex
                 $esMsg->time = $item->time * 1000;
                 $esMsg->name_support = $item->name_support;
                 $esMsg->user_id = $item->user_id;
-                $esMsg->dep_id = $infoChat[$item->chat_id]['dep_id'];
-                $esMsg->op_user_id = $infoChat[$item->chat_id]['user_id'];
+                $esMsg->dep_id = (int)$infoChat[$item->chat_id]['dep_id'];
+                $esMsg->op_user_id = (int)$infoChat[$item->chat_id]['user_id'];
+                $esMsg->gbot_id = (int)$infoChat[$item->chat_id]['gbot_id'];
+                $esMsg->status_sub = (int)$infoChat[$item->chat_id]['status_sub'];
 
                 $indexSave = erLhcoreClassModelESMsg::$indexName . '-' . erLhcoreClassModelESMsg::$elasticType;
 

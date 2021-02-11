@@ -16,6 +16,9 @@
             "subject_id": {
 				"type": "integer"
 			},
+            "abnd": {
+				"type": "integer"
+			},
 			"status": {
 				"type": "integer"
 			},
@@ -249,6 +252,12 @@
 				"type": "long"
 			},
 			"dep_id": {
+				"type": "integer"
+			},
+            "gbot_id": {
+				"type": "integer"
+			},
+            "status_sub": {
 				"type": "integer"
 			},
 			"name_support": {
