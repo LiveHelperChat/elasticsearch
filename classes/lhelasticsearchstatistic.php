@@ -601,8 +601,8 @@ class erLhcoreClassElasticSearchStatistic
         } else {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         }
 
@@ -647,7 +647,8 @@ class erLhcoreClassElasticSearchStatistic
             erLhcoreClassModelChat::STATUS_CLOSED_CHAT => 'closed',
             erLhcoreClassModelChat::STATUS_ACTIVE_CHAT => 'active',
             erLhcoreClassModelChat::STATUS_OPERATORS_CHAT => 'operators',
-            erLhcoreClassModelChat::STATUS_PENDING_CHAT => 'pending'
+            erLhcoreClassModelChat::STATUS_PENDING_CHAT => 'pending',
+            erLhcoreClassModelChat::STATUS_BOT_CHAT => 'bot'
         );
         
         $keyStatusInit = array(
@@ -718,8 +719,8 @@ class erLhcoreClassElasticSearchStatistic
             } else {
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
-                $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
-                $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
             }
 
@@ -767,8 +768,8 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if ($aggr == 'weekday') {
-            $sundayData = $numberOfChats[0];
-            unset($numberOfChats[0]);
+            $sundayData = $numberOfChats[7];
+            unset($numberOfChats[7]);
             $numberOfChats[0] = $sundayData;
         }
 
@@ -802,8 +803,8 @@ class erLhcoreClassElasticSearchStatistic
         } else {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         }
 
@@ -836,8 +837,8 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if ($aggr == 'weekday') {
-            $sundayData = $numberOfChats[0];
-            unset($numberOfChats[0]);
+            $sundayData = $numberOfChats[7];
+            unset($numberOfChats[7]);
             $numberOfChats[0] = $sundayData;
         }
 
@@ -1652,8 +1653,8 @@ class erLhcoreClassElasticSearchStatistic
         } else {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         }
 
@@ -1728,8 +1729,8 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if ($aggr == 'weekday') {
-            $sundayData = $numberOfChats[0];
-            unset($numberOfChats[0]);
+            $sundayData = $numberOfChats[7];
+            unset($numberOfChats[7]);
             $numberOfChats[0] = $sundayData;
         }
 
@@ -1784,8 +1785,8 @@ class erLhcoreClassElasticSearchStatistic
         } else {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 0;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 6;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         }
 
@@ -1852,8 +1853,8 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if ($aggr == 'weekday') {
-            $sundayData = $numberOfChats[0];
-            unset($numberOfChats[0]);
+            $sundayData = $numberOfChats[7];
+            unset($numberOfChats[7]);
             $numberOfChats[0] = $sundayData;
         }
 
