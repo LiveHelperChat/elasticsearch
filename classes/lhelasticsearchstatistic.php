@@ -377,7 +377,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
@@ -425,7 +425,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
         
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
@@ -475,7 +475,7 @@ class erLhcoreClassElasticSearchStatistic
 
         $params['filter']['filterlt']['wait_time'] = 600;
         
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
         
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
@@ -530,7 +530,7 @@ class erLhcoreClassElasticSearchStatistic
         $params['filter']['filtergt']['user_id'] = 0;
         $params['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_CLOSED_CHAT;
         
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
         
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
@@ -639,7 +639,7 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['index'] = $indexSearch;
         }
 
-        self::formatFilter($paramsOrig['filter'], $sparams);
+        self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $response = $elasticSearchHandler->search($sparams);
 
@@ -822,7 +822,7 @@ class erLhcoreClassElasticSearchStatistic
         $paramsOrig['filter']['filtergt']['wait_time'] = 0;
         $paramsOrig['filter']['filterlt']['wait_time'] = 600;
         
-        self::formatFilter($paramsOrig['filter'], $sparams);
+        self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
 
@@ -914,7 +914,7 @@ class erLhcoreClassElasticSearchStatistic
         }
         
         $sparams = array();
-        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESMsg::$elasticType;
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
         $sparams['body']['aggs']['avg_wait_time']['avg']['field'] = 'chat_duration';
         $sparams['body']['size'] = 0;
@@ -929,7 +929,7 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
 
@@ -963,7 +963,7 @@ class erLhcoreClassElasticSearchStatistic
 
         $diffDays = ((isset($params['filter']['filterlte']['time']) ? $params['filter']['filterlte']['time'] : time())-$params['filter']['filtergte']['time'])/(24*3600);
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
         
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
@@ -1043,37 +1043,37 @@ class erLhcoreClassElasticSearchStatistic
 
         $sparamsItem = $sparams;
         $paramsOrig = $params;
-        self::formatFilter($paramsOrig['filter'], $sparamsItem);
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
         $numberOfChats['totalchats'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
         
         $sparamsItem = $sparams;
         $paramsOrig = $params;
         $paramsOrig['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_PENDING_CHAT;
-        self::formatFilter($paramsOrig['filter'], $sparamsItem);
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
         $numberOfChats['totalpendingchats'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
         
         $sparamsItem = $sparams;
         $paramsOrig = $params;
         $paramsOrig['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_ACTIVE_CHAT;
-        self::formatFilter($paramsOrig['filter'], $sparamsItem);
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
         $numberOfChats['total_active_chats'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
         
         $sparamsItem = $sparams;
         $paramsOrig = $params;
         $paramsOrig['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_CLOSED_CHAT;
-        self::formatFilter($paramsOrig['filter'], $sparamsItem);
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
         $numberOfChats['total_closed_chats'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
         
         $sparamsItem = $sparams;
         $paramsOrig = $params;
         $paramsOrig['filter']['filter']['unanswered_chat'] = 1;
-        self::formatFilter($paramsOrig['filter'], $sparamsItem);
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
         $numberOfChats['total_unanswered_chat'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
         
         $sparamsItem = $sparams;
         $paramsOrig = $params;
         $paramsOrig['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_CHATBOX_CHAT;
-        self::formatFilter($paramsOrig['filter'], $sparamsItem);
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
         $numberOfChats['chatbox_chats'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
         
         $sparamsItem = $sparams;
@@ -1121,7 +1121,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
         
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
             $ts = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
@@ -1177,7 +1177,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         // Add default date range filter
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
@@ -1270,7 +1270,7 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['index'] = $indexSearch;
         }
 
-        $result = $elasticSearchHandler->search($sparams);
+        $result = $elasticSearchHandler->search($sparams, array('subject_ids' => 'subject_id'));
         
         foreach ($result['aggregations']['chat_count']['buckets'] as $key => $bucket) {
             
@@ -1310,7 +1310,7 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $paramsIndex = $params;
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
@@ -1531,7 +1531,7 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
 
@@ -1695,7 +1695,7 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['index'] = $indexSearch;
         }
 
-        self::formatFilter($paramsOrig['filter'], $sparams);
+        self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.nickbroupingdatenick_filter', array('sparams' => & $sparams));
 
@@ -1832,7 +1832,7 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['index'] = $indexSearch;
         }
 
-        self::formatFilter($paramsOrig['filter'], $sparams);
+        self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.nickgroupingdate_filter', array('sparams' => & $sparams));
 
@@ -1864,7 +1864,7 @@ class erLhcoreClassElasticSearchStatistic
         );
     }
 
-    public static function formatFilter($params, & $sparams)
+    public static function formatFilter($params, & $sparams, $customFields = array())
     {
         $returnFilter = array();
         
@@ -1893,8 +1893,9 @@ class erLhcoreClassElasticSearchStatistic
                     $sparams['body']['query']['bool']['must'][]['term'][$field] = $value;
                 } elseif ($type == 'filterinm') {
                     $sparams['body']['query']['bool']['must'][]['terms'][$field] = $value;
+                } elseif ($type == 'filterin_elastic' && isset($customFields[$field])) {
+                    $sparams['body']['query']['bool']['must'][]['terms'][$customFields[$field]] = $value;
                 }
-
             }
         }
         
@@ -1913,7 +1914,7 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
-        self::formatFilter($params['filter'], $sparams);
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));

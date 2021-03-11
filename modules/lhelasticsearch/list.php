@@ -200,6 +200,15 @@ if ($tab == 'chats') {
         }
     }
 
+    if (isset($filterParams['input']->subject_id) && is_array($filterParams['input']->subject_id) && !empty($filterParams['input']->subject_id)) {
+
+        erLhcoreClassChat::validateFilterInString($filterParams['input']->subject_id);
+
+        if (!empty($filterParams['input']->subject_id)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['subject_id'] = $filterParams['input']->subject_id;
+        }
+    }
+
     if (trim($filterParams['input_form']->uagent) != '') {
         $sparams['body']['query']['bool']['must'][]['match']['uagent'] = $filterParams['input_form']->uagent;
     }

@@ -329,6 +329,21 @@
                     <label><input type="checkbox" name="without_bot" value="1" <?php $input->without_bot == true ? print 'checked="checked"' : ''?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chats which did not had a bot')?></label>
                 </div>
 
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>
+                        <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                            'input_name'     => 'subject_id[]',
+                            'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select subject'),
+                            'selected_id'    => $input->subject_id,
+                            'css_class'      => 'form-control',
+                            'display_name'   => 'name',
+                            'list_function_params' => [],
+                            'list_function'  => 'erLhAbstractModelSubject::getList'
+                        )); ?>
+                    </div>
+                </div>
+
             </div>
         </div>
 

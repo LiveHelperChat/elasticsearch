@@ -352,6 +352,18 @@ $fieldsSearch['bot_ids'] = array (
     )
 );
 
+$fieldsSearch['subject_id'] = array (
+    'type' => 'text',
+    'trans' => 'Bot ID',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterin',
+    'filter_table_field' => 'subject_id',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 1), FILTER_REQUIRE_ARRAY
+    )
+);
+
 $fieldsSearch['has_operator'] = array (
     'type' => 'boolean',
     'trans' => 'groupby',
