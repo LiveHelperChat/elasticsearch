@@ -1262,7 +1262,7 @@ class erLhcoreClassElasticSearchStatistic
         }
         
         $sparams['body']['aggs']['chat_count']['aggs']['abandoned_chats']['filter']['bool']['must'][]['term']['user_id'] = 0;
-        $sparams['body']['aggs']['chat_count']['aggs']['abandoned_chats']['filter']['bool']['must'][]['term']['status_sub'] = erLhcoreClassModelChat::STATUS_SUB_USER_CLOSED_CHAT;
+        $sparams['body']['aggs']['chat_count']['aggs']['abandoned_chats']['filter']['bool']['must'][]['terms']['status_sub'] = array(erLhcoreClassModelChat::STATUS_SUB_USER_CLOSED_CHAT, erLhcoreClassModelChat::STATUS_SUB_SURVEY_COMPLETED);
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
 
