@@ -64,6 +64,9 @@
 			"user_status": {
 			    "type": "integer"
 			},
+            "cls_us": {
+			    "type": "integer"
+			},
 			"support_informed": {
 			    "type": "integer"
 			},
