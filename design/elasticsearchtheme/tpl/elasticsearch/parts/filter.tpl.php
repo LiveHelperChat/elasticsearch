@@ -34,7 +34,8 @@
                   'selected_id'    => $input->department_ids,
                   'css_class'      => 'form-control',
                   'display_name'   => 'name',
-                  'list_function'  => 'erLhcoreClassModelDepartament::getList'
+                  'list_function'  => 'erLhcoreClassModelDepartament::getList',
+                  'list_function_params'  => array('limit' => false)
                 )); ?>
 		  </div>
 		</div>
@@ -47,7 +48,8 @@
                     'selected_id'    => $input->department_group_ids,
                     'css_class'      => 'form-control',
                     'display_name'   => 'name',
-                    'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList'
+                    'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList',
+                    'list_function_params'  => array('limit' => false)
                 )); ?>
             </div>
         </div>
@@ -60,7 +62,8 @@
                     'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose proactive invitation'),
                     'selected_id'    => $input->invitation_id,
                     'css_class'      => 'form-control form-control-sm',
-                    'list_function'  => 'erLhAbstractModelProactiveChatInvitation::getList'
+                    'list_function'  => 'erLhAbstractModelProactiveChatInvitation::getList',
+                    'list_function_params'  => array('limit' => false)
                 )); ?>
             </div>
         </div>
@@ -145,9 +148,9 @@
                    'selected_id'    => $input->user_ids,
                    'css_class'      => 'form-control',
                    'display_name'   => 'name_official',
-                   'list_function'  => 'erLhcoreClassModelUser::getUserList'
+                   'list_function'  => 'erLhcoreClassModelUser::getUserList',
+                   'list_function_params'  => array('limit' => false)
                )); ?>
-
 		  </div>
 		</div>
 
@@ -160,7 +163,8 @@
                     'selected_id'    => $input->group_ids,
                     'css_class'      => 'form-control',
                     'display_name'   => 'name',
-                    'list_function'  => 'erLhcoreClassModelGroup::getList'
+                    'list_function'  => 'erLhcoreClassModelGroup::getList',
+                    'list_function_params'  => array('limit' => false)
                 )); ?>
 
             </div>
@@ -311,8 +315,8 @@
                             'selected_id'    => $input->bot_ids,
                             'css_class'      => 'form-control',
                             'display_name'   => 'name',
-                            'list_function_params' => [],
-                            'list_function'  => 'erLhcoreClassModelGenericBotBot::getList'
+                            'list_function'  => 'erLhcoreClassModelGenericBotBot::getList',
+                            'list_function_params'  => array('limit' => false)
                         )); ?>
                     </div>
                 </div>
@@ -338,8 +342,8 @@
                             'selected_id'    => $input->subject_id,
                             'css_class'      => 'form-control',
                             'display_name'   => 'name',
-                            'list_function_params' => [],
-                            'list_function'  => 'erLhAbstractModelSubject::getList'
+                            'list_function'  => 'erLhAbstractModelSubject::getList',
+                            'list_function_params'  => array('limit' => false)
                         )); ?>
                     </div>
                 </div>
