@@ -148,7 +148,7 @@ class erLhcoreClassElasticSearchStatistic
             }
 
             $groupByData = array(
-                'interval' => 60000,
+                'interval' => 300000,
                 'divide' => 1
             );
             
