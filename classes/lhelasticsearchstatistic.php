@@ -246,6 +246,8 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESOnlineOperator::$elasticType;
             $sparams['ignore_unavailable'] = true;
 
+            $indexSearch = self::getIndexByFilter($filterParamsIndex['filter'], erLhcoreClassModelESOnlineOperator::$elasticType);
+
             if ($indexSearch != '') {
                 $sparams['index'] = $indexSearch;
             }
