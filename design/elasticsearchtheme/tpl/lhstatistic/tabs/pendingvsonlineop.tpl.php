@@ -132,13 +132,13 @@
     <div class="col-md-2">
 	   <div class="form-group">
     	<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Group by');?></label>
-    	<?php echo erLhcoreClassRenderHelper::renderCombobox( array (
+    	<?php echo erLhcoreClassRenderHelper::renderCombobox(array(
                     'input_name'     => 'group_by',
-                    'selected_id'    => $input->group_by,	
+                    'selected_id'    => (empty($input->group_by) ? 300000 : $input->group_by),
     	            'css_class'      => 'form-control form-control-sm',
                     'list_function'  => 'erLhcoreClassElasticSearchStatistic::getGroupBy'
-            )); ?> 
-        </div>   
+            )); ?>
+        </div>
     </div>
 
     <div class="col-md-2">
