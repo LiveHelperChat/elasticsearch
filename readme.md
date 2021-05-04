@@ -52,6 +52,18 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
 #### Used to generate online operators/Active/Pending chat's chart [Optional]
 `* * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/cron_1m > cron_1m.txt /dev/null 2>&1`
 
+#### Used to remove duplicates every week [Optional]
+
+Duplicates can happen because elastic does not quarantine transactions. So this will make sure that there are no duplicates in ElasticSearch.
+
+`22 8 4 * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/remove_duplicates > log_duplicates.txt /dev/null 2>&1`
+
+#### Reindex recent chats [Optional]
+
+Sometimes elastic search might miss chat's in it's index especially if it just hangs or some other bad things happens. This reindex last 16 hours chats to be sure they are presented in ElasticSearch.
+
+`36 */8 * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/reindex_recent > log_reindex_recent.txt /dev/null 2>&1`
+
 #### Using daily/monthly index
 
 I recommend if you are planning to have thousands of chats per day to use monthly index.
