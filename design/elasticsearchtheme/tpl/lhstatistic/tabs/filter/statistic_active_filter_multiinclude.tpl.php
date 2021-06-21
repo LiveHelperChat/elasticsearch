@@ -1,4 +1,4 @@
-<div class="col-12">
+<div class="col-12" ng-non-bindable>
     <div class="form-group">
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>
             <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (

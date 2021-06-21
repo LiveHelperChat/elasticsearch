@@ -5,7 +5,7 @@
 	<li role="presentation" class="nav-item"><a class="nav-link<?php if ($tab == 'messages') : ?> active<?php endif;?>" href="#messages" aria-controls="messages" role="tab" data-toggle="tab" ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Messages');?></a></li>
 </ul>
 
-<div class="tab-content">
+<div class="tab-content" ng-non-bindable>
 	<div role="tabpanel" class="tab-pane <?php if ($tab == '' || $tab == 'chats') : ?>active<?php endif;?>" id="chats">
 		<?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter.tpl.php')); ?>
 	   	<?php if ($tab == 'chats') : ?>

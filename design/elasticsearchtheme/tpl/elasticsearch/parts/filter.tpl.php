@@ -1,6 +1,6 @@
 
 
-<form action="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>/(tab)/chats#/chats" autocomplete="off" method="get" name="SearchFormRight">
+<form action="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>/(tab)/chats#/chats" autocomplete="off" method="get" name="SearchFormRight" ng-non-bindable>
 	<input type="hidden" name="ds" value="1">
 	<div class="row">
 		

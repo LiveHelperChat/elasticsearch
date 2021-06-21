@@ -1,4 +1,4 @@
-<div class="col-12">
+<div class="col-12" ng-non-bindable>
     <div class="row">
         <div class="col-12">
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>

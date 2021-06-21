@@ -1,7 +1,7 @@
 <h1><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Online session list')?></h1>
 
 <?php if ($pages->items_total > 0): ?>
-	<table class="table">
+	<table class="table" ng-non-bindable>
 		<thead>
 			<tr>
 			    <th width="10%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','User ID')?></th>

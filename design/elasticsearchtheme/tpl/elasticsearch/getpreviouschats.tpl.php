@@ -1,4 +1,4 @@
-<ul class="foot-print-content list-unstyled" style="max-height: 170px;">
+<ul class="foot-print-content list-unstyled" style="max-height: 170px;" ng-non-bindable>
     <?php $hasPrevChat = false; foreach ($chatsPrev as $chatPrev) : ?>
         <?php if (!isset($chat) || $chat->id != $chatPrev->chat_id) : $hasPrevChat = true;?>
             <li>
