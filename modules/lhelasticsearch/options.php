@@ -29,6 +29,9 @@ if ( isset($_POST['StoreOptions']) ) {
         'auto_enable' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
+        'check_if_exists' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+        ),
         'indexType' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'string'
         ),
@@ -54,6 +57,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['disable_es'] = 1;
     } else {
         $data['disable_es'] = 0;
+    }
+
+    if ( $form->hasValidData( 'check_if_exists' ) && $form->check_if_exists == true ) {
+        $data['check_if_exists'] = 1;
+    } else {
+        $data['check_if_exists'] = 0;
     }
 
     if ( $form->hasValidData( 'star_month_index' ) && $form->star_month_index == true ) {

@@ -27,6 +27,10 @@
     <div class="form-group">
         <label><input type="checkbox" value="on" name="star_month_index" <?php isset($es_options['star_month_index']) && ($es_options['star_month_index'] == true) ? print 'checked="checked"' : ''?> /> Prepend star to month index</label><br/>
     </div>
+
+    <div class="form-group">
+        <label><input type="checkbox" value="on" name="check_if_exists" <?php isset($es_options['check_if_exists']) && ($es_options['check_if_exists'] == true) ? print 'checked="checked"' : ''?> /> Check if index exists before saving a chat</label><br/>
+    </div>
     
     <div class="form-group">
         <label>Last indexed message Id</label>

@@ -29,6 +29,29 @@ class erLhcoreClassElasticSearchIndex
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
         $dataOptions = (array)$esOptions->data;
 
+        if (isset($dataOptions['check_if_exists']) && $dataOptions['check_if_exists'] == 1)
+        {
+            $dateRangesIndex = [];
+            foreach ($dateRange as $dateRangeItem) {
+                if ($dataOptions['index_type'] == 'daily') {
+                    $dateRangesIndex[] = date('Y.m.d',$dateRangeItem);
+                } elseif ($dataOptions['index_type'] == 'monthly') {
+                    $dateRangesIndex[] = date('Y.m',$dateRangeItem);
+                }
+            }
+
+            if (!empty($dateRangesIndex)) {
+                $settings = include ('extension/elasticsearch/settings/settings.ini.php');
+
+                foreach (array_unique($dateRangesIndex) as $indexPrepend)
+                {
+                    $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
+                    $esSearchHandler = erLhcoreClassElasticClient::getHandler();
+                    erLhcoreClassElasticClient::indexExists($esSearchHandler, $settings['index'], $indexPrepend, true);
+                }
+            }
+        }
+
         foreach ($params['chats'] as $keyValue => $item) {
             if (isset($documentsReindexed[$keyValue])) {
                 $esChat = $documentsReindexed[$keyValue];
