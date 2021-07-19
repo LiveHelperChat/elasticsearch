@@ -2,6 +2,7 @@
 
 // Run once a day
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate
+// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate -p 2000
 
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $dataOptions = (array)$esOptions->data;
@@ -28,9 +29,20 @@ if ($dataOptions['index_type'] == 'daily') {
     $indexPrepend = date('Y.m',time()+24*3600);
 }
 
-if ($indexSave !== null) {
-    $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
-    $esSearchHandler = erLhcoreClassElasticClient::getHandler();
-    erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
-    echo "Created index - ",$indexSave,"\n";
+if (is_numeric($cronjobPathOption->value)) {
+    for ($i = 1; $i <= 12; $i++) {
+        $indexPrepend = $cronjobPathOption->value.'.'.($i < 10 ? '0'.$i : $i);
+        $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
+        $esSearchHandler = erLhcoreClassElasticClient::getHandler();
+        erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
+        echo "Created index - ",$indexSave,"\n";
+    }
+} else {
+    if ($indexSave !== null) {
+        $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
+        $esSearchHandler = erLhcoreClassElasticClient::getHandler();
+        erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
+        echo "Created index - ",$indexSave,"\n";
+    }
 }
+
