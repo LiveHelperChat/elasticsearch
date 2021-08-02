@@ -30,7 +30,6 @@ if (isset($_POST['doSearch']))
 
 $tpl->set('command',$command);
 $tpl->set('index',$index);
-$tpl->set('type',$type);
 $tpl->set('response',$response);
 
 $Result['content'] = $tpl->fetch();

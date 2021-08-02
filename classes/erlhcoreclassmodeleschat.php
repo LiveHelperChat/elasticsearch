@@ -98,12 +98,14 @@ class erLhcoreClassModelESChat
     {
         $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = $this->chat_id;
 
+        $dateFilter['gte'] = round($this->time/1000);
+
         $items = erLhcoreClassModelESMsg::getList(array(
             'offset' => 0,
             'limit' => 10000,
             'body' => $sparams['body']
-        ));
-        
+        ), array('date_index' => $dateFilter));
+
         foreach ($items as $item) {
             $item->removeThis();
         }
