@@ -19,6 +19,9 @@
             "abnd": {
 				"type": "integer"
 			},
+            "drpd": {
+				"type": "integer"
+			},
 			"status": {
 				"type": "integer"
 			},

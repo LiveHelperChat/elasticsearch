@@ -139,7 +139,8 @@ class erLhcoreClassElasticSearchIndex
             $esChat->auto_responder_id = $item->auto_responder_id;
             $esChat->invitation_id = $item->invitation_id;
             $esChat->gbot_id = $item->gbot_id;
-            $esChat->abnd = (($item->user_id == 0 && $item->status_sub == erLhcoreClassModelChat::STATUS_SUB_USER_CLOSED_CHAT) || ($item->lsync < ($item->pnd_time + $item->wait_time))) ? 1 : 0;
+            $esChat->abnd = ($item->lsync < ($item->pnd_time + $item->wait_time) &&  $item->wait_time > 1) ? 1 : 0;
+            $esChat->drpd = $item->lsync > ($item->pnd_time + $item->wait_time) && $item->has_unread_op_messages == 1 && $item->user_id > 0 ? 1 : 0;
             $esChat->cls_us = $item->cls_us;
             $esChat->subject_id = [];
 

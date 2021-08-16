@@ -80,6 +80,7 @@ class erLhcoreClassModelESChat
             'gbot_id' => $this->gbot_id,
             'subject_id' => $this->subject_id,
             'abnd' => $this->abnd,
+            'drpd' => $this->drpd,
             'cls_us' => $this->cls_us,
         );
 
@@ -204,5 +205,6 @@ class erLhcoreClassModelESChat
     public $gbot_id = null;
     public $subject_id = null;
     public $abnd = null;
+    public $drpd = null;
     public $cls_us = null;
 }

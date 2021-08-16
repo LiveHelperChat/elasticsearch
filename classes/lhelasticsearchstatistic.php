@@ -39,6 +39,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
 
         if ($indexSearch != '') {
@@ -391,6 +395,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
 
         if ($indexSearch != '') {
@@ -437,6 +445,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -487,6 +499,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -542,6 +558,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -622,6 +642,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         $paramsOrig = $paramsOrigIndex = $params;
@@ -816,6 +840,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         $paramsOrig = $params;
         if (!isset($paramsOrig['filter']['filtergte']['time'])) {
             $params['filter']['filtergte']['time']= $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
@@ -879,6 +907,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         self::formatFilter($params['filter'], $sparams);
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESMsg::$elasticType);
@@ -931,6 +963,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -961,6 +997,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         $diffDays = ((isset($params['filter']['filterlte']['time']) ? $params['filter']['filterlte']['time'] : time())-$params['filter']['filtergte']['time'])/(24*3600);
@@ -1117,6 +1157,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         $numberOfChats = array();
         
         $sparams = array();
@@ -1190,6 +1234,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         $sparams['body']['size'] = 0;
@@ -1310,6 +1358,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
@@ -1533,6 +1585,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -1640,6 +1696,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         $sparams = array();
@@ -1796,6 +1856,10 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['abnd'] = 1;
         }
 
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
         $validGroupFields = array(
             'nick' => 'nick_keyword',
             'uagent' => 'uagent',
@@ -1914,6 +1978,10 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
             $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
         }
 
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
