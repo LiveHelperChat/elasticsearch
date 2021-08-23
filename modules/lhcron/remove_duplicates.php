@@ -12,11 +12,13 @@ $indexSearch = erLhcoreClassElasticSearchStatistic::getIndexByFilter($dateFilter
 
 $sparams = array();
 $sparams['index'] = $indexSearch;
-$sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = mktime(0, 0, 0, date('m'), date('d') - 30, date('y')) * 1000;
+$sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = mktime(0, 0, 0, date('m'), date('d') - 7, date('y')) * 1000;
 $sparams['body']['size'] = 0;
 $sparams['body']['from'] = 0;
 $sparams['body']['aggs']['group_by_chat']['terms']['field'] = 'chat_id';
-$sparams['body']['aggs']['group_by_chat']['terms']['size'] = 2000;
+$sparams['body']['aggs']['group_by_chat']['terms']['size'] = 10000;
+$sparams['body']['aggs']['group_by_chat']['terms']['min_doc_count'] = 2;
+
 $sparams['ignore_unavailable'] = true;
 
 $response = $elasticSearchHandler->search($sparams);
