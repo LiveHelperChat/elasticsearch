@@ -86,6 +86,14 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['term']['has_unread_op_messages'] = (int)trim($filterParams['input_form']->has_unread_op_messages);
     }
 
+    if ($filterParams['input_form']->dropped_chat == true) {
+        $sparams['body']['query']['bool']['must'][]['term']['drpd'] = 1;
+    }
+
+    if ($filterParams['input_form']->abandoned_chat == true) {
+        $sparams['body']['query']['bool']['must'][]['term']['abnd'] = 1;
+    }
+
     if (trim($filterParams['input_form']->department_group_id) != '') {
         $db = ezcDbInstance::get();
         $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
