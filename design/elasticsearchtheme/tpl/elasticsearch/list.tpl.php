@@ -10,7 +10,7 @@
 		<?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter.tpl.php')); ?>
 	   	<?php if ($tab == 'chats') : ?>
             <?php if (isset($pages) && $pages->items_total > 0): ?>
-            	<table class="table mt-1">
+            	<table class="table table-sm mt-1">
             		<thead>
             			<tr>
             			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
@@ -18,7 +18,6 @@
             			    <th width="94%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
             			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
             			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','IP')?></th>
-            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Index')?></th>
             			    <th width="1%"></th>
             			</tr>  
             		</thead>
@@ -39,7 +38,7 @@
             		        
             		        </td>
             		        <td nowrap="nowrap">
-                                <?php echo htmlspecialchars($item->nick)?>
+                                <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/nick.tpl.php')); ?>
                             </td>
                             <td>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
@@ -60,9 +59,8 @@
                             </td>
             		        <td nowrap="nowrap"><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
             		        <td><?php echo htmlspecialchars($item->ip)?></td>
-            		        <td><?php echo htmlspecialchars($item->meta_data['index'])?></td>
                             <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
-            		        <td>
+            		        <td title="<?php echo htmlspecialchars($item->meta_data['index'])?>">
             		            <a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/delete')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a>
             		        </td>
                             <?php endif; ?>
