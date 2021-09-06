@@ -35,7 +35,7 @@
 		  </div>
 		</div>
 		
-		<div class="col-md-2">
+		<div class="col-md-1">
 		  <div class="form-group">
 			<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','E-mail');?></label>
 			<input type="text" class="form-control form-control-sm" name="email" value="<?php echo htmlspecialchars($input->email)?>" />
@@ -59,30 +59,48 @@
             </div>
         </div>
 
-		<div class="col-md-2">
-		  <div class="form-group">
-				<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department');?></label>
-                <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
-                  'input_name'     => 'department_ids[]',
-                  'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department'),
-                  'selected_id'    => $input->department_ids,
-                  'css_class'      => 'form-control',
-                  'display_name'   => 'name',
-                  'list_function'  => 'erLhcoreClassModelDepartament::getList',
-                  'list_function_params'  => array('limit' => false)
-                )); ?>
-		  </div>
+		<div class="col-md-3">
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department');?></label>
+                        <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                            'input_name'     => 'department_ids[]',
+                            'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department'),
+                            'selected_id'    => $input->department_ids,
+                            'css_class'      => 'form-control',
+                            'display_name'   => 'name',
+                            'list_function'  => 'erLhcoreClassModelDepartament::getList',
+                            'list_function_params'  => array('limit' => false)
+                        )); ?>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department group');?></label>
+                        <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                            'input_name'     => 'department_group_ids[]',
+                            'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department group'),
+                            'selected_id'    => $input->department_group_ids,
+                            'css_class'      => 'form-control',
+                            'display_name'   => 'name',
+                            'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList',
+                            'list_function_params'  => array('limit' => false)
+                        )); ?>
+                    </div>
+                </div>
+            </div>
 		</div>
         <div class="col-md-2">
             <div class="form-group">
-                <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Department group');?></label>
+                <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>
                 <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
-                    'input_name'     => 'department_group_ids[]',
-                    'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose department group'),
-                    'selected_id'    => $input->department_group_ids,
+                    'input_name'     => 'subject_id[]',
+                    'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select subject'),
+                    'selected_id'    => $input->subject_id,
                     'css_class'      => 'form-control',
                     'display_name'   => 'name',
-                    'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList',
+                    'list_function'  => 'erLhAbstractModelSubject::getList',
                     'list_function_params'  => array('limit' => false)
                 )); ?>
             </div>
@@ -350,20 +368,7 @@
                                 <label><input type="checkbox" name="without_bot" value="1" <?php $input->without_bot == true ? print 'checked="checked"' : ''?> >&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chats which did not had a bot')?></label>
                             </div>
 
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>
-                                    <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
-                                        'input_name'     => 'subject_id[]',
-                                        'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select subject'),
-                                        'selected_id'    => $input->subject_id,
-                                        'css_class'      => 'form-control',
-                                        'display_name'   => 'name',
-                                        'list_function'  => 'erLhAbstractModelSubject::getList',
-                                        'list_function_params'  => array('limit' => false)
-                                    )); ?>
-                                </div>
-                            </div>
+
 
                             <div class="col-md-2">
                                 <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Visitor status on chat close');?></label>
