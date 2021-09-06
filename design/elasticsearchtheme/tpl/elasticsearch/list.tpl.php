@@ -25,7 +25,7 @@
             		<thead>
             			<tr>
             			    <th width="8%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
-            			    <th width="1%">
+            			    <th width="1%" nowrap>
                                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/nick_title.tpl.php')); ?>
                             </th>
             			    <th width="65%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
