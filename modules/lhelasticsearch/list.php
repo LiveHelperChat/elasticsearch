@@ -388,9 +388,7 @@ if ($tab == 'chats') {
         $tpl->set('pages', $pages);
     }
 }
-
-$Result['content'] = $tpl->fetch();
-$Result['path'] = array(
+$tpl->set('Result',['path' => array(
     array(
         'url' => erLhcoreClassDesign::baseurl('elasticsearch/index'),
         'title' => erTranslationClassLhTranslation::getInstance()->getTranslation('lhelasticsearch/module', 'Elastic Search')
@@ -399,4 +397,8 @@ $Result['path'] = array(
         'url' => erLhcoreClassDesign::baseurl('elasticsearch/list'),
         'title' => erTranslationClassLhTranslation::getInstance()->getTranslation('lhelasticsearch/list', 'Chat list')
     )
-);
+)]);
+$Result['body_class'] = 'h-100 dashboard-height';
+$Result['content'] = $tpl->fetch();
+
+/*$Result['path'] = ;*/
