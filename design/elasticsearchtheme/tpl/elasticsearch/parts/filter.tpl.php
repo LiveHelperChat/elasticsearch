@@ -44,10 +44,11 @@
 
         <div class="col-md-2">
             <div class="form-group">
-                <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','User');?></label>
+                <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/user_title.tpl.php')); ?>
+                <label><?php echo $userTitle['user'];?></label>
                 <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
                     'input_name'     => 'user_ids[]',
-                    'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Select user'),
+                    'optional_field' => $userTitle['user_select'],
                     'selected_id'    => $input->user_ids,
                     'css_class'      => 'form-control',
                     'display_name'   => 'name_official',
