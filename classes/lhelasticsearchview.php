@@ -66,12 +66,20 @@ class erLhcoreClassElasticSearchView
         $pages->paginate();
         $tpl->set('pages',$pages);
 
+        $sparams = $search->params_array['sparams']['body'];
+
+        if (isset($sparams['highlight']['fields']['msg_operator'])) {
+            $sparams['highlight']['fields']['msg_operator'] = new stdClass();
+            $sparams['highlight']['fields']['msg_visitor'] = new stdClass();
+            $sparams['highlight']['fields']['msg_system'] = new stdClass();
+        }
+
         $items = erLhcoreClassModelESChat::getList(array(
             'offset' => $pages->low,
             'limit' => $pages->items_per_page,
             'body' => array_merge(array(
                 'sort' => $search->params_array['sort']
-            ), $search->params_array['sparams']['body'])
+            ), $sparams)
         ),
         array('date_index' => $dateFilter));
 
