@@ -60,6 +60,11 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('statistic.nickgroupingdate', 'erLhcoreClassElasticSearchStatistic::nickGroupingDate');
                 $dispatcher->listen('statistic.nickgroupingdateweekday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateWeekDay');
                 $dispatcher->listen('statistic.nickgroupingdateday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateDay');
+                
+                // Views
+                $dispatcher->listen('views.loadview', 'erLhcoreClassElasticSearchView::loadView');
+                $dispatcher->listen('views.editview', 'erLhcoreClassElasticSearchView::editView');
+                $dispatcher->listen('views.update_vew', 'erLhcoreClassElasticSearchView::updateView');
             }
         }
 
@@ -82,7 +87,8 @@ class erLhcoreClassExtensionElasticsearch
             'erLhcoreClassModelESPendingChat'    => 'extension/elasticsearch/classes/erlhcoreclassmodelespendingchat.php',
             'erLhcoreClassModelESOnlineOperator' => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlineoperator.php',
             'erLhcoreClassElasticSearchIndex'    => 'extension/elasticsearch/classes/lhelasticsearchindex.php',
-            'erLhcoreClassElasticSearchWorker'   => 'extension/elasticsearch/classes/lhqueueelasticsearchworker.php'
+            'erLhcoreClassElasticSearchWorker'   => 'extension/elasticsearch/classes/lhqueueelasticsearchworker.php',
+            'erLhcoreClassElasticSearchView'     => 'extension/elasticsearch/classes/lhelasticsearchview.php'
         );
 
         if (key_exists($className, $classesArray)) {

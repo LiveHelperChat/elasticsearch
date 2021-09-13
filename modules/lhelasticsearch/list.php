@@ -312,6 +312,41 @@ if ($tab == 'chats') {
             }
         }
 
+        if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 2) {
+
+            $savedSearch = new erLhAbstractModelSavedSearch();
+
+            if ($Params['user_parameters_unordered']['view'] > 0) {
+                $savedSearchPresent = erLhAbstractModelSavedSearch::fetch($Params['user_parameters_unordered']['view']);
+                if ($savedSearchPresent->user_id == $currentUser->getUserID()) {
+                    $savedSearch = $savedSearchPresent;
+                }
+            }
+
+            $tpl = erLhcoreClassTemplate::getInstance('lhviews/save_chat_view.tpl.php');
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+            if (ezcInputForm::hasPostData()) {
+                $Errors = erLhcoreClassAdminChatValidatorHelper::validateSavedSearch($savedSearch, array(
+                    'sort' => $sort,
+                    'sparams' => $sparams,
+                    'filter' => $filterParams['filter'],
+                    'input_form' => $filterParams['input_form']
+                ));
+                if (empty($Errors)) {
+                    $savedSearch->user_id = $currentUser->getUserID();
+                    $savedSearch->scope = 'eschat';
+                    $savedSearch->saveThis();
+                    $tpl->set('updated', true);
+                } else {
+                    $tpl->set('errors', $Errors);
+                }
+            }
+            $tpl->set('item', $savedSearch);
+            echo $tpl->fetch();
+            exit;
+        }
+
+
 
         $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
         $tpl->set('total_literal',$total);

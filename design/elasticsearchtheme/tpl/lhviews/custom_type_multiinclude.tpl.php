@@ -1,0 +1,1 @@
+<span ng-if="view.scope == 'eschat'"><span class="material-icons">search</span></span>

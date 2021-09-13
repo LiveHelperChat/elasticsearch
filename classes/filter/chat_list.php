@@ -38,6 +38,17 @@ $fieldsSearch['uagent'] = array (
     )
 );
 
+$fieldsSearch['view'] = array (
+    'type' => 'text',
+    'trans' => 'View',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'none',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 1)
+    )
+);
+
 $fieldsSearch['no_user'] = array (
     'type' => 'text',
     'trans' => 'id',

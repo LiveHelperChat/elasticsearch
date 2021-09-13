@@ -414,8 +414,26 @@
     <?php endif; ?>
 
 	<div class="btn-group" role="group" aria-label="...">
-		<input type="submit" name="doSearchSubmit" class="btn btn-secondary btn-sm" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
+		<input type="submit" name="doSearchSubmit" class="btn btn-primary btn-sm" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
+
+        <?php if (isset($pages) && erLhcoreClassUser::instance()->hasAccessTo('lhviews','use')) : ?>
+            <?php if ($input->view > 0) : ?>
+                <input type="hidden" name="view" value="<?php echo $input->view?>" />
+            <?php endif; ?>
+
+            <button type="button" onclick="return lhc.revealModal({'title' : 'Export', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/2'})" class="btn btn-outline-secondary btn-sm">
+                <span class="material-icons">saved_search</span>
+                <?php if ($input->view > 0) : ?>
+                    <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Update view')?>
+                <?php else : ?>
+                    <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Save as view')?>
+                <?php endif; ?>
+            </button>
+        <?php endif; ?>
+
 	</div>
+
+
 </form>
 <script>
 $(function() {
