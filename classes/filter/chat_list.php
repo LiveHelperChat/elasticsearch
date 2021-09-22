@@ -97,6 +97,31 @@ $fieldsSearch['keyword'] = array (
     )
 );
 
+$fieldsSearch['referrer'] = array (
+    'type' => 'text',
+    'trans' => 'Sort by',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'like',
+    'filter_table_field' => 'referrer',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+    )
+);
+
+$fieldsSearch['session_referrer'] = array (
+    'type' => 'text',
+    'trans' => 'Sort by',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'like',
+    'filter_table_field' => 'keyword',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+    )
+);
+
+
 $fieldsSearch['email'] = array (
     'type' => 'text',
     'trans' => 'Sort by',

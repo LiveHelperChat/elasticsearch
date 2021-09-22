@@ -396,6 +396,21 @@
                             <div class="col-2"><label class="col-form-label"><input type="checkbox" name="abandoned_chat" value="1" <?php $input->abandoned_chat == true ? print 'checked="checked"' : ''?> > <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Abandoned chats')?></label></div>
                             <div class="col-2"><label class="col-form-label"><input type="checkbox" name="dropped_chat" value="1" <?php $input->dropped_chat == true ? print 'checked="checked"' : ''?> > <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Dropped chat')?></label></div>
 
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Referrer website');?></label>
+                                    <input type="text" class="form-control form-control-sm" name="session_referrer" value="<?php echo htmlspecialchars($input->session_referrer)?>" />
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Chat start page');?></label>
+                                    <input type="text" class="form-control form-control-sm" name="referrer" value="<?php echo htmlspecialchars($input->referrer)?>" />
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
 

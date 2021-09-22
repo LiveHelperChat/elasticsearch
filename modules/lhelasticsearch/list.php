@@ -242,6 +242,18 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['bool']['should'] = $filesFilter;
     }
 
+    // From what page customer start a chat
+    if (trim($filterParams['input_form']->referrer) != '') {
+        $sparams['body']['query']['bool']['should'][]['match']['referrer'] = $filterParams['input_form']->referrer;
+        $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
+    }
+
+    // From what page customer come to our website
+    if (trim($filterParams['input_form']->session_referrer) != '') {
+        $sparams['body']['query']['bool']['should'][]['match']['session_referrer'] = $filterParams['input_form']->session_referrer;
+        $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
+    }
+
     if (trim($filterParams['input_form']->keyword) != '') {
 
         $exactMatch = $filterParams['input_form']->exact_match == 1 ? 'match_phrase' : 'match';
@@ -345,8 +357,6 @@ if ($tab == 'chats') {
             echo $tpl->fetch();
             exit;
         }
-
-
 
         $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
         $tpl->set('total_literal',$total);
