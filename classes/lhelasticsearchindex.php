@@ -594,4 +594,205 @@ class erLhcoreClassElasticSearchIndex
 
         return $response;
     }
+
+    public static function mailMessageRemove($params) {
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`,`op`,`udate`) VALUES (:mail_id,3,:udate)');
+        $stmt->bindValue(':mail_id', $params['message']->id, PDO::PARAM_STR);
+        $stmt->bindValue(':udate', $params['message']->udate, PDO::PARAM_STR);
+        $stmt->execute();
+
+        // Schedule background worker for instant indexing
+        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
+            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        }
+    }
+
+    public static function mailMessageIndex($params) {
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`) VALUES (:mail_id)');
+        $stmt->bindValue(':mail_id', $params['message']->id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Schedule background worker for instant indexing
+        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
+            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        }
+    }
+
+    public static function conversationIndex($params) {
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`,`op`) VALUES (:mail_id,1)');
+        $stmt->bindValue(':mail_id', $params['conversation']->id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Schedule background worker for instant indexing
+        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
+            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        }
+    }
+
+    public static function indexMails($params) {
+        $sparams = array();
+        $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['mails']);
+        $sparams['limit'] = 1000;
+
+        $dateRange = array();
+        foreach ($params['mails'] as $item) {
+            if ($item->udate > 0) {
+                $dateRange[] = $item->udate;
+            }
+        }
+
+        $documentsReindexed = erLhcoreClassModelESMail::getList($sparams,array('date_index' => array('gte' => min($dateRange), 'lte' => max($dateRange))));
+
+        $objectsSave = array();
+
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
+        if (isset($dataOptions['check_if_exists']) && $dataOptions['check_if_exists'] == 1)
+        {
+            $dateRangesIndex = [];
+            foreach ($dateRange as $dateRangeItem) {
+                if ($dataOptions['index_type'] == 'daily') {
+                    $dateRangesIndex[] = date('Y.m.d',$dateRangeItem);
+                } elseif ($dataOptions['index_type'] == 'monthly') {
+                    $dateRangesIndex[] = date('Y.m',$dateRangeItem);
+                }
+            }
+
+            if (!empty($dateRangesIndex)) {
+                $settings = include ('extension/elasticsearch/settings/settings.ini.php');
+
+                foreach (array_unique($dateRangesIndex) as $indexPrepend)
+                {
+                    $sessionElasticStatistic = erLhcoreClassModelESMail::getSession();
+                    $esSearchHandler = erLhcoreClassElasticClient::getHandler();
+                    erLhcoreClassElasticClient::indexExists($esSearchHandler, $settings['index'], $indexPrepend, true);
+                }
+            }
+        }
+
+        foreach ($params['mails'] as $keyValue => $item) {
+            if (isset($documentsReindexed[$keyValue])) {
+                $esChat = $documentsReindexed[$keyValue];
+            } else {
+                $esChat = new erLhcoreClassModelESMail();
+            }
+
+            $esChat->id = $item->id;
+            $esChat->status = $item->status;
+            $esChat->conversation_id = $item->conversation_id;
+            $esChat->mailbox_id = $item->mailbox_id;
+            $esChat->subject = $item->subject;
+            $esChat->body = strip_tags($item->body);
+            $esChat->alt_body = $item->alt_body;
+            $esChat->message_id = $item->message_id;
+            $esChat->in_reply_to = $item->in_reply_to;
+            $esChat->subject = $item->subject;
+            $esChat->references = $item->references;
+            $esChat->time = $item->udate * 1000;
+            $esChat->ctime = $item->ctime * 1000;
+            $esChat->flagged = $item->flagged;
+            $esChat->recent = $item->recent;
+            $esChat->msgno = $item->msgno;
+            $esChat->uid = $item->uid;
+            $esChat->size = $item->size;
+
+            $esChat->from_host = $item->from_host;
+            $esChat->from_name = $item->from_name;
+            $esChat->from_address = $item->from_address;
+
+            $esChat->sender_host = $item->sender_host;
+            $esChat->sender_name = $item->sender_name;
+            $esChat->sender_address = $item->sender_address;
+
+            $esChat->to_data = self::makeKeywords(json_decode($item->to_data,true));
+            $esChat->reply_to_data = self::makeKeywords(json_decode($item->reply_to_data,true));
+            $esChat->cc_data = self::makeKeywords(json_decode($item->cc_data,true));
+            $esChat->bcc_data = self::makeKeywords(json_decode($item->bcc_data,true));
+
+            $esChat->response_time = $item->response_time;
+            $esChat->cls_time = $item->cls_time * 1000;
+            $esChat->wait_time = $item->wait_time;
+            $esChat->accept_time = $item->accept_time * 1000;
+            $esChat->interaction_time = $item->interaction_time;
+            $esChat->lr_time = $item->lr_time * 1000;
+            $esChat->conv_duration = $item->conv_duration;
+            $esChat->user_id = $item->user_id;
+            $esChat->response_type = $item->response_type;
+            $esChat->dep_id = $item->dep_id;
+            $esChat->mb_folder = $item->mb_folder;
+            $esChat->has_attachment = $item->has_attachment;
+            $esChat->rfc822_body = $item->rfc822_body;
+            $esChat->delivery_status = self::makeKeywords($item->delivery_status_keyed);
+            $esChat->undelivered = $item->undelivered;
+            $esChat->priority = $item->priority;
+
+            // Conversation attributes
+            if ($item->conversation instanceof erLhcoreClassModelMailconvConversation) {
+                $esChat->conv_user_id = $item->conversation->user_id;
+                $esChat->status_conv = $item->conversation->status;
+                $esChat->start_type = $item->conversation->start_type;
+            }
+
+            $esChat->subject_id = [];
+
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare("SELECT `subject_id` FROM `lhc_mailconv_msg_subject` WHERE `message_id` = :message_id");
+            $stmt->bindValue(':message_id', $item->id,PDO::PARAM_INT);
+            $stmt->execute();
+            $subjectIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            if (!empty($subjectIds)) {
+                foreach ($subjectIds as $subjectId) {
+                    $esChat->subject_id[] = (int)$subjectId;
+                }
+            }
+
+            // Extensions can append custom value
+            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.indexmail', array(
+                'mail' => & $esChat
+            ));
+
+            // Store hour as UTC for easier grouping
+            $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
+            $date_utc->setTimestamp($item->udate);
+            $esChat->hour = $date_utc->format("H");
+
+            $indexSave = erLhcoreClassModelESMail::$indexName . '-' . erLhcoreClassModelESMail::$elasticType;
+
+            if (isset($esChat->meta_data['index']) && $esChat->meta_data['index'] != '') {
+                $indexSave = $esChat->meta_data['index'];
+            } else if (isset($dataOptions['index_type'])) {
+                if ($dataOptions['index_type'] == 'daily') {
+                    $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m.d',$item->time);
+                } elseif ($dataOptions['index_type'] == 'monthly') {
+                    $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m',$item->time);
+                }
+            }
+
+            $objectsSave[$indexSave][] = $esChat;
+        }
+
+        erLhcoreClassModelESMail::bulkSave($objectsSave, array('custom_index' => true));
+    }
+
+    public static function makeKeywords($array) {
+
+        if (!is_array($array) || empty($array)){
+            return null;
+        }
+
+        $pairs = [];
+
+        foreach ($array as $key => $item) {
+            $pairs[] = trim((!is_numeric($key) ? $key . ' ' : '').$item);
+        }
+
+        $pairs = array_filter($pairs);
+        
+        return implode(' ',$pairs);
+
+    }
 }

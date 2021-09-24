@@ -1,5 +1,145 @@
 {
 	"types": {
+		"lh_mail": {
+          "conversation_id": {
+            "type": "long"
+          },
+          "mailbox_id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "long"
+          },
+          "conv_user_id": {
+            "type": "long"
+          },
+          "size": {
+            "type": "long"
+          },
+          "uid": {
+            "type": "long"
+          },
+          "recent": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "status_conv": {
+            "type": "integer"
+          },
+          "start_type": {
+            "type": "integer"
+          },
+          "flagged": {
+            "type": "integer"
+          },
+          "msgno": {
+            "type": "long"
+          },
+          "time": {
+            "type": "date"
+          },
+          "ctime": {
+            "type": "date"
+          },
+          "lr_time": {
+            "type": "date"
+          },
+          "response_time": {
+            "type": "date"
+          },
+          "cls_time": {
+            "type": "date"
+          },
+          "accept_time": {
+            "type": "date"
+          },
+          "references": {
+            "type": "text"
+          },
+          "subject": {
+            "type": "text"
+          },
+          "to_data": {
+            "type": "text"
+          },
+          "sender_address": {
+            "type": "keyword"
+          },
+          "sender_name": {
+            "type": "text"
+          },
+          "from_address": {
+            "type": "keyword"
+          },
+          "from_host": {
+            "type": "keyword"
+          },
+          "from_name": {
+            "type": "text"
+          },
+          "sender_host": {
+            "type": "keyword"
+          },
+          "reply_to_data": {
+            "type": "text"
+          },
+          "body": {
+            "type": "text"
+          },
+          "alt_body": {
+            "type": "text"
+          },
+          "message_id": {
+            "type": "text"
+          },
+          "in_reply_to": {
+            "type": "text"
+          },
+          "rfc822_body": {
+            "type": "text"
+          },
+          "delivery_status": {
+            "type": "text"
+          },
+          "mb_folder": {
+            "type": "text"
+          },
+          "cc_data": {
+            "type": "text"
+          },
+          "bcc_data": {
+            "type": "text"
+          },
+          "hour": {
+            "type": "integer"
+          },
+          "interaction_time": {
+            "type": "integer"
+          },
+          "response_type": {
+            "type": "integer"
+          },
+          "wait_time": {
+            "type": "integer"
+          },
+          "undelivered": {
+            "type": "integer"
+          },
+          "has_attachment": {
+            "type": "integer"
+          },
+          "dep_id": {
+            "type": "integer"
+          },
+          "conv_duration": {
+            "type": "integer"
+          },
+          "subject_id": {
+            "type": "integer"
+          }
+        },
 		"lh_chat": {
 			"user_id": {
 				"type": "long"

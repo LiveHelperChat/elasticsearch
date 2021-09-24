@@ -65,6 +65,17 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('views.loadview', 'erLhcoreClassElasticSearchView::loadView');
                 $dispatcher->listen('views.editview', 'erLhcoreClassElasticSearchView::editView');
                 $dispatcher->listen('views.update_vew', 'erLhcoreClassElasticSearchView::updateView');
+
+                // Mail module
+
+                // Conversations
+                $dispatcher->listen('mail.conversation.after_save', 'erLhcoreClassElasticSearchIndex::conversationIndex');
+                $dispatcher->listen('mail.conversation.after_update', 'erLhcoreClassElasticSearchIndex::conversationIndex');
+
+                // Messages
+                $dispatcher->listen('mail.message.after_save', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
+                $dispatcher->listen('mail.message.after_update', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
+                $dispatcher->listen('mail.message.after_remove', 'erLhcoreClassElasticSearchIndex::mailMessageRemove');
             }
         }
 
@@ -88,7 +99,8 @@ class erLhcoreClassExtensionElasticsearch
             'erLhcoreClassModelESOnlineOperator' => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlineoperator.php',
             'erLhcoreClassElasticSearchIndex'    => 'extension/elasticsearch/classes/lhelasticsearchindex.php',
             'erLhcoreClassElasticSearchWorker'   => 'extension/elasticsearch/classes/lhqueueelasticsearchworker.php',
-            'erLhcoreClassElasticSearchView'     => 'extension/elasticsearch/classes/lhelasticsearchview.php'
+            'erLhcoreClassElasticSearchView'     => 'extension/elasticsearch/classes/lhelasticsearchview.php',
+            'erLhcoreClassModelESMail'           => 'extension/elasticsearch/classes/erlhcoreclassmodelesmail.php'
         );
 
         if (key_exists($className, $classesArray)) {
