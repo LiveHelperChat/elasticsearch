@@ -17,12 +17,47 @@
                 "default": "0",
                 "extra": ""
             }
+        ],
+        "lhc_lhesmail_index": [
+            {
+                "field": "mail_id",
+                "type": "bigint(20) unsigned",
+                "null": "NO",
+                "key": "UNI",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "status",
+                "type": "tinyint(1) unsigned",
+                "null": "NO",
+                "key": "",
+                "default": "0",
+                "extra": ""
+            },
+            {
+                "field": "op",
+                "type": "tinyint(1) unsigned",
+                "null": "NO",
+                "key": "",
+                "default": "0",
+                "extra": ""
+            },
+            {
+                "field": "udate",
+                "type": "bigint(20) unsigned",
+                "null": "NO",
+                "key": "",
+                "default": "0",
+                "extra": ""
+            }
         ]
-    },  
+    },
     "tables_data": {    },
     "tables_data_identifier": {    },
     "tables_indexes" : {    },
     "tables_create": {
-    	"lhc_lheschat_index" : "CREATE TABLE `lhc_lheschat_index` (  `chat_id` bigint(20) unsigned NOT NULL, `status` tinyint(1) unsigned NOT NULL DEFAULT 0, UNIQUE KEY `chat_id` (`chat_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+    	"lhc_lheschat_index" : "CREATE TABLE `lhc_lheschat_index` (  `chat_id` bigint(20) unsigned NOT NULL, `status` tinyint(1) unsigned NOT NULL DEFAULT 0, UNIQUE KEY `chat_id` (`chat_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8",
+    	"lhc_lhesmail_index" : "CREATE TABLE `lhc_lhesmail_index` (  `mail_id` bigint(20) unsigned NOT NULL, `udate` bigint(20) unsigned NOT NULL DEFAULT 0, `status` tinyint(1) unsigned NOT NULL DEFAULT 0, `op` tinyint(1) unsigned NOT NULL DEFAULT 0, UNIQUE KEY `mail_id` (`mail_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8"
     }
 }

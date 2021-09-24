@@ -140,9 +140,8 @@ class erLhcoreClassElasticClient
 
     public static function bulkSave($handler, $params, &$objects, $paramsExecution = array())
     {
-        $indexParams = explode('-', $params['index']);
-
-        self::indexExists($handler, $indexParams[0], (isset($indexParams[2]) ? $indexParams[2] : null));
+        //$indexParams = explode('-', $params['index']);
+        //self::indexExists($handler, $indexParams[0], (isset($indexParams[2]) ? $indexParams[2] : null));
 
         $action = $handler->bulk($params);
 
