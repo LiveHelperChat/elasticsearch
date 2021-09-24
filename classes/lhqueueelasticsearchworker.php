@@ -65,21 +65,21 @@ class erLhcoreClassElasticSearchWorker {
         /*
          * Mails messages index
          * */
-        $this->indexMails();
+        $mailsIndexed = $this->indexMails();
 
         /*
          * Conversations index
          * */
-        $this->indexConversations();
+        $mailsIndexedConversations = $this->indexConversations();
 
         /*
          * Conversations index
          * */
         $this->indexDeleteMail();
 
+        $maxRecords = max($mailsIndexed,$chatsId,$mailsIndexedConversations);
 
-
-        if (count($chatsId) == 100 && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+        if (count($maxRecords) >= 100 && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
             erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
         }
     }
