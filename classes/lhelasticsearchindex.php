@@ -766,9 +766,9 @@ class erLhcoreClassElasticSearchIndex
                 $indexSave = $esChat->meta_data['index'];
             } else if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
-                    $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m.d',$item->time);
+                    $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m.d',$item->udate);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
-                    $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m',$item->time);
+                    $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m',$item->udate);
                 }
             }
 
