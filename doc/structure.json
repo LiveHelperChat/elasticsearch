@@ -58,6 +58,6 @@
     "tables_indexes" : {    },
     "tables_create": {
     	"lhc_lheschat_index" : "CREATE TABLE `lhc_lheschat_index` (  `chat_id` bigint(20) unsigned NOT NULL, `status` tinyint(1) unsigned NOT NULL DEFAULT 0, UNIQUE KEY `chat_id` (`chat_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-    	"lhc_lhesmail_index" : "CREATE TABLE `lhc_lhesmail_index` (  `mail_id` bigint(20) unsigned NOT NULL, `udate` bigint(20) unsigned NOT NULL DEFAULT 0, `status` tinyint(1) unsigned NOT NULL DEFAULT 0, `op` tinyint(1) unsigned NOT NULL DEFAULT 0, UNIQUE KEY `mail_id` (`mail_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+    	"lhc_lhesmail_index" : "CREATE TABLE `lhc_lhesmail_index` (\n  `mail_id` bigint(20) unsigned NOT NULL,\n  `status` tinyint(1) unsigned NOT NULL DEFAULT 0,\n  `op` tinyint(1) unsigned NOT NULL DEFAULT 0,\n  `udate` bigint(20) unsigned NOT NULL DEFAULT 0,\n  UNIQUE KEY `mail_id_op` (`mail_id`,`op`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8"
     }
 }
