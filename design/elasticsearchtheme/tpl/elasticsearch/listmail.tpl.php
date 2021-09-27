@@ -60,7 +60,9 @@
 
                                     <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->subject)?>" onclick="lhinst.startMailNewWindow(<?php echo $item->conversation_id?>,$(this).attr('data-title'))" >open_in_new</a>
 
+                                    <span class="mr-2">
                                     <?php echo $item->conversation_id?>
+                                    </span>
 
                                     <a class="user-select-none" href="<?php echo erLhcoreClassDesign::baseurl('mailconv/view')?>/<?php echo $item->conversation_id?>"><?php echo htmlspecialchars($item->subject)?></a>
 
