@@ -57,6 +57,10 @@
     </div>
 
     <div class="form-group">
+        <label><input type="checkbox" value="on" name="disable_es_mail" <?php isset($es_options['disable_es_mail']) && ($es_options['disable_es_mail'] == true) ? print 'checked="checked"' : ''?> /> Disable Elastic Search for mails</label><br/>
+    </div>
+
+    <div class="form-group">
         <label>Report unavailable Elastic Search to these e-mails. Separated by comma</label>
         <input type="text" class="form-control" name="report_email_es" value="<?php isset($es_options['report_email_es']) ? print htmlspecialchars($es_options['report_email_es']) : ''?>" />
     </div>

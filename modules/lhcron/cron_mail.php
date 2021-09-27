@@ -5,7 +5,7 @@
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $data = (array)$esOptions->data;
 
-if (isset($data['disable_es']) && $data['disable_es'] == 1) {
+if (isset($data['disable_es_mail']) && $data['disable_es_mail'] == 1) {
     echo "Elastic Search is disabled!\n";
     exit;
 }

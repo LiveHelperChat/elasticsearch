@@ -26,6 +26,9 @@ if ( isset($_POST['StoreOptions']) ) {
         'disable_es' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
+        'disable_es_mail' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+        ),
         'auto_enable' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
@@ -43,7 +46,6 @@ if ( isset($_POST['StoreOptions']) ) {
         )
     );
 
-
     $form = new ezcInputForm( INPUT_POST, $definition );
     $Errors = array();
             
@@ -57,6 +59,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['disable_es'] = 1;
     } else {
         $data['disable_es'] = 0;
+    }
+
+    if ( $form->hasValidData( 'disable_es_mail' ) && $form->disable_es_mail == true ) {
+        $data['disable_es_mail'] = 1;
+    } else {
+        $data['disable_es_mail'] = 0;
     }
 
     if ( $form->hasValidData( 'check_if_exists' ) && $form->check_if_exists == true ) {

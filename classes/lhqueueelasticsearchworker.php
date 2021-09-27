@@ -62,20 +62,24 @@ class erLhcoreClassElasticSearchWorker {
             $db->rollback();
         }
 
-        /*
-         * Mails messages index
-         * */
-        $mailsIndexed = $this->indexMails();
+        $mailsIndexed = $mailsIndexedConversations = 0;
 
-        /*
-         * Conversations index
-         * */
-        $mailsIndexedConversations = $this->indexConversations();
+        if (!isset($data['disable_es_mail']) || $data['disable_es_mail'] == 0) {
+            /*
+             * Mails messages index
+             * */
+            $mailsIndexed = $this->indexMails();
 
-        /*
-         * Conversations index
-         * */
-        $this->indexDeleteMail();
+            /*
+             * Conversations index
+             * */
+            $mailsIndexedConversations = $this->indexConversations();
+
+            /*
+             * Conversations index
+             * */
+            $this->indexDeleteMail();
+        }
 
         $maxRecords = max($mailsIndexed,$chatsId,$mailsIndexedConversations);
 
