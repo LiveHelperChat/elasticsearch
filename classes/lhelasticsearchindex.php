@@ -725,7 +725,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->dep_id = $item->dep_id;
             $esChat->mb_folder = $item->mb_folder;
             $esChat->has_attachment = $item->has_attachment;
-            $esChat->rfc822_body = $item->rfc822_body;
+            $esChat->rfc822_body = mb_substr($item->rfc822_body,0,500);
             $esChat->delivery_status = self::makeKeywords($item->delivery_status_keyed);
             $esChat->undelivered = $item->undelivered;
             $esChat->priority = $item->priority;
