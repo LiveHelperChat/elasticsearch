@@ -298,7 +298,7 @@
                     </div>
                 </div>
 
-                <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/custom_filter_attr_multiinclude.tpl.php')); ?>
+                <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/mail_custom_filter_attr_multiinclude.tpl.php')); ?>
             </div>
 
             <hr class="mt-0">

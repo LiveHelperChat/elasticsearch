@@ -400,6 +400,6 @@ $searchAttributes = array(
     'sortAttributes'   => $fieldSortAttr
 );
 
-erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.chatsearchattr',array('attr' => & $searchAttributes));
+erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.mailsearchattr',array('attr' => & $searchAttributes));
 
 return $searchAttributes;

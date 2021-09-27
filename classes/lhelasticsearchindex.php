@@ -735,6 +735,7 @@ class erLhcoreClassElasticSearchIndex
                 $esChat->conv_user_id = $item->conversation->user_id;
                 $esChat->status_conv = $item->conversation->status;
                 $esChat->start_type = $item->conversation->start_type;
+                $esChat->mail_variables = $item->conversation->mail_variables;
             }
 
             $esChat->subject_id = [];

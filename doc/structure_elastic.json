@@ -138,6 +138,10 @@
           },
           "subject_id": {
             "type": "integer"
+          },
+          "mail_variables": {
+            "type": "text",
+            "index" : false
           }
         },
 		"lh_chat": {
