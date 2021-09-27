@@ -19,9 +19,9 @@
                     <table class="table table-sm mt-1">
                         <thead>
                         <tr>
-                            <th width="8%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Conversation ID')?></th>
-                            <th width="1%" nowrap><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Sender')?></th>
-                            <th width="65%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
+                            <th width="40%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Conversation ID')?></th>
+                            <th width="20%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Sender')?></th>
+                            <th width="20%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
                             <th width="1%" nowrap><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Priority')?></th>
                             <th width="1%" nowrap><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Operator')?></th>
                             <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Department')?></th>
@@ -32,7 +32,7 @@
                         </thead>
                         <?php $previousConversationId = 0; foreach ($items as $item) : ?>
                             <tr class="<?php if ($previousConversationId == $item->conversation_id) : ?>bg-light conversation-id-<?php echo $item->conversation_id?><?php endif;?>" <?php if ($previousConversationId == $item->conversation_id) : ?>style="display: none" <?php endif;?>>
-                                <td title="<?php echo $item->id?>" nowrap="nowrap" class="<?php if ($previousConversationId == $item->conversation_id) : ?>pl-4<?php endif;?>">
+                                <td title="<?php echo $item->id?>" class="<?php if ($previousConversationId == $item->conversation_id) : ?>pl-4<?php endif;?>">
 
                                     <?php if ($item->has_many_messages && ($previousConversationId == 0 || $previousConversationId != $item->conversation_id)) : ?>
                                     <a class="material-icons text-primary mr-0" onclick="$('.conversation-id-<?php echo $item->conversation_id?>').toggle()">expand_more</a>
@@ -71,8 +71,8 @@
                                     <?php endif; ?>
 
                                 </td>
-                                <td nowrap="nowrap" ng-non-bindable>
-                                    <?php echo htmlspecialchars($item->from_name)?> &lt;<?php echo $item->from_address?>&gt;
+                                <td ng-non-bindable>
+                                    <?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->from_name.' <'.$item->from_address.'>',30))?>
                                 </td>
                                 <td ng-non-bindable>
                                     <?php if (isset($item->meta_data['highlight'])) : ?>
