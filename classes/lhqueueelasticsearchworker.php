@@ -81,9 +81,9 @@ class erLhcoreClassElasticSearchWorker {
             $this->indexDeleteMail();
         }
 
-        $maxRecords = max($mailsIndexed,$chatsId,$mailsIndexedConversations);
+        $maxRecords = max($mailsIndexed,$mailsIndexedConversations);
 
-        if (count($maxRecords) >= 100 && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+        if ((count($chatsId) >= 100 || $maxRecords == 20) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
             erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
         }
     }
@@ -96,7 +96,7 @@ class erLhcoreClassElasticSearchWorker {
         $db->beginTransaction();
         try {
             $stmt = $db->prepare('SELECT mail_id, udate FROM lhc_lhesmail_index WHERE status = 0 AND op = 3 LIMIT :limit FOR UPDATE ');
-            $stmt->bindValue(':limit',100,PDO::PARAM_INT);
+            $stmt->bindValue(':limit',20,PDO::PARAM_INT);
             $stmt->execute();
             $chatsIdMetas = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $chatsId = [];
@@ -154,7 +154,7 @@ class erLhcoreClassElasticSearchWorker {
         $db->beginTransaction();
         try {
             $stmt = $db->prepare('SELECT mail_id FROM lhc_lhesmail_index WHERE status = 0 AND op = 1 LIMIT :limit FOR UPDATE ');
-            $stmt->bindValue(':limit',100,PDO::PARAM_INT);
+            $stmt->bindValue(':limit',20,PDO::PARAM_INT);
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
@@ -206,7 +206,7 @@ class erLhcoreClassElasticSearchWorker {
         $db->beginTransaction();
         try {
             $stmt = $db->prepare('SELECT mail_id FROM lhc_lhesmail_index WHERE status = 0 AND op = 0 LIMIT :limit FOR UPDATE ');
-            $stmt->bindValue(':limit',100,PDO::PARAM_INT);
+            $stmt->bindValue(':limit',20,PDO::PARAM_INT);
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
