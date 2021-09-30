@@ -41,6 +41,10 @@
                                     <?php if ($item->undelivered == 1) : ?>
                                         <span title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Undelivered e-mail');?>" class="text-danger material-icons">sms_failed</span>
                                     <?php endif; ?>
+                                    
+                                    <?php if ($item->follow_up_id > 0) : ?>
+                                        <span class="material-icons" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Follow up e-mail');?>">follow_the_signs</span>
+                                    <?php endif; ?>
 
                                     <?php if ($item->start_type == erLhcoreClassModelMailconvConversation::START_OUT) : ?>
                                         <i class="material-icons">call_made</i>

@@ -45,7 +45,7 @@ $ViewList['listmail'] = array(
         'department_group_id','group_id', 'user_ids',
         'export','view','subject_id', 'department_ids',
         'department_group_ids','group_ids','hvf','response_type','status','status_conv',
-        'sender_host','from_host','sender_address'
+        'sender_host','from_host','sender_address','is_followup'
     ),
     'multiple_arguments' => array(
         'search_in',

@@ -157,6 +157,10 @@ if ($filterParams['input_form']->has_operator == 1) {
     $sparams['body']['query']['bool']['must'][]['range']['conv_user_id']['gt'] = 0;
 }
 
+if ($filterParams['input_form']->is_followup == 1) {
+    $sparams['body']['query']['bool']['must'][]['range']['follow_up_id']['gt'] = 0;
+}
+
 if (isset($filterParams['input']->subject_id) && is_array($filterParams['input']->subject_id) && !empty($filterParams['input']->subject_id)) {
 
     erLhcoreClassChat::validateFilterInString($filterParams['input']->subject_id);
@@ -232,7 +236,6 @@ if (trim($filterParams['input_form']->keyword) != '') {
     $sparams['body']['highlight']['fields']['subject'] = new stdClass();
     $sparams['body']['highlight']['fields']['alt_body'] = new stdClass();
 }
-
 
 erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.mailsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
 
