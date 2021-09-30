@@ -424,7 +424,7 @@
 	
 	<?php if ($tab == 'chats' && isset($total_literal)) : ?>
     <div class="float-right">
-        Records in total - <?php echo $total_literal;?>
+        <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Records in total');?> - <?php echo $total_literal;?>
     </div>
     <?php endif; ?>
 

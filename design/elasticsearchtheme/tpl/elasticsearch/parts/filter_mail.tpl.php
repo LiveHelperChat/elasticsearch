@@ -310,6 +310,12 @@
         </div>
     </div>
 
+    <?php if (isset($total_literal)) : ?>
+        <div class="float-right">
+            <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Records in total');?> - <?php echo $total_literal;?>
+        </div>
+    <?php endif; ?>
+
     <div class="btn-group" role="group" aria-label="...">
         <input type="submit" name="doSearchSubmit" class="btn btn-primary btn-sm" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
 
