@@ -38,7 +38,7 @@ foreach ($response['aggregations']['group_by_chat']['buckets'] as $bucket) {
 
         $counter = 0;
         foreach ($chats as $chat) {
-            if ($counter > 0) {
+            if ($counter > 0 || !is_numeric($chat->id)) {
                 $chat->removeThisOnly();
                 echo $chat->chat_id , '-', $chat->id,"\n";
             } else {

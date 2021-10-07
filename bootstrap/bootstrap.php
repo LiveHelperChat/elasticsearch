@@ -18,6 +18,8 @@ class erLhcoreClassExtensionElasticsearch
 
         $dispatcher->listen('chat.close', 'erLhcoreClassElasticSearchIndex::indexChatDelay');
         $dispatcher->listen('chat.modified', 'erLhcoreClassElasticSearchIndex::indexChatModify');
+        $dispatcher->listen('chat.subject_remove', 'erLhcoreClassElasticSearchIndex::indexChatModify');
+        $dispatcher->listen('chat.subject_add', 'erLhcoreClassElasticSearchIndex::indexChatModify');
 
         if (!(isset($this->settings_personal['disable_es']) && $this->settings_personal['disable_es'] == 1)) {
 

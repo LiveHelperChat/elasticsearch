@@ -7,7 +7,7 @@ class erLhcoreClassElasticSearchIndex
     public static function indexChats($params)
     {
         $sparams = array();
-        $sparams['body']['query']['bool']['must'][]['terms']['chat_id'] = array_keys($params['chats']);
+        $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['chats']);
         $sparams['limit'] = 1000;
 
         $dateRange = array();
@@ -59,6 +59,7 @@ class erLhcoreClassElasticSearchIndex
                 $esChat = new erLhcoreClassModelESChat();
             }
 
+            $esChat->id = $item->id;
             $esChat->chat_id = $item->id;
             $esChat->time = $item->time * 1000;
             $esChat->pnd_time = $item->pnd_time * 1000;

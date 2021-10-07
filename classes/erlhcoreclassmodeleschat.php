@@ -7,6 +7,7 @@ class erLhcoreClassModelESChat
     public function getState()
     {
         $states = array(
+            'id' => $this->id,
             'user_id' => $this->user_id,
             'transfer_uid' => $this->transfer_uid,
             'chat_id' => $this->chat_id,
@@ -146,7 +147,8 @@ class erLhcoreClassModelESChat
     }
 
     public static $elasticType = 'lh_chat';
-    
+
+    public $id = null;
     public $transfer_uid = null;
     public $nc_cb_executed = null;
     public $operation = null;
