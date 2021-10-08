@@ -36,6 +36,7 @@ foreach ($response['aggregations']['group_by_chat']['buckets'] as $bucket) {
         ),
         array('date_index' => array('gte' => time() - 30*24*3600)));
 
+        $allRemoved = true;
         $counter = 0;
         foreach ($chats as $chat) {
             if ($counter > 0 || !is_numeric($chat->id)) {
@@ -43,9 +44,17 @@ foreach ($response['aggregations']['group_by_chat']['buckets'] as $bucket) {
                 echo $chat->chat_id , '-', $chat->id,"\n";
             } else {
                 echo "Skipping\n";
+                $allRemoved = false;
             }
 
             $counter++;
+        }
+
+        // If all chats were removed because id was string reindex chat
+        if ($allRemoved == true) {
+            $chat = new erLhcoreClassModelChat();
+            $chat->id = (int)trim($bucket['key']);
+            erLhcoreClassElasticSearchIndex::indexChatDelay(['chat' => $chat]);
         }
     }
 }
