@@ -290,13 +290,14 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><input type="checkbox" <?php if ($input->no_user == true) : ?>checked="checked"<?php endif;?> name="no_user" value="on" />&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Has not operator assigned')?></label><br/>
-                                <label><input type="checkbox" <?php if ($input->hvf == true) : ?>checked="checked"<?php endif;?> name="hvf" value="on" />&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Message has an attachment')?></label>
+                                <label><input type="checkbox" <?php if ($input->hvf == true) : ?>checked="checked"<?php endif;?> name="hvf" value="on" />&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Message has an attachment')?></label><br/>
                                 <label><input type="checkbox" name="has_operator" value="1" <?php $input->has_operator == true ? print 'checked="checked"' : ''?> >&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Has operator assigned')?></label>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label><input type="checkbox" <?php if ($input->is_followup == true) : ?>checked="checked"<?php endif;?> name="is_followup" value="on" />&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Is followup')?></label><br/>
+                                <label class="col-form-label"><input type="checkbox" name="undelivered" <?php $input->undelivered == 1 ? print ' checked="checked" ' : ''?> value="on" /> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Undelivered')?></label><br/>
+                                <label class="col-form-label"><input type="checkbox" <?php if ($input->is_followup == true) : ?>checked="checked"<?php endif;?> name="is_followup" value="on" />&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Is followup')?></label>
                             </div>
                         </div>
                     </div>

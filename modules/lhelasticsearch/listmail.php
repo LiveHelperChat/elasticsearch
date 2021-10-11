@@ -143,6 +143,10 @@ if ($filterParams['input_form']->no_user == 1) {
     $sparams['body']['query']['bool']['must'][]['term']['conv_user_id'] = 0;
 }
 
+if ($filterParams['input_form']->undelivered == 1) {
+    $sparams['body']['query']['bool']['must'][]['term']['undelivered'] = 1;
+}
+
 if (isset($filterParams['filter']['filtergte']['time'])) {
     $sparams['body']['query']['bool']['must'][]['range']['time']['gte'] = $filterParams['filter']['filtergte']['time'] * 1000;
     $dateFilter['gte'] = $filterParams['filter']['filtergte']['time'];
