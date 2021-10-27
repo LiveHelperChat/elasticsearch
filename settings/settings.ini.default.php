@@ -1,8 +1,8 @@
 <?php 
 
 return array (
-		'host' 			=> 'localhost',//'localhost',		
-		'port' 			=> '9200',
+		'host' 			=> getenv('ES_HOST') ?: 'localhost',//'localhost',		
+		'port' 			=> getenv('ES_PORT') ?: '9200',
 		'index' 		=> 'chat-',
         'index_search' 	=> 'chat-*',
 	    'additional_indexes' => array(
