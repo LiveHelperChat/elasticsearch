@@ -74,6 +74,56 @@ class erLhcoreClassElasticClient
 
         return $returnObjects;
     }
+    
+    public static function searchObjectsAggregated($handler, $params, $className, $aggregationName)
+    {
+
+        if (isset($params['enable_sql_cache'])) {
+            unset($params['enable_sql_cache']);
+        }
+
+        if (isset($params['sql_cache_timeout'])) {
+            unset($params['sql_cache_timeout']);
+        }
+
+        self::$lastSearchCount = 0;
+
+        $response = $handler->search($params);
+
+        $returnObjects = array();
+        if(isset($response['aggregations'][$aggregationName]['buckets']) && !empty($response['aggregations'][$aggregationName]['buckets'])){
+            
+            $count = count($response['aggregations'][$aggregationName]['buckets']);
+            foreach($response['aggregations'][$aggregationName]['buckets'] as $element){  
+                $obj = new $className();
+                $obj->aggregationName = $aggregationName;
+                $obj->setState($element);
+                
+                $returnObjects[] = $obj;
+            }
+            self::$lastSearchCount = $count;
+        }
+        
+        return $returnObjects;
+    }
+
+    public static function mGet($handler, $params, $className)
+    {
+        $documents = $handler->mget($params);
+
+        $returnObjects = array();
+
+        foreach ($documents['docs'] as $doc) {
+            if ($doc['found'] == 1) {
+                $obj = new $className();
+                $obj->setState($doc['_source']);
+                $obj->id = $doc['_id'];
+                $returnObjects[$obj->id] = $obj;
+            }
+        }
+
+        return $returnObjects;
+    }
 
     public static function mGet($handler, $params, $className)
     {
