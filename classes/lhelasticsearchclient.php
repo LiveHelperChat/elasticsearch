@@ -125,24 +125,6 @@ class erLhcoreClassElasticClient
         return $returnObjects;
     }
 
-    public static function mGet($handler, $params, $className)
-    {
-        $documents = $handler->mget($params);
-
-        $returnObjects = array();
-
-        foreach ($documents['docs'] as $doc) {
-            if ($doc['found'] == 1) {
-                $obj = new $className();
-                $obj->setState($doc['_source']);
-                $obj->id = $doc['_id'];
-                $returnObjects[$obj->id] = $obj;
-            }
-        }
-
-        return $returnObjects;
-    }
-
     public static function indexExists($handler, $index, $indexPrepend = null, $forceUpdate = false)
     {
         static $indexChecked = array();
