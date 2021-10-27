@@ -102,7 +102,8 @@ class erLhcoreClassExtensionElasticsearch
             'erLhcoreClassElasticSearchIndex'    => 'extension/elasticsearch/classes/lhelasticsearchindex.php',
             'erLhcoreClassElasticSearchWorker'   => 'extension/elasticsearch/classes/lhqueueelasticsearchworker.php',
             'erLhcoreClassElasticSearchView'     => 'extension/elasticsearch/classes/lhelasticsearchview.php',
-            'erLhcoreClassModelESMail'           => 'extension/elasticsearch/classes/erlhcoreclassmodelesmail.php'
+            'erLhcoreClassModelESMail'           => 'extension/elasticsearch/classes/erlhcoreclassmodelesmail.php',
+	    'erLhcoreClassModelESMsgAgg'         => 'extension/elasticsearch/classes/erlhcoreclassmodelesmsgagg.php'
         );
 
         if (key_exists($className, $classesArray)) {
