@@ -323,6 +323,48 @@ trait erLhcoreClassElasticTrait
 
         return $objects;
     }
+    
+    public static function getAggregation($params = array(), $executionParams = array(), $aggregationName)
+    {
+        $paramsDefault = array(
+            'limit' => 0
+        );
+
+        $params = array_merge($paramsDefault, $params);
+
+        $searchHandler = self::getSession();
+
+        $indexSearch = '';
+
+        if (isset($executionParams['date_index']) && !empty($executionParams['date_index'])) {
+            $indexSearch = self::extractIndexFilter($executionParams['date_index']);
+        }
+
+        $params['index'] = $indexSearch != '' ? $indexSearch : self::$indexNameSearch . '-' . self::$elasticType;
+
+        $params['ignore_unavailable'] = true;
+
+        // Convert pagination parameters to elastic one
+        if (isset($params['limit'])) {
+            if ($params['limit'] >= 0) {
+                $params['size'] = $params['limit'];
+            }
+            unset($params['limit']);
+        }
+
+        $objects = erLhcoreClassElasticClient::searchObjectsAggregated($searchHandler, $params, __CLASS__, $aggregationName);
+
+        if (isset($params['enable_sql_cache']) && $params['enable_sql_cache'] == true) {
+            if (isset($params['sql_cache_timeout'])) {
+                $cache->store($cacheKey, $objects, $params['sql_cache_timeout']);
+            } else {
+                $cache->store($cacheKey, $objects);
+            }
+        }
+
+        return $objects;
+    }
+
 
     public static function mGet($ids)
     {
