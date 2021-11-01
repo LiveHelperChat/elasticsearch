@@ -2200,11 +2200,11 @@ class erLhcoreClassElasticSearchStatistic
         $paramsOrig = $paramsOrigIndex = $params;
         if ($aggr[$params['params_execution']['group_by']] == 'month') {
             if (!isset($paramsOrig['filter']['filtergte']['time'])) {
-                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergte']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
             }
         } else {
             if (! isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
-                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergte']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
             }
         }
 
@@ -2257,7 +2257,7 @@ class erLhcoreClassElasticSearchStatistic
                     } else if ($attr == 'response_type') {
                         $returnArray['nick'][] = json_encode($responseTypes[$bucket['key']]);
                     } else {
-                        $returnArray['nick'][] = json_encode($demoItem->{$attr});
+                        $returnArray['nick'][] = json_encode($bucket['key']);
                     }
 
                     $returnArray['data'][] = $bucket['doc_count'];
@@ -2304,7 +2304,7 @@ class erLhcoreClassElasticSearchStatistic
             $dateTime = new DateTime("now");
             $utcAdjust = $dateTime->getOffset() / 60 / 60; // Hours are stored in UTC format. We need to adjust filters
 
-            $diffDays = ((isset($params['filter']['filterlte']['time']) ? $params['filter']['filterlte']['time'] : time())-$params['filter']['filtergte']['time'])/(24*3600);
+            $diffDays = ((isset($paramsOrig['filter']['filterlte']['time']) ? $paramsOrig['filter']['filterlte']['time'] : time())-$paramsOrig['filter']['filtergte']['time'])/(24*3600);
 
             foreach ($response['aggregations']['chat_by_hour']['buckets'] as $item) {
                 $hourAdjusted = $item['key'] + $utcAdjust;
