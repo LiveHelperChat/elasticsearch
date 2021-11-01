@@ -16,13 +16,13 @@ if (is_numeric($cronjobPathOption->value)) {
     $lastId = 0;
 }
 
-echo "Indexing chats\n";
+echo "Indexing mails\n";
 
 $pageLimit = 500;
 
 for ($i = 0; $i < 1000000; $i++) {
 
-    echo "Saving chats - ",($i + 1),"\n";
+    echo "Saving mails - ",($i + 1),"\n";
 
     $chats = erLhcoreClassModelMailconvMessage::getList(array('offset' => 0, 'filtergt' => array('id' => $lastId), 'limit' => $pageLimit, 'sort' => 'id ASC'));
 
@@ -41,7 +41,7 @@ for ($i = 0; $i < 1000000; $i++) {
 
         erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $chats));
     } else {
-        echo "No chats to index!\n";
+        echo "No mails to index!\n";
         exit;
     }
 }

@@ -70,6 +70,15 @@ class erLhcoreClassExtensionElasticsearch
 
                 // Mail module
 
+                // Statistic
+                $dispatcher->listen('mail.statistic.messagesperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                $dispatcher->listen('mail.statistic.messagesperuser', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                $dispatcher->listen('mail.statistic.messagesperdep', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                $dispatcher->listen('mail.statistic.avginteractionperdep', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                $dispatcher->listen('mail.statistic.avginteractionperuser', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                $dispatcher->listen('mail.statistic.messagesperhour', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                $dispatcher->listen('mail.statistic.attrbyperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+
                 // Conversations
                 $dispatcher->listen('mail.conversation.after_save', 'erLhcoreClassElasticSearchIndex::conversationIndex');
                 $dispatcher->listen('mail.conversation.after_update', 'erLhcoreClassElasticSearchIndex::conversationIndex');

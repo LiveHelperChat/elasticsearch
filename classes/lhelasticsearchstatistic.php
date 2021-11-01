@@ -2093,4 +2093,312 @@ class erLhcoreClassElasticSearchStatistic
     public static function getPreviousChatsByChat($chat) {
 
     }
+
+    public static function mailMessagesperinterval($params) {
+        
+        if ($params['lhc_caller']['function'] == 'messagesPerInterval' && (in_array('mavgwaittime',$params['params_execution']['chart_type']) || in_array('mmsgperinterval',$params['params_execution']['chart_type']))) {
+            $params['params_execution']['chart_type'] = ['mavgwaittime','mmsgperinterval'];
+        } elseif ($params['lhc_caller']['function'] == 'messagesPerUser'  &&  in_array('mmsgperuser',$params['params_execution']['chart_type'])) {
+            $params['params_execution']['chart_type'] = ['mmsgperuser'];
+        } elseif ($params['lhc_caller']['function'] == 'messagesPerDep' && in_array('mmsgperdep',$params['params_execution']['chart_type'])) {
+            $params['params_execution']['chart_type'] = ['mmsgperdep'];
+        } elseif ($params['lhc_caller']['function'] == 'messagesPerHour' && in_array('msgperhour',$params['params_execution']['chart_type'])) {
+            $params['params_execution']['chart_type'] = ['msgperhour'];
+        } elseif ($params['lhc_caller']['function'] == 'avgInteractionPerDep' && in_array('mmintperdep',$params['params_execution']['chart_type'])) {
+            $params['params_execution']['chart_type'] = ['mmintperdep'];
+        } elseif ($params['lhc_caller']['function'] == 'avgInteractionPerUser' && in_array('mmintperuser',$params['params_execution']['chart_type'])) {
+            $params['params_execution']['chart_type'] = ['mmintperuser'];
+        } elseif ($params['lhc_caller']['function'] == 'attrByPerInterval' && in_array('mattrgroup',$params['params_execution']['chart_type'])) {
+            $params['params_execution']['chart_type'] = ['mattrgroup'];
+        }
+
+        return self::mailMessagesperintervalprocess($params);
+    }
+
+    public static function mailMessagesperintervalprocess($params) {
+
+        $numberOfChats = array();
+
+        $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESMail::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+
+        $aggr = [1 => 'day', 0 => 'month'];
+
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr[$params['params_execution']['group_by']];
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+
+        if (is_array($params['params_execution']['chart_type']) && (in_array('mmsgperinterval',$params['params_execution']['chart_type'])) ) {
+            $sparams['body']['aggs']['chats_over_time']['aggs']['response_type']['terms']['field'] = 'response_type';
+        }
+
+        if (in_array('mavgwaittime',$params['params_execution']['chart_type'])) {
+            $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['filter']['range']['wait_time']['lt'] = 600;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['filter']['range']['wait_time']['gt'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['aggs']['wait_time_avg']['avg']['field'] = 'wait_time';
+        }
+
+        if (is_array($params['params_execution']['chart_type']) && in_array('mmsgperuser', $params['params_execution']['chart_type'])) {
+            $sparams['body']['aggs']['chat_user_aggr']['terms']['field'] = 'user_id';
+        }
+
+        if (is_array($params['params_execution']['chart_type']) && in_array('mmsgperdep', $params['params_execution']['chart_type'])) {
+            $sparams['body']['aggs']['chat_dep_aggr']['terms']['field'] = 'dep_id';
+        }
+        
+        if (is_array($params['params_execution']['chart_type']) && in_array('msgperhour', $params['params_execution']['chart_type'])) {
+            $sparams['body']['aggs']['chat_by_hour']['terms']['field'] = 'hour';
+            $sparams['body']['aggs']['chat_by_hour']['terms']['size'] = 48;
+        }
+
+        if (is_array($params['params_execution']['chart_type']) && in_array('mmintperdep', $params['params_execution']['chart_type'])) {
+            $params['filter']['filtergte']['interaction_time'] = 1;
+            $params['filter']['filterlte']['interaction_time'] = 600;
+            $sparams['body']['aggs']['chat_dep_aggr_int']['terms']['field'] = 'dep_id';
+            $sparams['body']['aggs']['chat_dep_aggr_int']['aggs']['interaction_time']['avg']['field'] = 'interaction_time';
+        }
+
+        if (is_array($params['params_execution']['chart_type']) && in_array('mmintperuser', $params['params_execution']['chart_type'])) {
+            $params['filter']['filtergte']['interaction_time'] = 1;
+            $params['filter']['filterlte']['interaction_time'] = 600;
+            $sparams['body']['aggs']['chat_user_aggr_int']['terms']['field'] = 'user_id';
+            $sparams['body']['aggs']['chat_user_aggr_int']['aggs']['interaction_time']['avg']['field'] = 'interaction_time';
+        }
+
+        if (is_array($params['params_execution']['chart_type']) && in_array('mattrgroup', $params['params_execution']['chart_type'])) {
+            $validGroupFields = array(
+                'user_id' => 'user_id',
+                'dep_id' => 'dep_id',
+                'mailbox_id' => 'mailbox_id',
+                'response_type' => 'response_type',
+            );
+            if (isset($params['params_execution']['group_field']) && key_exists($params['params_execution']['group_field'], $validGroupFields)) {
+                $groupField = $validGroupFields[$params['params_execution']['group_field']];
+                $attr = $params['params_execution']['group_field'];
+            } else {
+                return [];
+            }
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_attr_group_multi']['terms']['field'] = $attr;
+        }
+
+
+        if (isset($params['filter']['filtergte']['udate'])) {
+            $params['filter']['filtergte']['time'] = $params['filter']['filtergte']['udate'];
+            unset($params['filter']['filtergte']['udate']);
+        }
+
+        if (isset($params['filter']['filterlte']['udate'])) {
+            $params['filter']['filterlte']['time'] = $params['filter']['filterlte']['udate'];
+            unset($params['filter']['filterlte']['udate']);
+        }
+
+        $paramsOrig = $paramsOrigIndex = $params;
+        if ($aggr[$params['params_execution']['group_by']] == 'month') {
+            if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            }
+        } else {
+            if (! isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
+            }
+        }
+
+        $indexSearch = self::getIndexByFilter($paramsOrigIndex['filter'], erLhcoreClassModelESMail::$elasticType);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
+
+        $response = $elasticSearchHandler->search($sparams);
+
+        $valuesResponse = [
+            erLhcoreClassModelMailconvMessage::RESPONSE_NORMAL => 'normal',
+            erLhcoreClassModelMailconvMessage::RESPONSE_NOT_REQUIRED => 'notrequired',
+            erLhcoreClassModelMailconvMessage::RESPONSE_INTERNAL => 'send',
+            erLhcoreClassModelMailconvMessage::RESPONSE_UNRESPONDED => 'unresponded',
+        ];
+
+        if (is_array($params['params_execution']['chart_type']) && in_array('mattrgroup', $params['params_execution']['chart_type'])) {
+
+            $responseTypes = array(
+                erLhcoreClassModelMailconvMessage::RESPONSE_UNRESPONDED => erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconv','Unresponded'),
+                erLhcoreClassModelMailconvMessage::RESPONSE_NOT_REQUIRED => erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconv','No reply required'),
+                erLhcoreClassModelMailconvMessage::RESPONSE_INTERNAL => erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconv','Send messages'),
+                erLhcoreClassModelMailconvMessage::RESPONSE_NORMAL => erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconv','Responded by e-mail'),
+            );
+
+            $numberOfChats = [];
+
+            foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucketGroup) {
+
+                if ($bucketGroup['key'] > 10) {
+                    $keyDateUnix = $bucketGroup['key'] / 1000;
+                } else {
+                    $keyDateUnix = $bucketGroup['key'];
+                }
+
+                $returnArray = array();
+
+                foreach ($bucketGroup['chat_attr_group_multi']['buckets'] as $bucket) {
+                    $returnArray['color'][] = json_encode(erLhcoreClassChatStatistic::colorFromString($bucket['key']));
+                    if ($attr == 'user_id') {
+                        $returnArray['nick'][] = json_encode($bucket['key'] > 0 && ($itemStat = erLhcoreClassModelUser::fetch($bucket['key'],true)) ? $itemStat->name_official : erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconv','Not assigned'));
+                    } else if ($attr == 'dep_id') {
+                        $returnArray['nick'][] = json_encode($bucket['key'] > 0 && ($itemStat = erLhcoreClassModelDepartament::fetch($bucket['key'])) ? (string)$itemStat : erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconv','Not assigned'));
+                    } else if ($attr == 'mailbox_id') {
+                        $returnArray['nick'][] = json_encode($bucket['key'] > 0 && ($itemStat = erLhcoreClassModelMailconvMailbox::fetch($bucket['key'])) ? (string)$itemStat : erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconv','Not assigned'));
+                    } else if ($attr == 'response_type') {
+                        $returnArray['nick'][] = json_encode($responseTypes[$bucket['key']]);
+                    } else {
+                        $returnArray['nick'][] = json_encode($demoItem->{$attr});
+                    }
+
+                    $returnArray['data'][] = $bucket['doc_count'];
+                }
+
+                $numberOfChats[$keyDateUnix] = $returnArray;
+            }
+
+            $returnReversed = array();
+
+            foreach ($numberOfChats as $dateIndex => $returnData) {
+                for ($i = 0; $i < 12; $i++) {
+                    $returnReversed[$i]['data'][] = isset($returnData['data'][$i]) ? $returnData['data'][$i] : 0;
+                    $returnReversed[$i]['color'][] = isset($returnData['color'][$i]) ? $returnData['color'][$i] : '""';
+                    $returnReversed[$i]['nick'][] = isset($returnData['nick'][$i]) ? $returnData['nick'][$i] : '""';
+                }
+            }
+
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => array('labels' => $numberOfChats, 'data' => $returnReversed)
+            );
+        }
+
+        if (in_array('mmintperuser', $params['params_execution']['chart_type'])) {
+            $numberOfChats = [];
+            foreach ($response['aggregations']['chat_user_aggr_int']['buckets'] as $bucket) {
+                $numberOfChats[] = [
+                    'user_id' => $bucket['key'],
+                    'interaction_time' => $bucket['interaction_time']['value']
+                ];
+            }
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => $numberOfChats
+            );
+        }
+
+        if (in_array('msgperhour', $params['params_execution']['chart_type'])) {
+
+            $numberOfChats['total'] = array_fill(1, 23, 0);
+            $numberOfChats['byday'] = array_fill(1, 23, 0);
+
+            $dateTime = new DateTime("now");
+            $utcAdjust = $dateTime->getOffset() / 60 / 60; // Hours are stored in UTC format. We need to adjust filters
+
+            $diffDays = ((isset($params['filter']['filterlte']['time']) ? $params['filter']['filterlte']['time'] : time())-$params['filter']['filtergte']['time'])/(24*3600);
+
+            foreach ($response['aggregations']['chat_by_hour']['buckets'] as $item) {
+                $hourAdjusted = $item['key'] + $utcAdjust;
+
+                if ($hourAdjusted < 0){
+                    $hourAdjusted = 24 + $hourAdjusted;
+                }
+
+                if ($hourAdjusted > 23) {
+                    $hourAdjusted = $hourAdjusted - 24;
+                }
+
+                $numberOfChats['total'][$hourAdjusted] = $item['doc_count'];
+                $numberOfChats['byday'][$hourAdjusted] = $item['doc_count']/$diffDays;
+            }
+
+            ksort($numberOfChats, SORT_NUMERIC);
+
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => $numberOfChats
+            );
+        }
+
+        if (in_array('mmintperdep', $params['params_execution']['chart_type'])) {
+            $numberOfChats = [];
+            foreach ($response['aggregations']['chat_dep_aggr_int']['buckets'] as $bucket) {
+                $numberOfChats[] = [
+                    'dep_id' => $bucket['key'],
+                    'interaction_time' => $bucket['interaction_time']['value']
+                ];
+            }
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => $numberOfChats
+            );
+        }
+
+
+        if (in_array('mmsgperuser', $params['params_execution']['chart_type'])) {
+            $numberOfChats = [];
+            foreach ($response['aggregations']['chat_user_aggr']['buckets'] as $bucket) {
+                $numberOfChats[] = [
+                    'user_id' => $bucket['key'],
+                    'total_records' => $bucket['doc_count']
+                ];
+            }
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => $numberOfChats
+            );
+        }
+
+        if (in_array('mmsgperdep', $params['params_execution']['chart_type'])) {
+            $numberOfChats = [];
+            foreach ($response['aggregations']['chat_dep_aggr']['buckets'] as $bucket) {
+                $numberOfChats[] = [
+                    'dep_id' => $bucket['key'],
+                    'total_records' => $bucket['doc_count']
+                ];
+            }
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => $numberOfChats
+            );
+        }
+
+        foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+
+            if ($bucket['key'] > 10) {
+                $keyDateUnix = $bucket['key'] / 1000;
+            } else {
+                $keyDateUnix = $bucket['key'];
+            }
+
+            if (in_array('mavgwaittime', $params['params_execution']['chart_type'])) {
+                $numberOfChats[$keyDateUnix]['avg_wait_time'] = $bucket['avg_wait_time']['wait_time_avg']['value'];
+            }
+
+            if (in_array('mmsgperinterval', $params['params_execution']['chart_type'])) {
+                $numberOfChats[$keyDateUnix]['unresponded'] =
+                $numberOfChats[$keyDateUnix]['send'] =
+                $numberOfChats[$keyDateUnix]['notrequired'] =
+                $numberOfChats[$keyDateUnix]['normal'] = 0;
+                foreach ($bucket['response_type']['buckets'] as $bucketResponse) {
+                    $numberOfChats[$keyDateUnix][$valuesResponse[$bucketResponse['key']]] = $bucketResponse['doc_count'];
+                }
+            }
+        }
+
+        return array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+            'list' => $numberOfChats
+        );
+    }
+
 }
