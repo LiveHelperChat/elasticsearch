@@ -13,6 +13,9 @@
           "conv_user_id": {
             "type": "long"
           },
+          "follow_up_id": {
+            "type": "long"
+          },
           "size": {
             "type": "long"
           },
