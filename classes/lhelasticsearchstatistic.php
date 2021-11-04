@@ -2016,13 +2016,13 @@ class erLhcoreClassElasticSearchStatistic
                 } elseif ($type == 'filtergt') {
                     $sparams['body']['query']['bool']['must'][]['range'][$field]['gt'] = $value;
                 } elseif ($type == 'filterin') {
-                    $sparams['body']['query']['bool']['must'][]['terms'][$field] = $value;
+                    $sparams['body']['query']['bool']['must'][]['terms'][$field] = array_values($value);
                 } elseif ($type == 'filterm') {
                     $sparams['body']['query']['bool']['must'][]['term'][$field] = $value;
                 } elseif ($type == 'filterinm') {
                     $sparams['body']['query']['bool']['must'][]['terms'][$field] = $value;
                 } elseif ($type == 'filterin_elastic' && isset($customFields[$field])) {
-                    $sparams['body']['query']['bool']['must'][]['terms'][$customFields[$field]] = $value;
+                    $sparams['body']['query']['bool']['must'][]['terms'][$customFields[$field]] = array_values($value);
                 }
             }
         }
