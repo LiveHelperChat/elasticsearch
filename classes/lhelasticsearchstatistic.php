@@ -2000,7 +2000,8 @@ class erLhcoreClassElasticSearchStatistic
             foreach ($params as $field => $value) {
                 
                 $field = str_replace('lh_chat.', '', $field);
-                
+                $field = str_replace('lhc_mailconv_msg.', '', $field);
+
                 if ($field == 'time' || $field == 'itime') {
                     $value = $value * 1000;
                 }
