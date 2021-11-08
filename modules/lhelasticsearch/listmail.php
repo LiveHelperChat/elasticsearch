@@ -244,7 +244,11 @@ if (trim($filterParams['input_form']->keyword) != '') {
 erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.mailsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
 
 if ($filterParams['input_form']->sort_chat == 'asc') {
+    $sort = array('conversation_id' => array('order' => 'asc'));
+} elseif ($filterParams['input_form']->sort_chat == 'lastupdateasc') {
     $sort = array('time' => array('order' => 'asc'));
+} elseif ($filterParams['input_form']->sort_chat == 'lastupdatedesc') {
+    $sort = array('time' => array('order' => 'desc'));
 } elseif ($filterParams['input_form']->sort_chat == 'relevance') {
     $sort = array('_score' => array('order' => 'desc'));
 } else {
