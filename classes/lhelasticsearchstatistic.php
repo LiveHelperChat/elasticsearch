@@ -2145,10 +2145,12 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if (is_array($params['params_execution']['chart_type']) && in_array('mmsgperuser', $params['params_execution']['chart_type'])) {
+            $sparams['body']['aggs']['chat_user_aggr']['terms']['size'] = 50;
             $sparams['body']['aggs']['chat_user_aggr']['terms']['field'] = 'user_id';
         }
 
         if (is_array($params['params_execution']['chart_type']) && in_array('mmsgperdep', $params['params_execution']['chart_type'])) {
+            $sparams['body']['aggs']['chat_dep_aggr']['terms']['size'] = 50;
             $sparams['body']['aggs']['chat_dep_aggr']['terms']['field'] = 'dep_id';
         }
         
@@ -2161,6 +2163,7 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filtergte']['interaction_time'] = 1;
             $params['filter']['filterlte']['interaction_time'] = 600;
             $sparams['body']['aggs']['chat_dep_aggr_int']['terms']['field'] = 'dep_id';
+            $sparams['body']['aggs']['chat_dep_aggr_int']['terms']['size'] = 50;
             $sparams['body']['aggs']['chat_dep_aggr_int']['aggs']['interaction_time']['avg']['field'] = 'interaction_time';
         }
 
@@ -2168,6 +2171,7 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filtergte']['interaction_time'] = 1;
             $params['filter']['filterlte']['interaction_time'] = 600;
             $sparams['body']['aggs']['chat_user_aggr_int']['terms']['field'] = 'user_id';
+            $sparams['body']['aggs']['chat_user_aggr_int']['terms']['size'] = 50;
             $sparams['body']['aggs']['chat_user_aggr_int']['aggs']['interaction_time']['avg']['field'] = 'interaction_time';
         }
 
@@ -2216,6 +2220,7 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
+
 
         $response = $elasticSearchHandler->search($sparams);
 

@@ -223,7 +223,7 @@
                                     <option value="asc" <?php $input->sort_chat == 'asc' ? print 'selected="selected"' : null?> >From old to new</option>
                                     <option value="relevance" <?php ($input->sort_chat == 'relevance') ? print 'selected="selected"' : null?> >Relevance</option>
                                     <option value="lastupdatedesc" <?php if ($input->sort_chat == 'lastupdatedesc') : ?>selected="selected"<?php endif; ?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('pagelayout/pagelayout','Newest replies first');?></option>
-                                    <option value="lastupdateasc" <?php if ($input->sort_chat == 'lastupdateasc') : ?>selected="selected"<?php endif; ?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('pagelayout/pagelayout','Newest replies last');?></option>
+                                    <option value="lastupdateasc" <?php if ($input->sort_chat == 'lastupdateasc') : ?>selected="selected"<?php endif; ?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('pagelayout/pagelayout','Oldest replies first');?></option>
                                 </select>
                             </div>
                         </div>
