@@ -35,6 +35,8 @@ class erLhcoreClassElasticSearchIndex
             foreach ($dateRange as $dateRangeItem) {
                 if ($dataOptions['index_type'] == 'daily') {
                     $dateRangesIndex[] = date('Y.m.d',$dateRangeItem);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $dateRangesIndex[] = date('Y',$dateRangeItem);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
                     $dateRangesIndex[] = date('Y.m',$dateRangeItem);
                 }
@@ -204,6 +206,8 @@ class erLhcoreClassElasticSearchIndex
             } else if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
                     $indexSave = erLhcoreClassModelESChat::$indexName . '-' .erLhcoreClassModelESChat::$elasticType . '-' . gmdate('Y.m.d',$item->time);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $indexSave = erLhcoreClassModelESChat::$indexName . '-' .erLhcoreClassModelESChat::$elasticType . '-' . gmdate('Y',$item->time);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
                     $indexSave = erLhcoreClassModelESChat::$indexName . '-' .erLhcoreClassModelESChat::$elasticType . '-' . gmdate('Y.m',$item->time);
                 }
@@ -265,6 +269,8 @@ class erLhcoreClassElasticSearchIndex
             } else if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
                     $indexSave = erLhcoreClassModelESOnlineSession::$indexName . '-' . erLhcoreClassModelESOnlineSession::$elasticType . '-' . date('Y.m.d',$item->time);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $indexSave = erLhcoreClassModelESOnlineSession::$indexName . '-' . erLhcoreClassModelESOnlineSession::$elasticType . '-' . date('Y',$item->time);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
                     $indexSave = erLhcoreClassModelESOnlineSession::$indexName . '-' . erLhcoreClassModelESOnlineSession::$elasticType . '-' . date('Y.m',$item->time);
                 }
@@ -341,6 +347,8 @@ class erLhcoreClassElasticSearchIndex
             if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
                     $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' . date('Y.m.d',$item->time);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' .  date('Y',$item->time);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
                     $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' .  date('Y.m',$item->time);
                 }
@@ -392,6 +400,8 @@ class erLhcoreClassElasticSearchIndex
             if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
                     $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . '-' . erLhcoreClassModelESOnlineOperator::$elasticType . '-' . date('Y.m.d', $opEs->itime/1000);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . '-' . erLhcoreClassModelESOnlineOperator::$elasticType . '-' . date('Y',$opEs->itime/1000);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
                     $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . '-' . erLhcoreClassModelESOnlineOperator::$elasticType . '-' . date('Y.m',$opEs->itime/1000);
                 }
@@ -482,6 +492,8 @@ class erLhcoreClassElasticSearchIndex
                 } else if (isset($dataOptions['index_type'])) {
                     if ($dataOptions['index_type'] == 'daily') {
                         $indexSave = erLhcoreClassModelESMsg::$indexName . '-' . erLhcoreClassModelESMsg::$elasticType . '-' . date('Y.m.d', $item->time);
+                    } elseif ($dataOptions['index_type'] == 'yearly') {
+                        $indexSave = erLhcoreClassModelESMsg::$indexName . '-' . erLhcoreClassModelESMsg::$elasticType . '-' . date('Y',$item->time);
                     } elseif ($dataOptions['index_type'] == 'monthly') {
                         $indexSave = erLhcoreClassModelESMsg::$indexName . '-' . erLhcoreClassModelESMsg::$elasticType . '-' . date('Y.m',$item->time);
                     }
@@ -658,6 +670,8 @@ class erLhcoreClassElasticSearchIndex
             foreach ($dateRange as $dateRangeItem) {
                 if ($dataOptions['index_type'] == 'daily') {
                     $dateRangesIndex[] = date('Y.m.d',$dateRangeItem);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $dateRangesIndex[] = date('Y',$dateRangeItem);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
                     $dateRangesIndex[] = date('Y.m',$dateRangeItem);
                 }
@@ -770,6 +784,8 @@ class erLhcoreClassElasticSearchIndex
             } else if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
                     $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m.d',$item->udate);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y',$item->udate);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
                     $indexSave = erLhcoreClassModelESMail::$indexName . '-' .erLhcoreClassModelESMail::$elasticType . '-' . gmdate('Y.m',$item->udate);
                 }
