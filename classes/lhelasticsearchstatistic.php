@@ -1800,7 +1800,7 @@ class erLhcoreClassElasticSearchStatistic
         }
 
        $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = $attr;
-       $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['size'] = 10;
+       $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['size'] = (isset($params['params_execution']['group_limit']) && is_numeric($params['params_execution']['group_limit'])) ? (int)$params['params_execution']['group_limit'] : 10;
 
         $paramsOrig = $paramsOrigIndex = $params;
         if ($aggr == 'month') {
@@ -1860,11 +1860,7 @@ class erLhcoreClassElasticSearchStatistic
 
         $returnReversed = array();
 
-        $limitDays = count($numberOfChats);
-
-        if ($limitDays < 12) {
-            $limitDays = 12;
-        }
+        $limitDays = (isset($params['params_execution']['group_limit']) && is_numeric($params['params_execution']['group_limit'])) ? (int)$params['params_execution']['group_limit'] : 10;
 
         foreach ($numberOfChats as $dateIndex => $returnData) {
             for ($i = 0; $i < $limitDays; $i++) {
@@ -2176,6 +2172,7 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if (is_array($params['params_execution']['chart_type']) && in_array('mattrgroup', $params['params_execution']['chart_type'])) {
+
             $validGroupFields = array(
                 'user_id' => 'user_id',
                 'dep_id' => 'dep_id',
@@ -2189,6 +2186,7 @@ class erLhcoreClassElasticSearchStatistic
                 return [];
             }
             $sparams['body']['aggs']['chats_over_time']['aggs']['chat_attr_group_multi']['terms']['field'] = $attr;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_attr_group_multi']['terms']['size'] = (isset($params['params_execution']['group_limit']) && is_numeric($params['params_execution']['group_limit'])) ? (int)$params['params_execution']['group_limit'] : 10;
         }
 
 
@@ -2274,8 +2272,10 @@ class erLhcoreClassElasticSearchStatistic
 
             $returnReversed = array();
 
+            $limitReverse = (isset($params['params_execution']['group_limit']) && is_numeric($params['params_execution']['group_limit'])) ? (int)$params['params_execution']['group_limit'] : 10;
+
             foreach ($numberOfChats as $dateIndex => $returnData) {
-                for ($i = 0; $i < 12; $i++) {
+                for ($i = 0; $i < $limitReverse; $i++) {
                     $returnReversed[$i]['data'][] = isset($returnData['data'][$i]) ? $returnData['data'][$i] : 0;
                     $returnReversed[$i]['color'][] = isset($returnData['color'][$i]) ? $returnData['color'][$i] : '""';
                     $returnReversed[$i]['nick'][] = isset($returnData['nick'][$i]) ? $returnData['nick'][$i] : '""';
