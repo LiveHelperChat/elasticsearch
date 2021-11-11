@@ -205,6 +205,8 @@ trait erLhcoreClassElasticTrait
         if (isset($dataOptions['index_type'])) {
             if ($dataOptions['index_type'] == 'daily') {
                 $indexSave = 'daily';
+            } elseif ($dataOptions['index_type'] == 'yearly') {
+                $indexSave =  'yearly';
             } elseif ($dataOptions['index_type'] == 'monthly') {
                 $indexSave =  'monthly';
             }

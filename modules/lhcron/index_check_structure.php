@@ -26,6 +26,8 @@ echo "Checking structure for today indexes\n";
 
 if ($dataOptions['index_type'] == 'daily') {
     $indexSave = $settings['index'] . date('Y.m.d',time());
+} elseif ($dataOptions['index_type'] == 'yearly') {
+    $indexSave = $settings['index'] . date('Y',time());
 } elseif ($dataOptions['index_type'] == 'monthly') {
     $indexSave = $settings['index'] . date('Y.m',time());
 }

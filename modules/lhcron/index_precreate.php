@@ -24,6 +24,9 @@ $indexSave = null;
 if ($dataOptions['index_type'] == 'daily') {
     $indexSave = $settings['index'];
     $indexPrepend = date('Y.m.d',time()+24*3600);
+} elseif ($dataOptions['index_type'] == 'yearly') {
+    $indexSave = $settings['index'];
+    $indexPrepend = date('Y',time()+24*3600);
 } elseif ($dataOptions['index_type'] == 'monthly') {
     $indexSave = $settings['index'];
     $indexPrepend = date('Y.m',time()+24*3600);

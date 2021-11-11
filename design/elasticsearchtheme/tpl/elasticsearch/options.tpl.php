@@ -43,6 +43,7 @@
             <option value="static" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'static') ? print 'selected="selected"' : ''?> >Static</option>
             <option value="daily" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'daily') ? print 'selected="selected"' : ''?> >Daily</option>
             <option value="monthly" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'monthly') ? print 'selected="selected"' : ''?> >Monthly</option>
+            <option value="yearly" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'yearly') ? print 'selected="selected"' : ''?> >Yearly</option>
         </select>
     </div>
     <hr>
