@@ -24,9 +24,12 @@ $sparams = array(
 
 $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
 
+$dateFilter['gte'] = time() + 10;
+$dateFilter['lte'] = time() - 10;
+
 $pages = new lhPaginator();
 $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/listos') . $append;
-$pages->items_total = erLhcoreClassModelESOnlineSession::getCount($sparams);
+$pages->items_total = erLhcoreClassModelESOnlineSession::getCount($sparams, array('date_index' => $dateFilter));
 $pages->setItemsPerPage(30);
 $pages->paginate();
 
@@ -41,7 +44,7 @@ if ($pages->items_total > 0) {
                 )
             )
         ), $sparams['body'])
-    )));
+    ), array('date_index' => $dateFilter)));
 }
 
 $tpl->set('pages', $pages);

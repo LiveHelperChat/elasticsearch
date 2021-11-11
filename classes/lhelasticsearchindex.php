@@ -216,7 +216,7 @@ class erLhcoreClassElasticSearchIndex
             $objectsSave[$indexSave][] = $esChat;
         }
 
-        erLhcoreClassModelESChat::bulkSave($objectsSave, array('custom_index' => true));
+        erLhcoreClassModelESChat::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
     }
 
     public static function indexOs($params)
@@ -794,7 +794,7 @@ class erLhcoreClassElasticSearchIndex
             $objectsSave[$indexSave][] = $esChat;
         }
 
-        erLhcoreClassModelESMail::bulkSave($objectsSave, array('custom_index' => true));
+        erLhcoreClassModelESMail::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
     }
 
     public static function makeKeywords($array) {

@@ -455,6 +455,9 @@
 			"user_id": {
 				"type": "long"
 			},
+            "dep_ids": {
+				"type": "long"
+			},
 			"itime": {
 				"type": "date"
 			}			

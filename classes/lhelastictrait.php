@@ -406,7 +406,11 @@ trait erLhcoreClassElasticTrait
                     $object->beforeUpdate();
                     $operations[] = '{ "index":  { "_id": "' . $object->id . '"} }';
                 }
-                $operations[] = json_encode($object->getState());
+                $state = $object->getState();
+                if (isset($paramsExecution['ignore_id'])) {
+                    unset($state['id']);
+                }
+                $operations[] = json_encode($state);
             }
 
             if (! empty($operations)) {
@@ -420,9 +424,7 @@ trait erLhcoreClassElasticTrait
             foreach ($objects as $index => $objectCollection)
             {
                 $params['index'] = $index;
-
                 $operations = array();
-
                 foreach ($objectCollection as $object) {
                     if ($object->id == null) {
                         $object->beforeSave();
@@ -431,7 +433,11 @@ trait erLhcoreClassElasticTrait
                         $object->beforeUpdate();
                         $operations[] = '{ "index":  { "_id": "' . $object->id . '"} }';
                     }
-                    $operations[] = json_encode($object->getState());
+                    $state = $object->getState();
+                    if (isset($paramsExecution['ignore_id'])) {
+                        unset($state['id']);
+                    }
+                    $operations[] = json_encode($state);
                 }
 
                 if (! empty($operations)) {
