@@ -206,9 +206,9 @@ trait erLhcoreClassElasticTrait
             if ($dataOptions['index_type'] == 'daily') {
                 $indexSave = 'daily';
             } elseif ($dataOptions['index_type'] == 'yearly') {
-                $indexSave =  'yearly';
+                $indexSave = 'yearly';
             } elseif ($dataOptions['index_type'] == 'monthly') {
-                $indexSave =  'monthly';
+                $indexSave = 'monthly';
             }
         }
         $indexes = array();
@@ -232,6 +232,11 @@ trait erLhcoreClassElasticTrait
                 for ($i = 0; $i <= $days; $i++) {
                     $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
                 }
+            } elseif ($indexSave == 'yearly') {
+                $years = date('Y') - date('Y', $dataFilter['gte']);
+                for ($i = 0; $i <= $years; $i++) {
+                    $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' . (date('Y', $dataFilter['gte']) +  $i) . ($indexSave == 'daily' ? '*' : $starPrepend);
+                }
             } else {
                 $months = ceil((time()-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration
                 for ($i = 0; $i <= $months; $i++) {
@@ -250,6 +255,11 @@ trait erLhcoreClassElasticTrait
             if ($days < 31 && $indexSave == 'daily') {
                 for ($i = 0; $i <= $days; $i++) {
                     $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' . date('Y.m.d',$dataFilter['gte']+($i*24*3600));
+                }
+            } elseif ($indexSave == 'yearly') {
+                $years = date('Y',$dataFilter['lte']) - date('Y', $dataFilter['gte']);
+                for ($i = 0; $i <= $years; $i++) {
+                    $indexes[] = $indexName . '-' . ($elasticType == null ? self::$elasticType : $elasticType) . '-' . (date('Y', $dataFilter['gte']) +  $i) . ($indexSave == 'daily' ? '*' : $starPrepend);
                 }
             } else {
                 $months = ceil(($dataFilter['lte']-$dataFilter['gte'])/(28*24*3600)); // Use lowest possible month duration

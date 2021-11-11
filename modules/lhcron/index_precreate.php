@@ -2,7 +2,7 @@
 
 // Run once a day
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate
-// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate -p 2000
+// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate -p yearly
 
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $dataOptions = (array)$esOptions->data;
@@ -32,20 +32,41 @@ if ($dataOptions['index_type'] == 'daily') {
     $indexPrepend = date('Y.m',time()+24*3600);
 }
 
+if ($indexSave == null) {
+    echo "This script works only with dynamic index!\n";
+    exit;
+}
+
 if (is_numeric($cronjobPathOption->value)) {
-    for ($i = 1; $i <= 12; $i++) {
-        $indexPrepend = $cronjobPathOption->value.'.'.($i < 10 ? '0'.$i : $i);
+    if ($dataOptions['index_type'] == 'monthly') {
+        for ($i = 1; $i <= 12; $i++) {
+            $indexPrepend = $cronjobPathOption->value.'.'.($i < 10 ? '0'.$i : $i);
+            $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
+            $esSearchHandler = erLhcoreClassElasticClient::getHandler();
+            erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
+            echo "Created index - ",$indexSave . '-' . $indexPrepend,"\n";
+        }
+    } else if ($dataOptions['index_type'] == 'yearly') {
+        $indexSave = $settings['index'];
+        $indexPrepend = $cronjobPathOption->value;
         $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
         $esSearchHandler = erLhcoreClassElasticClient::getHandler();
         erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
-        echo "Created index - ",$indexSave,"\n";
+        echo "Pre-creating yearly index - ",$indexSave . '-' . $indexPrepend,"\n";
     }
+} elseif ($cronjobPathOption->value == 'yearly') {
+    $indexSave = $settings['index'];
+    $indexPrepend = date('Y',time()+24*3600);
+    $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
+    $esSearchHandler = erLhcoreClassElasticClient::getHandler();
+    erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
+    echo "Pre-creating yearly index - ",$indexSave . '-' . $indexPrepend,"\n";
 } else {
     if ($indexSave !== null) {
         $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
         $esSearchHandler = erLhcoreClassElasticClient::getHandler();
         erLhcoreClassElasticClient::indexExists($esSearchHandler, $indexSave, $indexPrepend, true);
-        echo "Created index - ",$indexSave,"\n";
+        echo "Created index - ",$indexSave . '-' . $indexPrepend,"\n";
     }
 }
 

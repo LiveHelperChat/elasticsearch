@@ -43,6 +43,8 @@ echo "Checking structure for tomorrow indexes\n";
 
 if ($dataOptions['index_type'] == 'daily') {
     $indexSave = $settings['index'] . date('Y.m.d',time()+24*3600);
+} elseif ($dataOptions['index_type'] == 'yearly') {
+    $indexSave = $settings['index'] . date('Y',time()+24*3600);
 } elseif ($dataOptions['index_type'] == 'monthly') {
     $indexSave = $settings['index'] . date('Y.m',time()+24*3600);
 }
