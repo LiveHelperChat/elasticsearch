@@ -142,6 +142,9 @@
           "subject_id": {
             "type": "integer"
           },
+          "priority": {
+            "type": "integer"
+          },
           "mail_variables": {
             "type": "text",
             "index" : false
