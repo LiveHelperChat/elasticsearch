@@ -1517,6 +1517,52 @@ class erLhcoreClassElasticSearchStatistic
             $usersStats[$bucket['key']] = $statsValue;
         }
 
+        // Mails aggregation
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESOnlineSession::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+
+        $userIdFilter = array_keys($usersStats);
+        if (!empty($userIdFilter)) {
+            $params['filter']['filterin']['user_id'] = $userIdFilter;
+        } else {
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => array()
+            );
+        }
+
+        self::formatFilter($params['filter'], $sparams);
+
+        $paramsIndex = $params;
+
+        if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
+            $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
+            $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
+            $paramsIndex['filter']['filtergte']['time'] = $ts;
+        }
+
+        $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESMail::$elasticType);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+        $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
+        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
+        $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['field'] = 'response_type';
+        $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['size'] = 1000;
+
+        $result = $elasticSearchHandler->search($sparams);
+
+        foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
+            foreach ($bucket['response_type']['buckets'] as $bucketStat) {
+                $usersStats[$bucket['key']]['mail_statistic_'.$bucketStat['key']] = $bucketStat['doc_count'];
+            }
+        }
+
         // Online hours aggregration
         $sparams = array();
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESOnlineSession::$elasticType;
@@ -1609,7 +1655,13 @@ class erLhcoreClassElasticSearchStatistic
                 'avgChatLength' => ($avgDuration > 0 ? erLhcoreClassChat::formatSeconds($avgDuration) : '0 s.'),
                 'avgChatLengthSeconds' => $avgDuration,
                 'subject_stats' => (isset($usersStats[$user->id]['subject_stats']) ? $usersStats[$user->id]['subject_stats'] : array()),
+                'mail_statistic_0' => (isset($usersStats[$user->id]['mail_statistic_0']) ? $usersStats[$user->id]['mail_statistic_0'] : 0),
+                'mail_statistic_1' => (isset($usersStats[$user->id]['mail_statistic_1']) ? $usersStats[$user->id]['mail_statistic_1'] : 0),
+                'mail_statistic_2' => (isset($usersStats[$user->id]['mail_statistic_2']) ? $usersStats[$user->id]['mail_statistic_2'] : 0),
+                'mail_statistic_3' => (isset($usersStats[$user->id]['mail_statistic_3']) ? $usersStats[$user->id]['mail_statistic_3'] : 0),
             );
+
+            $statsRecord['mail_statistic_total'] = $statsRecord['mail_statistic_0'] + $statsRecord['mail_statistic_1'] + $statsRecord['mail_statistic_2'] + $statsRecord['mail_statistic_3'];
 
             // Allow extension append custom column
             erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getagentstatistic_display', array(
