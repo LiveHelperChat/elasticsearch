@@ -13,7 +13,10 @@ $ViewList['index'] = array(
 
 $ViewList['interactions'] = array(
     'params' => array(),
-    'uparams' => array('attr','val')
+    'uparams' => array('search_in','attr','val','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours','sort_chat','keyword'),
+    'multiple_arguments' => array(
+        'search_in',
+    ),
 );
 
 $ViewList['list'] = array(

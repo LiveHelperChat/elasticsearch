@@ -18,7 +18,7 @@ $sparams = array(
 );
 
 $dateFilter = array(
-    'gte' => (time() - (31 * 24 * 3600)),
+    'gte' => (time() - (3 * 31 * 24 * 3600)),
     'lte' => (time() + (31 * 24 * 3600))
 );
 
@@ -80,6 +80,16 @@ if (trim($filterParams['input_form']->keyword) != '') {
     $sparams['body']['highlight']['fields']['msg_system'] = new stdClass();
     $sparams['body']['highlight']['fields']['subject'] = new stdClass();
     $sparams['body']['highlight']['fields']['alt_body'] = new stdClass();
+}
+
+if (isset($filterParams['filter']['filtergte']['time'])) {
+    $sparams['body']['query']['bool']['must'][]['range']['time']['gte'] = $filterParams['filter']['filtergte']['time'] * 1000;
+    $dateFilter['gte'] = $filterParams['filter']['filtergte']['time'];
+}
+
+if (isset($filterParams['filter']['filterlte']['time'])) {
+    $sparams['body']['query']['bool']['must'][]['range']['time']['lte'] = $filterParams['filter']['filterlte']['time'] * 1000;
+    $dateFilter['lte'] = $filterParams['filter']['filterlte']['time'];
 }
 
 if ($filterParams['input_form']->sort_chat == 'asc') {
