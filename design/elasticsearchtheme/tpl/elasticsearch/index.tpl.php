@@ -3,6 +3,7 @@
 <ul>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/list')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of chats')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listmail')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of mails')?></a></li>
+    <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/interactions')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of interactions')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listos')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of online sessions')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listop')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of online operators history')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listpc')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of pending/active chats history')?></a></li>

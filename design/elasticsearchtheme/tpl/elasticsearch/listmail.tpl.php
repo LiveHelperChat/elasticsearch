@@ -11,6 +11,10 @@
         <?php endif; ?>
     <?php endif;?>
 
+    <ul class="nav nav-pills" role="tablist">
+        <li role="presentation" class="nav-item"><a class="nav-link active" href="#chats" aria-controls="chats" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Mails');?></a></li>
+    </ul>
+
     <div class="tab-content pl-2">
         <div role="tabpanel" class="tab-pane active" id="chats">
             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter_mail.tpl.php')); ?>
@@ -32,7 +36,7 @@
                         </thead>
                         <?php $previousConversationId = 0; foreach ($items as $item) : ?>
                             <tr class="<?php if ($previousConversationId == $item->conversation_id) : ?>bg-light conversation-id-<?php echo $item->conversation_id?><?php endif;?>" <?php if ($previousConversationId == $item->conversation_id) : ?>style="display: none" <?php endif;?>>
-                                <td title="<?php echo $item->id?>" class="<?php if ($previousConversationId == $item->conversation_id) : ?>pl-4<?php endif;?>">
+                                <td ng-non-bindable title="<?php echo $item->id?>" class="<?php if ($previousConversationId == $item->conversation_id) : ?>pl-4<?php endif;?>">
 
                                     <?php if ($item->has_many_messages && ($previousConversationId == 0 || $previousConversationId != $item->conversation_id)) : ?>
                                     <a class="material-icons text-primary mr-0" onclick="$('.conversation-id-<?php echo $item->conversation_id?>').toggle()">expand_more</a>
@@ -68,7 +72,7 @@
                                     <?php echo $item->conversation_id?>
                                     </span>
 
-                                    <a class="user-select-none" href="<?php echo erLhcoreClassDesign::baseurl('mailconv/view')?>/<?php echo $item->conversation_id?>"><?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->subject,50))?></a>
+                                    <a class="user-select-none" onclick='lhinst.startMailChat(<?php echo $item->conversation_id?>,$("#tabs"),<?php echo json_encode($item->subject_front,JSON_HEX_APOS)?>)' href="#!#chat-id-mc<?php echo $item->conversation_id?>" ><?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->subject,50))?></a>
 
                                     <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
                                         <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/rawmail')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>

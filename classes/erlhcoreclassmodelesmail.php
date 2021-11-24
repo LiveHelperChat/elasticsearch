@@ -108,6 +108,10 @@ class erLhcoreClassModelESMail
                 $this->mailbox = erLhcoreClassModelMailconvMailbox::fetch($this->mailbox_id);
                 return $this->mailbox;
 
+            case 'subject_front':
+                $this->subject_front = $this->subject != '' ? $this->subject : ($this->from_name != '' ? $this->from_name : $this->id.' '.$this->from_address);
+                return $this->subject_front;
+
             case 'mailbox_front':
                 $this->mailbox_front = [
                     'name' => '',
