@@ -21,7 +21,7 @@
 		<?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter.tpl.php')); ?>
 	   	<?php if ($tab == 'chats') : ?>
             <?php if (isset($pages) && $pages->items_total > 0): ?>
-            	<table class="table table-sm mt-1">
+            	<table class="table table-sm mt-1 list-links">
             		<thead>
             			<tr>
             			    <th width="8%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
@@ -46,7 +46,7 @@
                             <?php else : ?>
                                 <a onclick="lhc.previewChat(<?php echo $item->chat_id?>)"><i class="material-icons">info_outline</i></a>
                                 <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
-                                <a href="#" ng-click="lhc.startChatByID(<?php echo $item->chat_id?>)"><?php echo $item->chat_id?></a>
+                                <a href="#!#Fchat-id-<?php echo $item->chat_id?>" ng-click="lhc.startChatByID(<?php echo $item->chat_id?>)"><?php echo $item->chat_id?></a>
                             <?php endif; ?>
 
                             <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>

@@ -16,7 +16,7 @@
             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter_mail.tpl.php')); ?>
 
                 <?php if (isset($pages) && $pages->items_total > 0): ?>
-                    <table class="table table-sm mt-1">
+                    <table class="table table-sm mt-1 list-links">
                         <thead>
                         <tr>
                             <th width="40%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Conversation ID')?></th>
@@ -60,7 +60,7 @@
                                         <span class="material-icons">image</span>
                                     <?php endif; ?>
 
-                                    <a onclick="lhc.previewMail(<?php echo $item->conversation_id?>);" class="material-icons">info_outline</a>
+                                    <a href="#!#Fchat-id-<?php echo $item->conversation_id?>" onclick="lhc.previewMail(<?php echo $item->conversation_id?>);" class="material-icons">info_outline</a>
 
                                     <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->subject)?>" onclick="lhinst.startMailNewWindow(<?php echo $item->conversation_id?>,$(this).attr('data-title'))" >open_in_new</a>
 
