@@ -7,6 +7,7 @@ use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\RequestOptions;
 
 class erLhcoreClassElasticClient
 {
@@ -317,7 +318,12 @@ class erLhcoreClassElasticClient
                 $elasticClient->setHandler($handler);
             }
 
-            self::$handler = $elasticClient->setHosts(array($settings['host'] . ':' . $settings['port']))->build();
+            self::$handler = $elasticClient->setHosts(array($settings['host'] . ':' . $settings['port']))->setConnectionParams([
+                'client' => [
+                    RequestOptions::TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 15 : 3),
+                    RequestOptions::CONNECT_TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 10 : 2),
+                ],
+            ])->build();
         }
 
         return self::$handler;

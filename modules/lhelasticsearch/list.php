@@ -66,23 +66,23 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['term']['email'] = $filterParams['input_form']->email;
     }
     
-    if (trim($filterParams['input_form']->user_id) != '') {
+    if (trim((string)$filterParams['input_form']->user_id) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['user_id'] = (int)trim($filterParams['input_form']->user_id);
     }
     
-    if (trim($filterParams['input_form']->department_id) != '') {
+    if (trim((string)$filterParams['input_form']->department_id) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = (int)trim($filterParams['input_form']->department_id);
     }
 
-    if (trim($filterParams['input_form']->invitation_id) != '') {
+    if (trim((string)$filterParams['input_form']->invitation_id) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['invitation_id'] = (int)trim($filterParams['input_form']->invitation_id);
     }
 
-    if (trim($filterParams['input_form']->cls_us) != '') {
+    if (trim((string)$filterParams['input_form']->cls_us) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['cls_us'] = (int)trim($filterParams['input_form']->cls_us);
     }
 
-    if (trim($filterParams['input_form']->has_unread_op_messages) != '') {
+    if (trim((string)$filterParams['input_form']->has_unread_op_messages) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['has_unread_op_messages'] = (int)trim($filterParams['input_form']->has_unread_op_messages);
     }
 
@@ -94,7 +94,7 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['term']['abnd'] = 1;
     }
 
-    if (trim($filterParams['input_form']->department_group_id) != '') {
+    if (trim((string)$filterParams['input_form']->department_group_id) != '') {
         $db = ezcDbInstance::get();
         $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
         $stmt->bindValue( ':group_id', $filterParams['input']->department_group_id, PDO::PARAM_INT);
