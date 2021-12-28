@@ -714,6 +714,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->msgno = $item->msgno;
             $esChat->uid = $item->uid;
             $esChat->size = $item->size;
+            $esChat->lang = $item->lang;
 
             $esChat->from_host = $item->from_host;
             $esChat->from_name = $item->from_name;

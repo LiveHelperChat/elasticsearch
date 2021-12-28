@@ -53,7 +53,7 @@ $ViewList['listmail'] = array(
         'department_group_id','group_id', 'user_ids',
         'export','view','subject_id', 'department_ids',
         'department_group_ids','group_ids','hvf','response_type','status','status_conv',
-        'sender_host','from_host','sender_address','is_followup','undelivered'
+        'sender_host','from_host','sender_address','is_followup','undelivered','lang_ids'
     ),
     'multiple_arguments' => array(
         'search_in',
@@ -66,6 +66,7 @@ $ViewList['listmail'] = array(
         'attr_int_3_multi',
         'attr_int_4_multi',
         'subject_id',
+        'lang_ids',
     ),
     'functions' => array('use')
 );

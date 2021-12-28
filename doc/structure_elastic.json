@@ -70,6 +70,9 @@
           "sender_address": {
             "type": "keyword"
           },
+          "lang": {
+            "type": "keyword"
+          },
           "sender_name": {
             "type": "text"
           },

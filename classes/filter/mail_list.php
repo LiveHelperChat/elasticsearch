@@ -303,6 +303,18 @@ $fieldsSearch['department_ids'] = array (
     )
 );
 
+$fieldsSearch['lang_ids'] = array (
+    'type' => 'text',
+    'trans' => 'Language',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterin',
+    'filter_table_field' => 'lang',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'string', null, FILTER_REQUIRE_ARRAY
+    )
+);
+
 $fieldsSearch['response_type'] = array (
     'type' => 'text',
     'trans' => 'Department',
