@@ -695,7 +695,11 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if (is_array($params['params_execution']['charttypes']) && in_array('proactivevsdefault', $params['params_execution']['charttypes'])) {
-            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_aggr']['terms']['field'] = 'chat_initiator';
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_aggr']['filter']['term']['chat_initiator'] = erLhcoreClassModelChat::CHAT_INITIATOR_DEFAULT;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_proact_aggr']['filter']['bool']['must'][]['term']['chat_initiator'] = erLhcoreClassModelChat::CHAT_INITIATOR_PROACTIVE;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_proact_aggr']['filter']['bool']['must'][]['range']['invitation_id']['gt'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_proact_man']['filter']['bool']['must'][]['term']['chat_initiator'] = erLhcoreClassModelChat::CHAT_INITIATOR_PROACTIVE;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_proact_man']['filter']['bool']['must'][]['term']['invitation_id'] = 0;
         }
 
         if (is_array($params['params_execution']['charttypes']) && in_array('unanswered',$params['params_execution']['charttypes'])){
@@ -740,8 +744,9 @@ class erLhcoreClassElasticSearchStatistic
         );
         
         $keyStatusInit = array(
-            erLhcoreClassModelChat::CHAT_INITIATOR_DEFAULT => 'chatinitdefault',
-            erLhcoreClassModelChat::CHAT_INITIATOR_PROACTIVE => 'chatinitproact'
+            'chatinitdefault',
+            'chatinitproact',
+            'chatinitmanualinv'
         );
 
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
@@ -768,11 +773,9 @@ class erLhcoreClassElasticSearchStatistic
             }
 
             if (is_array($params['params_execution']['charttypes']) && in_array('proactivevsdefault', $params['params_execution']['charttypes'])) {
-                foreach ($bucket['chat_initiator_aggr']['buckets'] as $bucketStatus) {
-                    if (isset($keyStatusInit[$bucketStatus['key']])) {
-                        $numberOfChats[$keyDateUnix][$keyStatusInit[$bucketStatus['key']]] = $bucketStatus['doc_count'];
-                    }
-                }
+                $numberOfChats[$keyDateUnix]['chatinitdefault'] = $bucket['chat_initiator_aggr']['doc_count'];
+                $numberOfChats[$keyDateUnix]['chatinitproact'] = $bucket['chat_initiator_proact_aggr']['doc_count'];
+                $numberOfChats[$keyDateUnix]['chatinitmanualinv'] = $bucket['chat_initiator_proact_man']['doc_count'];
             }
             
             foreach ($keyStatus as $mustHave) {
