@@ -38,6 +38,10 @@
                             <tr class="<?php if ($previousConversationId == $item->conversation_id) : ?>bg-light conversation-id-<?php echo $item->conversation_id?><?php endif;?>" <?php if ($previousConversationId == $item->conversation_id) : ?>style="display: none" <?php endif;?>>
                                 <td ng-non-bindable title="<?php echo $item->id?>" class="<?php if ($previousConversationId == $item->conversation_id) : ?>pl-4<?php endif;?>">
 
+                                    <?php if ($item->opened_at > 0) : ?>
+                                        <span class="material-icons text-success" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Message was seen by customer first time at');?>: <?php echo date(erLhcoreClassModule::$dateFormat, $item->opened_at / 1000)?>">visibility</span>
+                                    <?php endif; ?>
+
                                     <?php if ($item->lang != '') : ?>
                                         <img src="<?php echo erLhcoreClassDesign::design('images/flags');?>/<?php echo $item->lang?>.png" alt="<?php echo htmlspecialchars($item->lang)?>" title="<?php echo htmlspecialchars($item->lang)?>" />
                                     <?php endif; ?>

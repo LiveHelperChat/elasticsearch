@@ -286,7 +286,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Message ID');?></label>
-                                <input type="text" class="form-control form-control-sm" name="message_id" value="<?php echo htmlspecialchars($input->message_id)?>" />
+                                <input type="text" class="form-control form-control-sm" name="message_id" value="<?php echo htmlspecialchars((string)$input->message_id)?>" />
                             </div>
                         </div>
 

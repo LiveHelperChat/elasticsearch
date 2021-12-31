@@ -709,6 +709,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->references = $item->references;
             $esChat->time = $item->udate * 1000;
             $esChat->ctime = $item->ctime * 1000;
+            $esChat->opened_at = $item->opened_at * 1000;
             $esChat->flagged = $item->flagged;
             $esChat->recent = $item->recent;
             $esChat->msgno = $item->msgno;

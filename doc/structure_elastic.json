@@ -55,6 +55,9 @@
           "cls_time": {
             "type": "date"
           },
+          "opened_at": {
+            "type": "date"
+          },
           "accept_time": {
             "type": "date"
           },

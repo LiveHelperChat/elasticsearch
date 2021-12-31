@@ -58,6 +58,7 @@ class erLhcoreClassModelESMail
             'mail_variables' => $this->mail_variables,
             'follow_up_id' => $this->follow_up_id,
             'lang' => $this->lang,
+            'opened_at' => $this->opened_at,
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate_mail', array(
@@ -164,6 +165,7 @@ class erLhcoreClassModelESMail
     public $mailbox_id = null;
     public $response_time = null;
     public $cls_time = null;
+    public $opened_at = null;
     public $wait_time = null;
     public $accept_time = null;
     public $interaction_time = null;
