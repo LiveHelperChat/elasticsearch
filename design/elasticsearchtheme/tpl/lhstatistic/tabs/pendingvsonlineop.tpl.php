@@ -204,10 +204,8 @@ dataSets.push({
 dataSets.push({
     type: 'bar',
     label: 'Pending chats',
-    backgroundColor: "rgb(226, 213, 59)",
+    backgroundColor: "rgb(189,99,231)",
     data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['pending'];?><?php $counter++;endforeach;?>],
-    borderColor: 'white',
-    borderWidth: 2,
     yAxisID: "y-axis-1"
 });
 <?php endif ?>
