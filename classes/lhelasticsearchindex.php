@@ -585,6 +585,60 @@ class erLhcoreClassElasticSearchIndex
         }
     }
 
+    public static function getConcurrentChats($params)
+    {
+        $response = array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+        );
+
+        $sparams = array(
+            'body' => array()
+        );
+
+        $sparams['body']['query']['bool']['must'][]['range']['cls_time']['gt'] = (int)$params['chat']->time * 1000;
+        $sparams['body']['query']['bool']['must'][]['range']['chat_id']['lt'] = (int)$params['chat']->id;
+        $sparams['body']['query']['bool']['must'][]['term']['user_id'] = (int)$params['chat']->user_id;
+
+        $dateFilter['gte'] = $params['chat']->time + 10;
+        $dateFilter['lte'] = $params['chat']->time - 10;
+
+        $sort = array('chat_id' => array('order' => 'desc'));
+
+        $response['previous_chats']  = array_reverse(erLhcoreClassModelESChat::getList(array(
+            'offset' => 0,
+            'limit' => 5,
+            'body' => array_merge(array(
+                'sort' => $sort
+            ), $sparams['body'])
+        ),
+        array('date_index' => $dateFilter)));
+
+        /* next chats */
+
+        $sparams = array(
+            'body' => array()
+        );
+
+        $sparams['body']['query']['bool']['must'][]['range']['time']['lt'] = (int)$params['chat']->cls_time * 1000;
+        $sparams['body']['query']['bool']['must'][]['range']['chat_id']['gt'] = (int)$params['chat']->id;
+        $sparams['body']['query']['bool']['must'][]['term']['user_id'] = (int)$params['chat']->user_id;
+
+        $sort = array('chat_id' => array('order' => 'asc'));
+
+        $response['next_chats'] = erLhcoreClassModelESChat::getList(array(
+            'offset' => 0,
+            'limit' => 5,
+            'body' => array_merge(array(
+                'sort' => $sort
+            ), $sparams['body'])
+        ),
+            array('date_index' => $dateFilter));
+
+        $response['processed'] = true;
+
+        return $response;
+    }
+
     public static function getChatHistory($params)
     {
         $result = self::hasPreviousMessages(array(

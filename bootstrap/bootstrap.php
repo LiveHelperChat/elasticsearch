@@ -13,7 +13,7 @@ class erLhcoreClassExtensionElasticsearch
     public function registerAutoload()
     {
     	include 'extension/elasticsearch/vendor/autoload.php';
-	
+
     	$dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
 
         $dispatcher->listen('chat.close', 'erLhcoreClassElasticSearchIndex::indexChatDelay');
@@ -26,6 +26,7 @@ class erLhcoreClassExtensionElasticsearch
             $dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');
             $dispatcher->listen('chat.workflow.has_previous_messages', 'erLhcoreClassElasticSearchIndex::hasPreviousMessages');
             $dispatcher->listen('chat.workflow.get_chat_history', 'erLhcoreClassElasticSearchIndex::getChatHistory');
+            $dispatcher->listen('chat.chathistory', 'erLhcoreClassElasticSearchIndex::getConcurrentChats');
 
             $dispatcher->listen('statistic.valid_tabs', 'erLhcoreClassElasticSearchStatistic::appendStatisticTab');
             $dispatcher->listen('statistic.process_tab', 'erLhcoreClassElasticSearchStatistic::processTab');
