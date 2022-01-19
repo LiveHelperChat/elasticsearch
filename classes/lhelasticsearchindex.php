@@ -606,7 +606,7 @@ class erLhcoreClassElasticSearchIndex
 
         $response['previous_chats']  = array_reverse(erLhcoreClassModelESChat::getList(array(
             'offset' => 0,
-            'limit' => 5,
+            'limit' => 10,
             'body' => array_merge(array(
                 'sort' => $sort
             ), $sparams['body'])
@@ -627,7 +627,7 @@ class erLhcoreClassElasticSearchIndex
 
         $response['next_chats'] = erLhcoreClassModelESChat::getList(array(
             'offset' => 0,
-            'limit' => 5,
+            'limit' => 10,
             'body' => array_merge(array(
                 'sort' => $sort
             ), $sparams['body'])
