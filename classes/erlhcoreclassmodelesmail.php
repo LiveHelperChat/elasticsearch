@@ -59,6 +59,7 @@ class erLhcoreClassModelESMail
             'follow_up_id' => $this->follow_up_id,
             'lang' => $this->lang,
             'opened_at' => $this->opened_at,
+            'phone' => $this->phone,
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate_mail', array(
@@ -188,6 +189,7 @@ class erLhcoreClassModelESMail
     public $mail_variables = null;
     public $follow_up_id = null;
     public $lang = null;
+    public $phone = null;
 
     // Dynamic attributes
     public $subject_id = null;

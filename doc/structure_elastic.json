@@ -151,6 +151,9 @@
           "priority": {
             "type": "integer"
           },
+          "phone": {
+            "type": "keyword"
+          },
           "mail_variables": {
             "type": "text",
             "index" : false
