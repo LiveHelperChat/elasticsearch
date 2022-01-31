@@ -289,7 +289,12 @@
                                 <input type="text" class="form-control form-control-sm" name="message_id" value="<?php echo htmlspecialchars((string)$input->message_id)?>" />
                             </div>
                         </div>
-
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Phone');?></label>
+                                <input type="text" class="form-control form-control-sm" name="phone" value="<?php echo htmlspecialchars($input->phone)?>" />
+                            </div>
+                        </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Language');?></label>

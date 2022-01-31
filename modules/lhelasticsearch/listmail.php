@@ -41,6 +41,10 @@ if ($filterParams['input_form']->from_name != '') {
     $sparams['body']['query']['bool']['must'][]['match']['from_name'] = $filterParams['input_form']->from_name;
 }
 
+if ($filterParams['input_form']->phone != '') {
+    $sparams['body']['query']['bool']['must'][]['term']['phone'] = $filterParams['input_form']->phone;
+}
+
 if ($filterParams['input_form']->email != '') {
     $sparams['body']['query']['bool']['must'][]['term']['from_address'] = trim($filterParams['input_form']->email);
 }

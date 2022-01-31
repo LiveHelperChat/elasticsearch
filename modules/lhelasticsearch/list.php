@@ -61,6 +61,10 @@ if ($tab == 'chats') {
     if ($filterParams['input_form']->nick != '') {
         $sparams['body']['query']['bool']['must'][]['match']['nick'] = $filterParams['input_form']->nick;
     }
+
+    if ($filterParams['input_form']->phone != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['phone'] = $filterParams['input_form']->phone;
+    }
     
     if ($filterParams['input_form']->email != '') {
         $sparams['body']['query']['bool']['must'][]['term']['email'] = $filterParams['input_form']->email;

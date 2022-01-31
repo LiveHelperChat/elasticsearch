@@ -8,6 +8,7 @@
                 <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Attribute');?></label>
                 <select name="attr" class="form-control form-control-sm">
                     <option value="email" <?php ($input->attr == 'email' || $input->attr == '') ? print 'selected' : '' ?> >E-mail</option>
+                    <option value="phone" <?php ($input->attr == 'phone') ? print 'selected' : '' ?> >Phone</option>
                 </select>
             </div>
         </div>

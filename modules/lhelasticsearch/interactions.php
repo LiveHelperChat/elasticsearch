@@ -31,6 +31,8 @@ if (trim($filterParams['input_form']->attr) != '') {
         $sparams['body']['query']['bool']['should'][] = $booldConditions;
         $minimumMatch = 1;
         $sparams['body']['query']['bool']['minimum_should_match'] = 1;
+    } elseif ($filterParams['input_form']->attr == 'phone') {
+        $sparams['body']['query']['bool']['must'][]['term']['phone'] = $filterParams['input_form']->val;
     }
 }
 
