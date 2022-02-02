@@ -62,6 +62,14 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['match']['nick'] = $filterParams['input_form']->nick;
     }
 
+    if ($filterParams['input_form']->proactive_chat != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['chat_initiator'] = (int)$filterParams['input_form']->proactive_chat;
+    }
+
+    if ($filterParams['input_form']->not_invitation != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['invitation_id'] = (int)$filterParams['input_form']->not_invitation;
+    }
+
     if ($filterParams['input_form']->phone != '') {
         $sparams['body']['query']['bool']['must'][]['term']['phone'] = $filterParams['input_form']->phone;
     }
