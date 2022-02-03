@@ -79,7 +79,7 @@
                             'display_name'   => 'name',
                             'list_function'  => 'erLhcoreClassModelDepartament::getList',
                             'ajax'           => 'deps',
-                            'list_function_params' => array_merge(['sort' => '`name` ASC'],erLhcoreClassUserDep::conditionalDepartmentFilter()),
+                            'list_function_params' => array_merge(['sort' => '`name` ASC', 'limit' => 20],erLhcoreClassUserDep::conditionalDepartmentFilter()),
                         )); ?>
                     </div>
                 </div>

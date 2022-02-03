@@ -72,7 +72,7 @@
                             'display_name'   => 'name',
                             'ajax'           => 'deps',
                             'list_function'  => 'erLhcoreClassModelDepartament::getList',
-                            'list_function_params'  => array('sort' => '`name` ASC')
+                            'list_function_params'  => array('sort' => '`name` ASC', 'limit' => 20)
                         )); ?>
                     </div>
                 </div>
