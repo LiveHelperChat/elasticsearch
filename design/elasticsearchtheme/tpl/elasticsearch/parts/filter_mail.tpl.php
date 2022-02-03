@@ -61,7 +61,7 @@
                     'display_name'   => 'name_official',
                     'ajax'           => 'users',
                     'list_function'  => 'erLhcoreClassModelUser::getUserList',
-                    'list_function_params'  => array('limit' => 50)
+                    'list_function_params'  => array('limit' => 50, 'sort' => '`name` ASC')
                 )); ?>
             </div>
         </div>
@@ -78,7 +78,8 @@
                             'css_class'      => 'form-control',
                             'display_name'   => 'name',
                             'list_function'  => 'erLhcoreClassModelDepartament::getList',
-                            'list_function_params'  => array('limit' => false)
+                            'ajax'           => 'deps',
+                            'list_function_params' => array_merge(['sort' => '`name` ASC'],erLhcoreClassUserDep::conditionalDepartmentFilter()),
                         )); ?>
                     </div>
                 </div>
@@ -92,7 +93,7 @@
                             'css_class'      => 'form-control',
                             'display_name'   => 'name',
                             'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList',
-                            'list_function_params'  => array('limit' => false)
+                            'list_function_params' => array_merge(['sort' => '`name` ASC','limit' => false],erLhcoreClassUserDep::conditionalDepartmentGroupFilter()),
                         )); ?>
                     </div>
                 </div>
@@ -108,7 +109,7 @@
                     'css_class'      => 'form-control',
                     'display_name'   => 'name',
                     'list_function'  => 'erLhAbstractModelSubject::getList',
-                    'list_function_params'  => array('limit' => false)
+                    'list_function_params'  => array('limit' => false,'sort' => '`name` ASC')
                 )); ?>
             </div>
         </div>
@@ -206,7 +207,7 @@
                             'css_class'      => 'form-control',
                             'display_name'   => 'name',
                             'list_function'  => 'erLhcoreClassModelGroup::getList',
-                            'list_function_params'  => array('limit' => false)
+                            'list_function_params' => array_merge(['sort' => '`name` ASC', 'limit' => false],erLhcoreClassUserDep::conditionalDepartmentGroupFilter()),
                         )); ?>
 
                     </div>

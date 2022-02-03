@@ -54,7 +54,7 @@
                     'display_name'   => 'name_official',
                     'ajax'           => 'users',
                     'list_function'  => 'erLhcoreClassModelUser::getUserList',
-                    'list_function_params'  => array('limit' => 50)
+                    'list_function_params'  => array('limit' => 50, 'sort' => '`name` ASC')
                 )); ?>
             </div>
         </div>
@@ -70,8 +70,9 @@
                             'selected_id'    => $input->department_ids,
                             'css_class'      => 'form-control',
                             'display_name'   => 'name',
+                            'ajax'           => 'deps',
                             'list_function'  => 'erLhcoreClassModelDepartament::getList',
-                            'list_function_params'  => array('limit' => false)
+                            'list_function_params'  => array('sort' => '`name` ASC')
                         )); ?>
                     </div>
                 </div>
@@ -85,7 +86,7 @@
                             'css_class'      => 'form-control',
                             'display_name'   => 'name',
                             'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList',
-                            'list_function_params'  => array('limit' => false)
+                            'list_function_params'  => array('limit' => false, 'sort' => '`name` ASC')
                         )); ?>
                     </div>
                 </div>
