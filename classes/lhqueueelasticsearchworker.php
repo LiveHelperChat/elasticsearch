@@ -83,6 +83,10 @@ class erLhcoreClassElasticSearchWorker {
 
         $maxRecords = max($mailsIndexed,$mailsIndexedConversations);
 
+        // Just even that we are indexing something
+        // So extensions can index their own things
+        \erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.elastic_search.index_objects',array());
+
         if ((count($chatsId) >= 100 || $maxRecords == 20) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
             erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
         }

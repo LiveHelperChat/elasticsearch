@@ -136,6 +136,12 @@ class erLhcoreClassElasticClient
 
         $contentData = array($index => json_decode($contentData, true));
 
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.getelasticstructure_core', array(
+            'structure' => & $contentData,
+            'index_original' => $settings['index'],
+            'index_new' => $index,
+        ));
+
         foreach ($contentData[$index]['types'] as $type => $mapping) {
 
             $indexCurrent = $index . '-' . $type . ($indexPrepend != null ? '-' . $indexPrepend : '');

@@ -148,4 +148,8 @@ if (!empty($chatsId)) {
 
 echo "total re-indexed chats - {$totalIndex}\n";
 
+// Just even that we are indexing something
+// So extensions can index their own things
+\erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.elastic_search.index_objects',array());
+
 ?>
