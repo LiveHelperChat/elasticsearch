@@ -116,6 +116,11 @@ $indexSearch .=',' . erLhcoreClassElasticSearchStatistic::getIndexByFilter([
         'filterlte' => ['time' => $dateFilter['lte'] ]
     ], erLhcoreClassModelESMail::$elasticType);
 
+\erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.interactions_index', array(
+    'index_search' => & $indexSearch,
+    'date_filter' => $dateFilter,
+));
+
 $sparamsCount = $sparams;
 $sparamsCount['index'] = $indexSearch;
 $sparamsCount['ignore_unavailable'] = true;
@@ -153,6 +158,11 @@ if ($pages->items_total > 0) {
             } else {
                 $className = 'erLhcoreClassModelESChat';
             }
+
+            \erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.interactions_class', array(
+                'class_name' => & $className,
+                'index' => $doc['_index'],
+            ));
 
             $obj = new $className();
             $obj->setState($doc['_source']);

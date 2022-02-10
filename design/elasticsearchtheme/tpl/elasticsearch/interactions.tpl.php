@@ -40,6 +40,8 @@
                                     <a href="#!#Fchat-id-<?php echo $item->conversation_id?>" onclick="lhc.previewMail(<?php echo $item->conversation_id?>);" class="material-icons">info_outline</a>
                                     <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->subject)?>" onclick="lhinst.startMailNewWindow(<?php echo $item->conversation_id?>,$(this).attr('data-title'))" >open_in_new</a>
                                     <a class="user-select-none" ng-click='lhc.startMailChat(<?php echo $item->conversation_id?>,<?php echo json_encode($item->subject_front,JSON_HEX_APOS)?>)' href="#!#chat-id-mc<?php echo $item->conversation_id?>"><span class="material-icons">email</span><?php echo $item->conversation_id?> <?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->subject,50))?></a>
+                                <?php else : ?>
+                                    <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/interactions_type_multiinclude.tpl.php')); ?>
                                 <?php endif ?>
 
                                 <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>

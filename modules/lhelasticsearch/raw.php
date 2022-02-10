@@ -2,7 +2,21 @@
 
 $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/raw.tpl.php');
 
-$tpl->set('item', erLhcoreClassModelESChat::fetch($Params['user_parameters']['id'], $Params['user_parameters']['index']));
+if (strpos($Params['user_parameters']['index'],'lh_mail') !== false) {
+    $className = 'erLhcoreClassModelESMail';
+} else {
+    $className = 'erLhcoreClassModelESChat';
+}
+
+\erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.interactions_class', array(
+    'class_name' => & $className,
+    'index' => $Params['user_parameters']['index'],
+));
+
+$tpl->set('item', call_user_func_array($className.'::fetch',[
+    $Params['user_parameters']['id'],
+    $Params['user_parameters']['index']
+]));
 
 $Result['content'] = $tpl->fetch();
 $Result['path'] = array(
