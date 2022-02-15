@@ -677,9 +677,16 @@ class erLhcoreClassElasticSearchIndex
 
     public static function mailMessageIndex($params) {
         $db = ezcDbInstance::get();
-        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`) VALUES (:mail_id)');
-        $stmt->bindValue(':mail_id', $params['message']->id, PDO::PARAM_INT);
-        $stmt->execute();
+
+        try {
+            $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`) VALUES (:mail_id)');
+            $stmt->bindValue(':mail_id', $params['message']->id, PDO::PARAM_INT);
+            $stmt->execute();
+        } catch (Exception $e) {
+            // Ignore an error if deadlock is found
+            // Perhaps we should handle it different way, but usually it happens rarely
+            // and mails re re-indexed multiple times during their lifespan
+        }
 
         // Schedule background worker for instant indexing
         if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
@@ -689,9 +696,15 @@ class erLhcoreClassElasticSearchIndex
 
     public static function conversationIndex($params) {
         $db = ezcDbInstance::get();
-        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`,`op`) VALUES (:mail_id,1)');
-        $stmt->bindValue(':mail_id', $params['conversation']->id, PDO::PARAM_INT);
-        $stmt->execute();
+        try {
+            $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`,`op`) VALUES (:mail_id,1)');
+            $stmt->bindValue(':mail_id', $params['conversation']->id, PDO::PARAM_INT);
+            $stmt->execute();
+        } catch (Exception $e) {
+            // Ignore an error if deadlock is found
+            // Perhaps we should handle it different way, but usually it happens rarely
+            // and mails re re-indexed multiple times during their lifespan
+        }
 
         // Schedule background worker for instant indexing
         if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
