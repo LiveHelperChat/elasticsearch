@@ -75,9 +75,9 @@ if (trim($filterParams['input_form']->status) != '') {
 
 if (trim($filterParams['input_form']->opened) != '') {
     if ($filterParams['input_form']->opened === 0) {
-        $sparams['body']['query']['bool']['must'][]['term']['opened_at'] = (int)0;
+        $sparams['body']['query']['bool']['must_not'][]['range']['opened_at']['gte'] = 1;
     } else {
-        $sparams['body']['query']['bool']['must_not'][]['term']['opened_at'] = 0;
+        $sparams['body']['query']['bool']['must'][]['range']['opened_at']['gte'] = 1;
     }
 }
 
