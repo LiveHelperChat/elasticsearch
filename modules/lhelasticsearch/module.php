@@ -55,7 +55,7 @@ $ViewList['listmail'] = array(
         'export','view','subject_id', 'department_ids',
         'department_group_ids','group_ids','hvf','response_type','status','status_conv',
         'sender_host','from_host','sender_address','is_followup','undelivered','lang_ids',
-        'phone'
+        'phone','opened'
     ),
     'multiple_arguments' => array(
         'search_in',

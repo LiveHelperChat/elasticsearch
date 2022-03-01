@@ -73,6 +73,14 @@ if (trim($filterParams['input_form']->status) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['status'] = (int)trim($filterParams['input_form']->status);
 }
 
+if (trim($filterParams['input_form']->opened) != '') {
+    if ($filterParams['input_form']->opened === 0) {
+        $sparams['body']['query']['bool']['must'][]['term']['opened_at'] = (int)0;
+    } else {
+        $sparams['body']['query']['bool']['must_not'][]['term']['opened_at'] = 0;
+    }
+}
+
 if (trim($filterParams['input_form']->status_conv) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['status_conv'] = (int)trim($filterParams['input_form']->status_conv);
 }

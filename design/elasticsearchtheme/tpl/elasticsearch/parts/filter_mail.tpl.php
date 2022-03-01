@@ -212,6 +212,16 @@
 
                     </div>
                 </div>
+                
+                <div class="col-md-2">
+                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Open status');?></label>
+                    <select name="opened" class="form-control form-control-sm">
+                        <option value=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Any')?></option>
+                        <option value="0" <?php if ($input->opened === 0) : ?>selected="selected"<?php endif;?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Not opened')?></option>
+                        <option value="1" <?php if ($input->opened === 1) : ?>selected="selected"<?php endif;?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Opened')?></option>
+                    </select>
+                </div>
+
 
                 <div class="col-12">
                     <div class="row">
