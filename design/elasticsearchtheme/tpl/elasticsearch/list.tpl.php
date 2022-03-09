@@ -59,8 +59,9 @@
                             </td>
                             <td ng-non-bindable>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
-                                <div class="abbr-list-general action-image" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>)<?php endif;?>">
-                                    <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode($fields,"\n")))); ?>
+                                <a class="abbr-list-general action-image warning-visited" href="#!#es-highlight-chat-<?php echo $item->chat_id?>" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>)<?php endif;?>">
+                                    <?php foreach ($item->meta_data['highlight'] as $field => $fields) :
+                                        $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n", $fields )))); ?>
                                         <div>
                                             <?php if ($field == 'msg_system') : ?>
                                                 <i>System:</i>
@@ -71,12 +72,12 @@
                                             <?php endif; ?>
                                             <?php echo $highlightText;?></div>
                                     <?php endforeach; ?>
-                                </div>
+                                </a>
                                 <?php endif; ?>
                             </td>
                             <td><?php echo htmlspecialchars($item->department)?></td>
             		        <td nowrap="nowrap"><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
-            		        <td ng-non-bindable><?php echo htmlspecialchars($item->ip)?></td>
+            		        <td ng-non-bindable><?php echo htmlspecialchars((string)$item->ip)?></td>
                             <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
             		        <td title="<?php echo htmlspecialchars($item->meta_data['index'])?>">
             		            <a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/delete')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a>
