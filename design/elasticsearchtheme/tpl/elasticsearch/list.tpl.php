@@ -40,11 +40,11 @@
             		        <td nowrap="nowrap">
 
                             <?php $chatArchivePreview = false; if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : $chatArchivePreview = true;?>
-                                <a onclick="lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>)"><i class="material-icons">info_outline</i></a>
+                                <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" onclick="lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this))"><i class="material-icons">info_outline</i></a>
                                 <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
                                 <a href="<?php echo erLhcoreClassDesign::baseurl('chatarchive/viewarchivedchat')?>/<?php echo $itemsArchive[$item->chat_id]['archive_id']?>/<?php echo $item->chat_id;?>"><?php echo $item->chat_id?></a>
                             <?php else : ?>
-                                <a onclick="lhc.previewChat(<?php echo $item->chat_id?>)"><i class="material-icons">info_outline</i></a>
+                                <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" onclick="lhc.previewChat(<?php echo $item->chat_id?>,this)"><i class="material-icons">info_outline</i></a>
                                 <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
                                 <a href="#!#Fchat-id-<?php echo $item->chat_id?>" ng-click="lhc.startChatByID(<?php echo $item->chat_id?>)"><?php echo $item->chat_id?></a>
                             <?php endif; ?>
@@ -59,7 +59,7 @@
                             </td>
                             <td ng-non-bindable>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
-                                <a class="abbr-list-general action-image warning-visited" href="#!#es-highlight-chat-<?php echo $item->chat_id?>" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>)<?php endif;?>">
+                                <a class="abbr-list-general action-image warning-visited" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" href="#!#es-highlight-chat-<?php echo $item->chat_id?>" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>,this)<?php endif;?>">
                                     <?php foreach ($item->meta_data['highlight'] as $field => $fields) :
                                         $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n", $fields )))); ?>
                                         <div>
