@@ -59,7 +59,7 @@
                             </td>
                             <td ng-non-bindable>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
-                                <a class="abbr-list-general action-image warning-visited" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" href="#!#es-highlight-chat-<?php echo $item->chat_id?>" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>,this)<?php endif;?>">
+                                <a class="abbr-list-general action-image preview-list preview-item-<?php echo $item->chat_id?>" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" href="#!#es-highlight-chat-<?php echo $item->chat_id?>" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>,this)<?php endif;?>">
                                     <?php foreach ($item->meta_data['highlight'] as $field => $fields) :
                                         $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n", $fields )))); ?>
                                         <div>
