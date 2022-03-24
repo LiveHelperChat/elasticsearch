@@ -1,4 +1,4 @@
-<div id="tabs" role="tabpanel">
+<div id="tabs" role="tabpanel" class="pt-0">
     <?php if (isset($Result['path'])) :
         $pathElementCount = count($Result['path'])-1;
         if ($pathElementCount >= 0): ?>
@@ -92,7 +92,7 @@
                                 </td>
                                 <td ng-non-bindable>
                                     <?php if (isset($item->meta_data['highlight'])) : ?>
-                                        <a class="abbr-list-general action-image preview-list preview-item-<?php echo $item->conversation_id?>" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" href="#!#es-highlight-mail-<?php echo $item->id?>" onclick="lhc.previewMail(<?php echo $item->conversation_id?>);">
+                                        <a class="abbr-list-general action-image preview-list preview-item-<?php echo $item->conversation_id?>" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" href="#!#es-highlight-mail-<?php echo $item->id?>" onclick="lhc.previewMail(<?php echo $item->conversation_id?>,this);">
                                             <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n",$fields)))); ?>
                                                 <div>
                                                     <?php if ($field == 'subject') : ?>

@@ -1,4 +1,6 @@
-<div id="tabs" role="tabpanel">
+
+<div id="tabs" role="tabpanel" class="pt-0">
+
     <?php if (isset($Result['path'])) :
         $pathElementCount = count($Result['path'])-1;
         if ($pathElementCount >= 0): ?>
