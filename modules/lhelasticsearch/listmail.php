@@ -47,7 +47,7 @@ if ($filterParams['input_form']->phone != '') {
 
 if ($filterParams['input_form']->email != '') {
     if (empty($filterParams['input_form']->search_email_in) || $filterParams['input_form']->search_email_in == 1) {
-        $sparams['body']['query']['bool']['must'][]['term']['customer_email'] = trim($filterParams['input_form']->email);
+        $sparams['body']['query']['bool']['must'][]['term']['customer_address'] = trim($filterParams['input_form']->email);
     } else {
         $sparams['body']['query']['bool']['must'][]['term']['from_address'] = trim($filterParams['input_form']->email);
     }
