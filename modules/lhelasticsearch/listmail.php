@@ -46,7 +46,11 @@ if ($filterParams['input_form']->phone != '') {
 }
 
 if ($filterParams['input_form']->email != '') {
-    $sparams['body']['query']['bool']['must'][]['term']['from_address'] = trim($filterParams['input_form']->email);
+    if (empty($filterParams['input_form']->search_email_in) || $filterParams['input_form']->search_email_in == 1) {
+        $sparams['body']['query']['bool']['must'][]['term']['customer_email'] = trim($filterParams['input_form']->email);
+    } else {
+        $sparams['body']['query']['bool']['must'][]['term']['from_address'] = trim($filterParams['input_form']->email);
+    }
 }
 
 if ($filterParams['input_form']->sender_host != '') {
@@ -244,6 +248,10 @@ if (trim($filterParams['input_form']->keyword) != '') {
 
         if (in_array(11,$filterParams['input_form']->search_in)) {
             $sparams['body']['query']['bool']['should'][][$exactMatch]['mb_folder'] = $filterParams['input_form']->keyword;
+        }
+
+        if (in_array(12,$filterParams['input_form']->search_in)) {
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['customer_name'] = $filterParams['input_form']->keyword;
         }
     }
 

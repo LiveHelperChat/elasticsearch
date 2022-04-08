@@ -79,6 +79,12 @@
           "sender_name": {
             "type": "text"
           },
+          "customer_address": {
+            "type": "keyword"
+          },
+          "customer_name": {
+            "type": "text"
+          },
           "from_address": {
             "type": "keyword"
           },

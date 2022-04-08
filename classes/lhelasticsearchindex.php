@@ -822,6 +822,8 @@ class erLhcoreClassElasticSearchIndex
                 $esChat->mail_variables = $item->conversation->mail_variables;
                 $esChat->follow_up_id = $item->conversation->follow_up_id;
                 $esChat->phone = $item->conversation->phone;
+                $esChat->customer_name = $item->conversation->from_name;
+                $esChat->customer_address = $item->conversation->from_address;
             }
 
             $esChat->subject_id = [];
@@ -843,7 +845,7 @@ class erLhcoreClassElasticSearchIndex
             ));
 
             // Store hour as UTC for easier grouping
-            $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
+            $date_utc = new \DateTime('now', new \DateTimeZone("UTC"));
             $date_utc->setTimestamp($item->udate);
             $esChat->hour = $date_utc->format("H");
 

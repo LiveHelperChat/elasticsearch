@@ -21,6 +21,7 @@
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(2,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="2" /> Body</label>
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(3,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="3" /> From name</label>
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(4,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="4" /> Sender name</label>
+                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(12,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="12" /> Customer name</label>
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(5,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="5" /> Delivery status</label>
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(6,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="6" /> Undelivered mail body</label>
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(7,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="7" /> In Reply to data</label>
@@ -43,9 +44,16 @@
         </div>
 
         <div class="col-md-1">
-            <div class="form-group">
-                <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','E-mail');?></label>
-                <input type="text" class="form-control form-control-sm" name="email" value="<?php echo htmlspecialchars($input->email)?>" />
+            <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','E-mail');?></label>
+            <div class="input-group input-group-sm">
+                <input type="text" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','E-mail');?>" class="form-control form-control-sm" name="email" value="<?php echo htmlspecialchars($input->email)?>" />
+                <div class="input-group-append ">
+                    <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
+                    <div class="dropdown-menu">
+                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if (empty($input->search_email_in) || $input->search_email_in == 1) : ?>checked="checked"<?php endif;?> name="search_email_in" value="1" /> Customer e-mail</label>
+                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if ($input->search_email_in == 2) : ?>checked="checked"<?php endif;?> name="search_email_in" value="2" /> Sender e-mail</label>
+                    </div>
+                </div>
             </div>
         </div>
 

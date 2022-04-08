@@ -61,6 +61,17 @@ $fieldsSearch['view'] = array (
     )
 );
 
+$fieldsSearch['search_email_in'] = array (
+    'type' => 'text',
+    'trans' => 'Search in e-mail',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'none',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 1)
+    )
+);
+
 $fieldsSearch['no_user'] = array (
     'type' => 'text',
     'trans' => 'id',
