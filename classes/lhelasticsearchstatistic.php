@@ -1841,6 +1841,8 @@ class erLhcoreClassElasticSearchStatistic
             'nick' => 'nick_keyword',
             'uagent' => 'uagent',
             'device_type' => 'device_type',
+            'department' => 'dep_id',
+            'user_id' => 'user_id',
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.validgroupfields', array('type' => 'elastic', 'fields' => & $validGroupFields));
@@ -1895,8 +1897,14 @@ class erLhcoreClassElasticSearchStatistic
 
                 $returnArray['color'][] = json_encode(erLhcoreClassChatStatistic::colorFromString($bucketStatus['key']));
 
+                echo $attr;
+
                 if ($attr == 'device_type') {
                     $returnArray['nick'][] = json_encode($bucketStatus['key'] == 0 ? 'PC' : ($bucketStatus['key'] == 1 ? 'Mobile' : 'Table'));
+                } elseif ($attr == 'user_id') {
+                    $returnArray['nick'][] = json_encode($bucketStatus['key'] > 0 && ($userAttr = erLhcoreClassModelUser::fetch($bucketStatus['key'])) && $userAttr instanceof erLhcoreClassModelUser ? $userAttr->name_official : $bucketStatus['key']);
+                } elseif ($attr == 'dep_id') {
+                    $returnArray['nick'][] = json_encode((string)erLhcoreClassModelDepartament::fetch($bucketStatus['key']));
                 } else {
                     $returnArray['nick'][] = json_encode($bucketStatus['key']);
                 }
