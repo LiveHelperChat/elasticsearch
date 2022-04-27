@@ -1,5 +1,6 @@
 <?php
 
+/*
 $fieldsSearch['sentiment_visitor'] = array (
     'type' => 'text',
     'trans' => '',
@@ -34,6 +35,6 @@ $fieldsSearch['sentiment_visitor_value_lt'] = array (
     'validation_definition' => new ezcInputFormDefinitionElement (
         ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
     )
-);
+);*/
 
 ?>
