@@ -540,6 +540,8 @@ $fieldSortAttr = array (
     'options'    => array()
 );
 
+include 'extension/elasticsearch/classes/filter/chat_list_custom_column.php';
+
 $searchAttributes = array(
     'filterAttributes' => $fieldsSearch,
     'sortAttributes'   => $fieldSortAttr

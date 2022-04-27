@@ -90,7 +90,15 @@ class erLhcoreClassModelESChat
             'chat' => & $this
         ));
 
+        foreach ($this->customGetAttributes as $attrCustom) {
+            $states[$attrCustom] = $this->{$attrCustom};
+        }
+
         return $states;
+    }
+
+    public function setCustomGetAttributes($attr) {
+        $this->customGetAttributes = $attr;
     }
 
     /**
@@ -127,7 +135,24 @@ class erLhcoreClassModelESChat
                     }
                 }
                 return $this->department;
-                break;
+
+            case 'chat_variables_array':
+                if (!empty($this->chat_variables)){
+                    $jsonData = json_decode($this->chat_variables,true);
+                    if ($jsonData !== null) {
+                        $this->chat_variables_array = $jsonData;
+                    } else {
+                        $chat_variables_array = @unserialize($this->chat_variables);
+                        if ($chat_variables_array !== false) {
+                            $this->chat_variables_array = $chat_variables_array;
+                        } else {
+                            $this->chat_variables_array = $this->chat_variables;
+                        }
+                    }
+                } else {
+                    $this->chat_variables_array = array();
+                }
+                return $this->chat_variables_array;
 
             case 'user':
                 $this->user = false;
@@ -139,7 +164,6 @@ class erLhcoreClassModelESChat
                     }
                 }
                 return $this->user;
-                break;
 
             default:
                 break;
@@ -147,6 +171,8 @@ class erLhcoreClassModelESChat
     }
 
     public static $elasticType = 'lh_chat';
+
+    public $customGetAttributes = [];
 
     public $id = null;
     public $transfer_uid = null;

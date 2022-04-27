@@ -6,6 +6,16 @@ $validTabs = array('chats','messages');
 $tab = (isset($Params['user_parameters_unordered']['tab']) && in_array($Params['user_parameters_unordered']['tab'], $validTabs)) ? $Params['user_parameters_unordered']['tab'] : "chats";
 $tpl->set('tab', $tab);
 
+if (isset(erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'])) {
+    $urlCfgDefault = ezcUrlConfiguration::getInstance();
+    $url = erLhcoreClassURL::getInstance();
+    foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'] as $columnField => $columnData) {
+        $urlCfgDefault->addUnorderedParameter( $columnField );
+        $url->applyConfiguration( $urlCfgDefault );
+        $Params['user_parameters_unordered'][$columnField] = $url->getParam($columnField);
+    }
+}
+
 // Chats filter
 if (isset($_GET['ds'])) {
     $filterParams = erLhcoreClassSearchHandler::getParams(array(
@@ -228,6 +238,24 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['term']['gbot_id'] = 0;
     }
 
+    if (isset(erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'])) {
+        foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'] as $columnField => $columnData) {
+            if ($columnData['filter_type'] == 'filterstring') {
+                if (trim($filterParams['input_form']->{$columnField}) != '') {
+                    $sparams['body']['query']['bool']['must'][]['term'][$columnData['field_search']] = (string)$filterParams['input_form']->{$columnField};
+                }
+            } elseif ($columnData['filter_type'] == 'filterrangefloatgt') {
+                if (trim($filterParams['input_form']->{$columnField}) != '') {
+                    $sparams['body']['query']['bool']['must'][]['range'][$columnData['field_search']]['gt'] = (float)$filterParams['input_form']->{$columnField};
+                }
+            } elseif ($columnData['filter_type'] == 'filterrangefloatlt') {
+                if (trim($filterParams['input_form']->{$columnField}) != '') {
+                    $sparams['body']['query']['bool']['must'][]['range'][$columnData['field_search']]['lt'] = (float)$filterParams['input_form']->{$columnField};
+                }
+            }
+        }
+    }
+
     if (isset($filterParams['input']->bot_ids) && is_array($filterParams['input']->bot_ids) && !empty($filterParams['input']->bot_ids)) {
 
         erLhcoreClassChat::validateFilterInString($filterParams['input']->bot_ids);
@@ -404,6 +432,11 @@ if ($tab == 'chats') {
             }
             erLhcoreClassChatArcive::setArchiveAttribute($chatIds);
             $tpl->set('itemsArchive', $chatIds);
+
+            $iconsAdditional = erLhAbstractModelChatColumn::getList(array('ignore_fields' => array('position','conditions','column_identifier','enabled'), 'sort' => false, 'filter' => array('icon_mode' => 1, 'enabled' => 1, 'chat_enabled' => 1)));
+            erLhcoreClassChat::prefillGetAttributes($chats, array(), array(), array('additional_columns' => $iconsAdditional, 'do_not_clean' => true));
+            $tpl->set('icons_additional',$iconsAdditional);
+
             $tpl->set('items', $chats);
         }
 

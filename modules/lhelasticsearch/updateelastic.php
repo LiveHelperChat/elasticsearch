@@ -71,6 +71,16 @@ if (in_array($action, array(
                 $mapping = array_merge($mapping,$contentData[$elasticIndex]['types'][$type]);
             }
 
+            if ($type == 'lh_chat' && isset($settings['columns']) && !empty($settings['columns'])) {
+                foreach ($settings['columns'] as $field => $dataField) {
+                    if (isset($dataField['type'])) {
+                        $mapping[$field] = [
+                            'type' => $dataField['type']
+                        ];
+                    }
+                }
+            }
+
             $types[] = erLhcoreClassElasticSearchUpdate::getElasticStatus($mapping, $elasticIndex);
 
         }

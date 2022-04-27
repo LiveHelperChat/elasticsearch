@@ -1,4 +1,4 @@
-<div class="col-12" ng-non-bindable>
+<div class="col-2" ng-non-bindable>
     <div class="form-group">
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>
             <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
@@ -12,3 +12,4 @@
             )); ?>
     </div>
 </div>
+<?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/custom_filter_attr_settings.tpl.php')); ?>

@@ -172,6 +172,16 @@ class erLhcoreClassElasticClient
                     $mapping = array_merge($mapping, $contentData[$index]['types'][$type]);
                 }
 
+                if ($type == 'lh_chat' && isset($settings['columns']) && !empty($settings['columns'])) {
+                   foreach ($settings['columns'] as $field => $dataField) {
+                       if (isset($dataField['type'])) {
+                           $mapping[$field] = [
+                               'type' => $dataField['type']
+                           ];
+                       }
+                   }
+                }
+
                 erLhcoreClassElasticSearchUpdate::doElasticUpdate($mapping, $indexCurrent);
             }
         }

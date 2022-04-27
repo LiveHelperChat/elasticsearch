@@ -29,6 +29,8 @@ class erLhcoreClassElasticSearchIndex
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
         $dataOptions = (array)$esOptions->data;
 
+        $settings = include ('extension/elasticsearch/settings/settings.ini.php');
+
         if (isset($dataOptions['check_if_exists']) && $dataOptions['check_if_exists'] == 1)
         {
             $dateRangesIndex = [];
@@ -43,13 +45,20 @@ class erLhcoreClassElasticSearchIndex
             }
 
             if (!empty($dateRangesIndex)) {
-                $settings = include ('extension/elasticsearch/settings/settings.ini.php');
-
                 foreach (array_unique($dateRangesIndex) as $indexPrepend)
                 {
                     $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
                     $esSearchHandler = erLhcoreClassElasticClient::getHandler();
                     erLhcoreClassElasticClient::indexExists($esSearchHandler, $settings['index'], $indexPrepend, true);
+                }
+            }
+        }
+
+        $attributesGet = [];
+        if (isset($settings['columns']) && !empty($settings['columns'])) {
+            foreach ($settings['columns'] as $columnAttr => $column) {
+                if ($column['enabled'] && isset($column['content'])) {
+                    $attributesGet[$columnAttr] = $column;
                 }
             }
         }
@@ -189,15 +198,39 @@ class erLhcoreClassElasticSearchIndex
                 }
             }
 
-            $esChat->msg_system = trim($esChat->msg_system);
-            $esChat->msg_operator = trim($esChat->msg_operator);
-            $esChat->msg_visitor = trim($esChat->msg_visitor);
+            $esChat->msg_system = trim((string)$esChat->msg_system);
+            $esChat->msg_operator = trim((string)$esChat->msg_operator);
+            $esChat->msg_visitor = trim((string)$esChat->msg_visitor);
 
             // Has visitor file
             $esChat->hvf = preg_match('/\[file="?(.*?)"?\]/is',$esChat->msg_visitor);
 
             // Hast operator file
             $esChat->hof = preg_match('/\[file="?(.*?)"?\]/is',$esChat->msg_operator);
+
+            // Fields defined from settings file
+            foreach ($attributesGet as $attributeField => $attributeGet) {
+                $esChat->{$attributeField} = erLhcoreClassGenericBotWorkflow::translateMessage($attributeGet['content'], array('chat' => $item, 'args' => ['chat' => $item]));
+
+                if ($attributeGet['type'] == 'keyword') {
+                    if (trim($esChat->{$attributeField}) == '') {
+                        $esChat->{$attributeField} = null;
+                    } else {
+                        $esChat->{$attributeField} = (string)$esChat->{$attributeField};
+                    }
+                }
+
+                if ($attributeGet['type'] == 'float') {
+                    if (trim($esChat->{$attributeField}) == '') {
+                        $esChat->{$attributeField} = null;
+                    } else {
+                        $esChat->{$attributeField} = (double)$esChat->{$attributeField};
+                    }
+                }
+            }
+
+            // Let indexes to know custom fields
+            $esChat->setCustomGetAttributes(array_keys($attributesGet));
 
             $indexSave = erLhcoreClassModelESChat::$indexName . '-' . erLhcoreClassModelESChat::$elasticType;
 

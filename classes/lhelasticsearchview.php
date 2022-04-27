@@ -106,6 +106,11 @@ class erLhcoreClassElasticSearchView
                 $chatIds[$prevChat->chat_id] = array();
             }
             erLhcoreClassChatArcive::setArchiveAttribute($chatIds);
+
+            $iconsAdditional = erLhAbstractModelChatColumn::getList(array('ignore_fields' => array('position','conditions','column_identifier','enabled'), 'sort' => false, 'filter' => array('icon_mode' => 1, 'enabled' => 1, 'chat_enabled' => 1)));
+            erLhcoreClassChat::prefillGetAttributes($items, array(), array(), array('additional_columns' => $iconsAdditional, 'do_not_clean' => true));
+
+            $tpl->set('icons_additional',$iconsAdditional);
             $tpl->set('itemsArchive', $chatIds);
             $tpl->set('items', $items);
             $tpl->set('list_mode', $params['uparams']['mode'] == 'list');

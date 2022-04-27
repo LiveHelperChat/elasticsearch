@@ -437,6 +437,28 @@ class erLhcoreClassElasticSearchStatistic
         exit;
     }
 
+
+    public static function statisticFilter($params)
+    {
+        if (isset(erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'])) {
+            foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'] as $columnField => $columnData) {
+                $params['filter']['input']->{$columnField} = null;
+                $params['filter']['input_form']->{$columnField} = null;
+                if (isset($_GET[$columnField]) && !empty(trim($_GET[$columnField]))) {
+                    $params['filter']['input']->{$columnField} = $_GET[$columnField];
+                    $params['filter']['input_form']->{$columnField} = $_GET[$columnField];
+                    if ($columnData['filter_type'] == 'filterstring') {
+                        $params['filter']['filter']['filter'][$columnData['field_search']] = (string)$params['filter']['input_form']->{$columnField};
+                    } elseif ($columnData['filter_type'] == 'filterrangefloatgt') {
+                        $params['filter']['filter']['filtergt'][$columnData['field_search']] = (float)$params['filter']['input_form']->{$columnField};
+                    } elseif ($columnData['filter_type'] == 'filterrangefloatlt') {
+                        $params['filter']['filter']['filterlt'][$columnData['field_search']] = (float)$params['filter']['input_form']->{$columnField};
+                    }
+                }
+            }
+        }
+    }
+
     public static function statisticNumberofchatsdialogsbydepartment($params)
     {
         $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();

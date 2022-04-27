@@ -1,6 +1,6 @@
 <div class="col-12" ng-non-bindable>
     <div class="row">
-        <div class="col-12">
+        <div class="col-2">
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>
             <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
                 'input_name'     => 'subject_ids[]',
@@ -12,5 +12,6 @@
                 'list_function'  => 'erLhAbstractModelSubject::getList'
             )); ?>
         </div>
+        <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/custom_filter_attr_settings.tpl.php')); ?>
     </div>
 </div>
