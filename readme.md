@@ -78,3 +78,99 @@ To receive notification about failure of Elasticsearch you can run this cronjob.
 
 `* * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/check_health`
 
+#### Sample for additional column from settings file
+
+In relation to https://doc.livehelperchat.com/docs/bot/sentiment-analysis-per-message
+
+While setting config I suggest to set `'enabled' => false` and then run. So additional columns will be created and only then set `'enabled' => true` 
+
+```shell
+cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/index_precreate
+```
+
+This configuration defines two columns `sentiment_visitor` and `sentiment_visitor_value`. `sentiment_visitor_value_lt` does not have `type` and is not a field just a search attribute.
+
+```php
+'columns' => array(
+            'sentiment_visitor' => [
+                'enabled' => true,
+                'render' => array(
+                        'field' => 'sentiment_visitor',
+                        'type' => 'combobox',
+                        'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/proactivechatinvitation', 'Sentiment visitor'),
+                        'optional_value' => '',
+                        'required' => false,
+                        'direct_name' => true,
+                        'frontend' => 'name',
+                        'name_attr' => 'name',
+                        'source' => function() {
+                            $items = [];
+
+                            $item = new stdClass();
+                            $item->id = 'negative';
+                            $item->name = 'negative';
+                            $items[] = $item;
+
+                            $item = new stdClass();
+                            $item->id = 'positive';
+                            $item->name = 'positive';
+                            $items[] = $item;
+
+                            $item = new stdClass();
+                            $item->id = 'neutral';
+                            $item->name = 'neutral';
+                            $items[] = $item;
+
+                            return $items;
+                        },
+                        'hide_optional' => false,
+                        'params_call' => array(),
+                        'validation_definition' => new ezcInputFormDefinitionElement(ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw')
+                ),
+                'filter_type' => 'filterstring',
+                'type' => 'keyword',
+                'field_search' => 'sentiment_visitor',
+                'content' => '{args.chat.chat_variables_array.sentiment_visitor}'
+            ],
+            'sentiment_visitor_value' => [
+                'enabled' => true,
+                'width' => 'col-1',
+                'render' => array(
+                    'field' => 'sentiment_visitor_value',
+                    'type' => 'text',
+                    'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/proactivechatinvitation', 'Greater than'),
+                    'required' => false,
+                    'direct_name' => true,
+                    'placeholder' => '0.5 for 50%',
+                    'frontend' => 'name',
+                    'name_attr' => 'name',
+                    'hide_optional' => false,
+                    'params_call' => array(),
+                    'validation_definition' => new ezcInputFormDefinitionElement(ezcInputFormDefinitionElement::OPTIONAL, 'float')
+                ),
+                'filter_type' => 'filterrangefloatgt',
+                'type' => 'float',
+                'field_search' => 'sentiment_visitor_value',
+                'content' => '{args.chat.chat_variables_array.sentiment_visitor_value}'
+            ],
+            'sentiment_visitor_value_lt' => [
+                'enabled' => true,
+                'width' => 'col-1',
+                'render' => array(
+                    'field' => 'sentiment_visitor_value_lt',
+                    'type' => 'text',
+                    'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/proactivechatinvitation', 'Less than'),
+                    'required' => false,
+                    'direct_name' => true,
+                    'placeholder' => '0.5 for 50%',
+                    'frontend' => 'name',
+                    'name_attr' => 'name',
+                    'hide_optional' => false,
+                    'params_call' => array(),
+                    'validation_definition' => new ezcInputFormDefinitionElement(ezcInputFormDefinitionElement::OPTIONAL, 'float')
+                ),
+                'field_search' => 'sentiment_visitor_value',
+                'filter_type' => 'filterrangefloatlt',
+            ],
+        ),
+```

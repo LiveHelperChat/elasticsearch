@@ -8,6 +8,7 @@ return array (
 	    'additional_indexes' => array(
 	        
 	    ),
+	    'columns' => [],
 	    'use_iam' => false,
 	    'iam_region' => 'eu-central-1',
 	    'iam_credentials' => array(
