@@ -65,7 +65,9 @@ if ($tab == 'chats') {
     $dateFilter = array();
 
     if (trim($filterParams['input_form']->chat_id) != '') {
-        $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = (int)trim($filterParams['input_form']->chat_id);
+        $chat_ids = explode(',',trim($filterParams['input_form']->chat_id));
+        erLhcoreClassChat::validateFilterIn($chat_ids);
+        $sparams['body']['query']['bool']['must'][]['terms']['chat_id'] = $chat_ids;
     }
     
     if ($filterParams['input_form']->nick != '') {
@@ -351,26 +353,38 @@ if ($tab == 'chats') {
     {
 
         if (trim($filterParams['input_form']->chat_id) != '') {
+            foreach ($chat_ids as $index_chat_id => $chat_id) {
+                $chatDirect = erLhcoreClassModelChat::fetch((int)trim($chat_id));
 
-            $chatDirect = erLhcoreClassModelChat::fetch((int)trim($filterParams['input_form']->chat_id));
+                if (!($chatDirect instanceof erLhcoreClassModelChat)) {
+                    $chatArchive = erLhcoreClassChatArcive::fetchChatById((int)trim($chat_id));
+                    if (is_array($chatArchive)) {
+                        $chatDirect = $chatArchive['chat'];
+                    }
+                }
 
-            if (!($chatDirect instanceof erLhcoreClassModelChat)) {
-                $chatArchive = erLhcoreClassChatArcive::fetchChatById((int)trim($filterParams['input_form']->chat_id));
-                if (is_array($chatArchive)) {
-                    $chatDirect = $chatArchive['chat'];
+                if (is_object($chatDirect)) {
+                    if ($index_chat_id == 0) {
+                        $sparams = array(
+                            'body' => array()
+                        );
+                        $sparams['body']['query']['bool']['must'][]['terms']['chat_id'] = $chat_ids;
+                    }
+
+                    if (isset($dateFilter['gte'])) {
+                        $dateFilter['gte'] = min($chatDirect->time + 10, $dateFilter['gte']);
+                    } else {
+                        $dateFilter['gte'] = $chatDirect->time + 10;
+                    }
+
+                    if (isset($dateFilter['lte'])) {
+                        $dateFilter['lte'] = max($chatDirect->time - 10,$dateFilter['lte']);
+                    } else {
+                        $dateFilter['lte'] = $chatDirect->time - 10;
+                    }
                 }
             }
 
-            if (is_object($chatDirect)) {
-                $sparams = array(
-                    'body' => array()
-                );
-
-                $sparams['body']['query']['bool']['must'][]['term']['chat_id'] = (int)trim($filterParams['input_form']->chat_id);
-
-                $dateFilter['gte'] = $chatDirect->time + 10;
-                $dateFilter['lte'] = $chatDirect->time - 10;
-            }
         }
 
         if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 2) {
