@@ -243,15 +243,15 @@ if ($tab == 'chats') {
     if (isset(erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'])) {
         foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'] as $columnField => $columnData) {
             if ($columnData['filter_type'] == 'filterstring') {
-                if (trim($filterParams['input_form']->{$columnField}) != '') {
+                if (isset($filterParams['input_form']->{$columnField}) && trim($filterParams['input_form']->{$columnField}) != '') {
                     $sparams['body']['query']['bool']['must'][]['term'][$columnData['field_search']] = (string)$filterParams['input_form']->{$columnField};
                 }
             } elseif ($columnData['filter_type'] == 'filterrangefloatgt') {
-                if (trim($filterParams['input_form']->{$columnField}) != '') {
+                if (isset($filterParams['input_form']->{$columnField}) && trim($filterParams['input_form']->{$columnField}) != '') {
                     $sparams['body']['query']['bool']['must'][]['range'][$columnData['field_search']]['gt'] = (float)$filterParams['input_form']->{$columnField};
                 }
             } elseif ($columnData['filter_type'] == 'filterrangefloatlt') {
-                if (trim($filterParams['input_form']->{$columnField}) != '') {
+                if (isset($filterParams['input_form']->{$columnField}) && trim($filterParams['input_form']->{$columnField}) != '') {
                     $sparams['body']['query']['bool']['must'][]['range'][$columnData['field_search']]['lt'] = (float)$filterParams['input_form']->{$columnField};
                 }
             }
@@ -384,8 +384,43 @@ if ($tab == 'chats') {
                     }
                 }
             }
-
         }
+
+        if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 1) {
+            if (ezcInputForm::hasPostData()) {
+                session_write_close();
+                $ignoreFields = (new erLhcoreClassModelChat)->getState();
+                unset($ignoreFields['id']);
+                $ignoreFields = array_keys($ignoreFields);
+
+                $filterSQL = [];
+
+                $chats = erLhcoreClassModelESChat::getList(array(
+                    'offset' => 0,
+                    'limit' => 9000,
+                    'body' => array_merge(array(
+                        'sort' => $sort
+                    ), $sparams['body'])
+                ),
+                    array('date_index' => $dateFilter));
+
+                $chatIDs = [];
+                foreach ($chats as $chatID) {
+                    $filterSQL['filterin']['id'][] = $chatID->chat_id;
+                }
+
+                // @todo add archived chats support as not all elastic chats are in live tables
+
+                erLhcoreClassChatExport::chatListExportXLS(erLhcoreClassModelChat::getList(array_merge($filterSQL, array('limit' => 100000, 'offset' => 0, 'ignore_fields' => $ignoreFields))), array('csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
+                exit;
+            } else {
+                $tpl = erLhcoreClassTemplate::getInstance('lhchat/export_config.tpl.php');
+                $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+                echo $tpl->fetch();
+                exit;
+            }
+        }
+
 
         if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 2) {
 

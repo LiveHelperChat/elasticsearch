@@ -473,6 +473,16 @@
 	<div class="btn-group" role="group" aria-label="...">
 		<input type="submit" name="doSearchSubmit" class="btn btn-primary btn-sm" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
 
+        <?php $appendPrintExportURL = ''; if (isset($pages) && $pages->items_total > 0) : ?>
+            <?php include(erLhcoreClassDesign::designtpl('lhchat/lists/search_panel_append_print_multiinclude.tpl.php'));?>
+           
+            <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhchat','export_chats')) : ?>
+                <button type="button" onclick="return lhc.revealModal({'title' : 'Export', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/1?<?php echo $appendPrintExportURL?>'})" class="btn btn-outline-secondary btn-sm"><span class="material-icons">file_download</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Export')?> (<?php echo $pages->items_total?> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','chats');?>)</button>
+            <?php endif; ?>
+
+        <?php endif; ?>
+
+
         <?php if (isset($pages) && erLhcoreClassUser::instance()->hasAccessTo('lhviews','use')) : ?>
             <?php if ($input->view > 0) : ?>
                 <input type="hidden" name="view" value="<?php echo $input->view?>" />

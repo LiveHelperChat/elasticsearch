@@ -317,6 +317,39 @@ if ($filterParams['input_form']->ds == 1)
         exit;
     }
 
+    if (in_array($Params['user_parameters_unordered']['export'], array(1))) {
+        if (ezcInputForm::hasPostData()) {
+            session_write_close();
+
+            $filterSQL = [];
+
+            $chats = erLhcoreClassModelESMail::getList(array(
+                'offset' => 0,
+                'limit' => 9000,
+                'body' => array_merge(array(
+                    'sort' => $sort
+                ), $sparams['body'])
+            ),
+                array('date_index' => $dateFilter));
+
+            $chatIDs = [];
+            foreach ($chats as $chatID) {
+                $filterSQL['filterin']['id'][] = $chatID->conversation_id;
+            }
+
+            $filterSQL['filterin']['id'] = array_unique($filterSQL['filterin']['id']);
+
+            // @todo add archived mails support as not all elastic chats are in live tables
+
+            erLhcoreClassMailconvExport::export(array_merge($filterSQL, array('limit' => 100000, 'offset' => 0)), array('csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
+            exit;
+        } else {
+            $tpl = erLhcoreClassTemplate::getInstance('lhmailconv/export_config.tpl.php');
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+            echo $tpl->fetch();
+            exit;
+        }
+    }
 
 
     $total = erLhcoreClassModelESMail::getCount($sparams, array('date_index' => $dateFilter));
