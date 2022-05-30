@@ -64,13 +64,23 @@ Sometimes elastic search might miss chat's in it's index especially if it just h
 
 `36 */8 * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/reindex_recent > log_reindex_recent.txt /dev/null 2>&1`
 
-#### Using daily/monthly index
+#### Using daily/monthly/yearly index
 
-I recommend if you are planning to have thousands of chats per day to use monthly index.
+I recommend if you are planning to have thousands of chats per day to use monthly or early index.
 
-If you are running daily/monthly index you should be running this cronjob daily.
+If you are running daily/monthly/yearly index you should be running this cronjob daily.
 
 `5 12 * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/index_precreate`
+
+To precreate/update index you can also run it like this one time
+
+Current year
+
+`/usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate -p yearly`
+
+Manual year
+
+`/usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_precreate -p 2022`
 
 #### Monitoring Elasticsearch
 
