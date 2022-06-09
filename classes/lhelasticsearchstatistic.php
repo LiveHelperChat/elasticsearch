@@ -35,6 +35,12 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['drpd'] = 1;
         }
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         self::formatFilter($params['filter'], $sparams);
 
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
@@ -103,6 +109,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -475,6 +487,12 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['drpd'] = 1;
         }
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
@@ -527,6 +545,12 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['drpd'] = 1;
         }
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
         
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
@@ -543,9 +567,9 @@ class erLhcoreClassElasticSearchStatistic
 
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
-        $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = 'user_id';
+        $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = isset($params['group_field']) ? $params['group_field'] : 'user_id';
         $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 40;
-        
+
         $response = $elasticSearchHandler->search($sparams);
         
         $statsAggr = array();
@@ -587,6 +611,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -638,6 +668,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
@@ -734,6 +770,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         $paramsOrig = $paramsOrigIndex = $params;
@@ -931,6 +973,12 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['drpd'] = 1;
         }
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         $paramsOrig = $params;
         if (!isset($paramsOrig['filter']['filtergte']['time'])) {
             $params['filter']['filtergte']['time']= $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
@@ -998,6 +1046,12 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['drpd'] = 1;
         }
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         self::formatFilter($params['filter'], $sparams);
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESMsg::$elasticType);
@@ -1054,6 +1108,12 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['drpd'] = 1;
         }
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -1088,6 +1148,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         $diffDays = ((isset($params['filter']['filterlte']['time']) ? $params['filter']['filterlte']['time'] : time())-$params['filter']['filtergte']['time'])/(24*3600);
@@ -1254,6 +1320,12 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
         $sparams['ignore_unavailable'] = true;
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
         
         if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
@@ -1316,6 +1388,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
@@ -1449,6 +1527,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
@@ -1728,6 +1812,12 @@ class erLhcoreClassElasticSearchStatistic
             $params['filter']['filter']['drpd'] = 1;
         }
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESChat::$elasticType);
@@ -1847,6 +1937,12 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
 
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
         if ($aggr != 'weekday') {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
@@ -1865,6 +1961,7 @@ class erLhcoreClassElasticSearchStatistic
             'device_type' => 'device_type',
             'department' => 'dep_id',
             'user_id' => 'user_id',
+            'transfer_uid' => 'transfer_uid',
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.validgroupfields', array('type' => 'elastic', 'fields' => & $validGroupFields));
@@ -1912,18 +2009,15 @@ class erLhcoreClassElasticSearchStatistic
                 $keyDateUnix = $bucket['key'];
             }
 
-
             $returnArray = array();
 
             foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
 
                 $returnArray['color'][] = json_encode(erLhcoreClassChatStatistic::colorFromString($bucketStatus['key']));
 
-                echo $attr;
-
                 if ($attr == 'device_type') {
                     $returnArray['nick'][] = json_encode($bucketStatus['key'] == 0 ? 'PC' : ($bucketStatus['key'] == 1 ? 'Mobile' : 'Table'));
-                } elseif ($attr == 'user_id') {
+                } elseif ($attr == 'user_id' || $attr == 'transfer_uid') {
                     $returnArray['nick'][] = json_encode($bucketStatus['key'] > 0 && ($userAttr = erLhcoreClassModelUser::fetch($bucketStatus['key'])) && $userAttr instanceof erLhcoreClassModelUser ? $userAttr->name_official : $bucketStatus['key']);
                 } elseif ($attr == 'dep_id') {
                     $returnArray['nick'][] = json_encode((string)erLhcoreClassModelDepartament::fetch($bucketStatus['key']));
@@ -2001,6 +2095,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         $validGroupFields = array(
@@ -2126,6 +2226,12 @@ class erLhcoreClassElasticSearchStatistic
 
         if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
             $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
         }
 
         self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));

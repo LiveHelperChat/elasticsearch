@@ -236,6 +236,12 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['range']['gbot_id']['gt'] = (int)0;
     }
 
+    if ($filterParams['input_form']->transfer_happened == 1) {
+        $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+        $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+        $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+    }
+
     if ($filterParams['input_form']->without_bot == 1) {
         $sparams['body']['query']['bool']['must'][]['term']['gbot_id'] = 0;
     }

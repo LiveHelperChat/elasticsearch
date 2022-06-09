@@ -532,6 +532,18 @@ $fieldsSearch['without_bot'] = array (
     )
 );
 
+$fieldsSearch['transfer_happened'] = array (
+    'type' => 'boolean',
+    'trans' => 'groupby',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'manual',
+    'filter_table_field' => ['filter' => ['gbot_id' => 0]],
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+    )
+);
+
 $fieldSortAttr = array (
     'field'      => false,
     'default'    => false,

@@ -146,6 +146,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->user_tz_identifier = $item->user_tz_identifier;
             $esChat->operation_admin = $item->operation_admin;
             $esChat->tslasign = $item->tslasign;
+            $esChat->transfer_uid = $item->transfer_uid;
             $esChat->usaccept = $item->usaccept;
             $esChat->lsync = $item->lsync;
             $esChat->auto_responder_id = $item->auto_responder_id;
