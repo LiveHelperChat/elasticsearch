@@ -70,6 +70,7 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('views.loadview', 'erLhcoreClassElasticSearchView::loadView');
                 $dispatcher->listen('views.editview', 'erLhcoreClassElasticSearchView::editView');
                 $dispatcher->listen('views.update_vew', 'erLhcoreClassElasticSearchView::updateView');
+                $dispatcher->listen('views.export', 'erLhcoreClassElasticSearchView::exportView');
 
                 // Mail module
 

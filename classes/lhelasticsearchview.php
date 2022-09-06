@@ -16,8 +16,22 @@ class erLhcoreClassElasticSearchView
     }
 
     // Update view handler
-    public static function updateView($params) {
+    public static function exportView($params) {
+        if ($params['search']->scope == 'eschat')
+        {
+            $tpl = erLhcoreClassTemplate::getInstance('lhchat/export_config.tpl.php');
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . $params['append']);
+            echo $tpl->fetch();
+            exit;
+        } else if ($params['search']->scope == 'esmail') {
+            $tpl = erLhcoreClassTemplate::getInstance('lhmailconv/export_config.tpl.php');
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $params['append']);
+            echo $tpl->fetch();
+            exit;
+        }
+    }
 
+    public static function updateView($params) {
         if ($params['search']->scope == 'eschat')
         {
             $dateFilter = [];
@@ -55,6 +69,7 @@ class erLhcoreClassElasticSearchView
                 $params['search']->updateThis(['update' => ['updated_at']]);
             }
         }
+
     }
 
     // Load view handler

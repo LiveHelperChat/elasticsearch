@@ -82,7 +82,8 @@
             <td ng-non-bindable>
                 <?php if (isset($item->meta_data['highlight'])) : ?>
                     <div class="abbr-list-general">
-                        <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode($fields,"\n")))); ?>
+                        <?php foreach ($item->meta_data['highlight'] as $field => $fields) :
+                            $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n",$fields)))); ?>
                             <div>
                                 <?php if ($field == 'subject') : ?>
                                     <i><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Subject');?>:</i>

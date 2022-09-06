@@ -264,6 +264,8 @@ if ($tab == 'chats') {
         }
     }
 
+
+
     if (isset($filterParams['input']->bot_ids) && is_array($filterParams['input']->bot_ids) && !empty($filterParams['input']->bot_ids)) {
 
         erLhcoreClassChat::validateFilterInString($filterParams['input']->bot_ids);
