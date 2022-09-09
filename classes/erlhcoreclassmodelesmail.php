@@ -10,6 +10,7 @@ class erLhcoreClassModelESMail
             'id' => $this->id,
             'status' => $this->status,
             'conversation_id' => $this->conversation_id,
+            'conversation_id_old' => $this->conversation_id_old,
             'message_id' => $this->message_id,
             'in_reply_to'  => $this->in_reply_to,
             'subject' => $this->subject,
@@ -194,6 +195,7 @@ class erLhcoreClassModelESMail
     public $phone = null;
     public $customer_address = null;
     public $customer_name = null;
+    public $conversation_id_old = null;
 
     // Dynamic attributes
     public $subject_id = null;

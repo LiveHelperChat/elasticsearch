@@ -7,7 +7,7 @@
         <div class="col-md-1">
 		  <div class="form-group">
 			<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Chat ID');?></label>
-			<input type="text" class="form-control form-control-sm" name="chat_id" value="<?php echo htmlspecialchars($input->chat_id)?>" />
+			<input type="text" class="form-control form-control-sm" name="chat_id" placeholder="<?php echo htmlspecialchars("<id>[,<id>]");?>" value="<?php echo htmlspecialchars($input->chat_id)?>" />
 		  </div>
 		</div>
 

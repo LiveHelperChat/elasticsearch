@@ -30,7 +30,17 @@ $sparams = array(
 $dateFilter = array();
 
 if (trim($filterParams['input_form']->conversation_id) != '') {
-    $sparams['body']['query']['bool']['must'][]['term']['conversation_id'] = (int)trim($filterParams['input_form']->conversation_id);
+    $chat_ids = explode(',',trim($filterParams['input_form']->conversation_id));
+    erLhcoreClassChat::validateFilterIn($chat_ids);
+
+    // Merged id's support
+    // In the future once we have archiving this part has to support archives
+    $idsRelated = array_unique(erLhcoreClassModelMailconvMessage::getCount(['filter' => ['conversation_id_old' => $chat_ids]], '', false, 'conversation_id', false, true, true));
+    if (!empty($idsRelated)) {
+        $chat_ids = array_merge($chat_ids,$idsRelated);
+    }
+
+    $sparams['body']['query']['bool']['must'][]['terms']['conversation_id'] = $chat_ids;
 }
 
 if (trim($filterParams['input_form']->message_id) != '') {

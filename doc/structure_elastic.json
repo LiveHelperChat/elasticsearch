@@ -4,6 +4,9 @@
           "conversation_id": {
             "type": "long"
           },
+          "conversation_id_old": {
+            "type": "long"
+          },
           "mailbox_id": {
             "type": "integer"
           },

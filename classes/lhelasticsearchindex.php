@@ -800,6 +800,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->id = $item->id;
             $esChat->status = $item->status;
             $esChat->conversation_id = $item->conversation_id;
+            $esChat->conversation_id_old = $item->conversation_id_old;
             $esChat->mailbox_id = $item->mailbox_id;
             $esChat->subject = $item->subject;
             $esChat->body = strip_tags($item->body);
