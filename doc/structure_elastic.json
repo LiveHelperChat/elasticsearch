@@ -387,6 +387,9 @@
 			"city": {
 			    "type": "keyword"
 			},
+            "region": {
+			    "type": "keyword"
+			},
 			"nick_keyword": {
 			    "type": "keyword"
 			},

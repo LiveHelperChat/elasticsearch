@@ -94,6 +94,10 @@ class erLhcoreClassElasticSearchIndex
 
             $esChat->dep_id = $item->dep_id;
             $esChat->city = $item->city;
+            $partsCity = explode('||',$esChat->city);
+            if (isset($partsCity[1]) && !empty($partsCity[1])) {
+                $esChat->region = trim($partsCity[1]);
+            }
             $esChat->wait_time = $item->wait_time;
             $esChat->nick = $item->nick;
             $esChat->nick_keyword = $item->nick;

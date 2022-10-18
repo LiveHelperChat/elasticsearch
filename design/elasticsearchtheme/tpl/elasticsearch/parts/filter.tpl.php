@@ -295,17 +295,31 @@
                                     <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','User agent');?></label>
                                     <input type="text" class="form-control form-control-sm" name="uagent" value="<?php echo htmlspecialchars($input->uagent)?>" />
                                 </div>
-
-                                <div class="form-group">
-                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','User Country');?></label>
-                                    <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
-                                        'input_name'     => 'country_ids[]',
-                                        'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose country'),
-                                        'selected_id'    => $input->country_ids,
-                                        'css_class'      => 'form-control',
-                                        'display_name'   => 'name',
-                                        'list_function'  => 'lhCountries::getCountries'
-                                    )); ?>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','User Country');?></label>
+                                            <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                                                'input_name'     => 'country_ids[]',
+                                                'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose country'),
+                                                'selected_id'    => $input->country_ids,
+                                                'css_class'      => 'form-control',
+                                                'display_name'   => 'name',
+                                                'list_function'  => 'lhCountries::getCountries'
+                                            )); ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Region');?></label>
+                                            <input type="text" list="regions" class="form-control form-control-sm" name="region" value="<?php echo htmlspecialchars($input->region)?>">
+                                        </div>
+                                        <datalist id="regions">
+                                            <?php foreach (lhCountries::getStates() as $stateCode => $stateName) : ?>
+                                            <option value="<?php echo htmlspecialchars($stateName)?>">
+                                                <?php endforeach; ?>
+                                        </datalist>
+                                    </div>
                                 </div>
                             </div>
 

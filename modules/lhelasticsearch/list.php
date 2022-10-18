@@ -89,6 +89,10 @@ if ($tab == 'chats') {
     if ($filterParams['input_form']->email != '') {
         $sparams['body']['query']['bool']['must'][]['term']['email'] = $filterParams['input_form']->email;
     }
+
+    if ($filterParams['input_form']->region != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['region'] = $filterParams['input_form']->region;
+    }
     
     if (trim((string)$filterParams['input_form']->user_id) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['user_id'] = (int)trim($filterParams['input_form']->user_id);

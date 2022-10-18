@@ -2224,6 +2224,8 @@ class erLhcoreClassElasticSearchStatistic
                     $sparams['body']['query']['bool']['must'][]['terms'][$field] = $value;
                 } elseif ($type == 'filterin_elastic' && isset($customFields[$field])) {
                     $sparams['body']['query']['bool']['must'][]['terms'][$customFields[$field]] = array_values($value);
+                } elseif ($type == 'filterlike' && $field == 'city') {
+                    $sparams['body']['query']['bool']['must'][]['term']['region'] = $value;
                 }
             }
         }

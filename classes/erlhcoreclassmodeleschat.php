@@ -15,6 +15,7 @@ class erLhcoreClassModelESChat
             'ip'  => $this->ip,
             'location' => $this->location,
             'city' => $this->city,
+            'region' => $this->region,
             'wait_time' => $this->wait_time,
             'nick' => $this->nick,
             'nick_keyword' => $this->nick_keyword,
@@ -186,6 +187,7 @@ class erLhcoreClassModelESChat
     public $email = null;
     public $chat_id = null;
     public $city = null;
+    public $region = null;
     public $location = null;
     public $time = null;
     public $referrer = null;
