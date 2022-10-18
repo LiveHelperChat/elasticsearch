@@ -2,6 +2,16 @@
 
 class erLhcoreClassElasticSearchStatistic
 {
+    public static function uparamsAppend($params) {
+        $urlCfgDefault = ezcUrlConfiguration::getInstance();
+        $url = erLhcoreClassURL::getInstance();
+        foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'] as $column => $columnFilter) {
+            $urlCfgDefault->addUnorderedParameter($column);
+            $url->applyConfiguration( $urlCfgDefault );
+            $params['uparams'][$column] = $url->getParam($column);
+        }
+    }
+
     public static function getIndexByFilter($filter, $elasticType) {
 
         $dateIndexFilter = array();
@@ -449,7 +459,6 @@ class erLhcoreClassElasticSearchStatistic
         exit;
     }
 
-
     public static function statisticFilter($params)
     {
         if (isset(erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['columns'])) {
@@ -459,6 +468,16 @@ class erLhcoreClassElasticSearchStatistic
                 if (isset($_GET[$columnField]) && !empty(trim($_GET[$columnField]))) {
                     $params['filter']['input']->{$columnField} = $_GET[$columnField];
                     $params['filter']['input_form']->{$columnField} = $_GET[$columnField];
+                    if ($columnData['filter_type'] == 'filterstring') {
+                        $params['filter']['filter']['filter'][$columnData['field_search']] = (string)$params['filter']['input_form']->{$columnField};
+                    } elseif ($columnData['filter_type'] == 'filterrangefloatgt') {
+                        $params['filter']['filter']['filtergt'][$columnData['field_search']] = (float)$params['filter']['input_form']->{$columnField};
+                    } elseif ($columnData['filter_type'] == 'filterrangefloatlt') {
+                        $params['filter']['filter']['filterlt'][$columnData['field_search']] = (float)$params['filter']['input_form']->{$columnField};
+                    }
+                } elseif (isset($params['uparams'][$columnField]) && !empty(trim($params['uparams'][$columnField]))) {
+                    $params['filter']['input']->{$columnField} = $params['uparams'][$columnField];
+                    $params['filter']['input_form']->{$columnField} = $params['uparams'][$columnField];
                     if ($columnData['filter_type'] == 'filterstring') {
                         $params['filter']['filter']['filter'][$columnData['field_search']] = (string)$params['filter']['input_form']->{$columnField};
                     } elseif ($columnData['filter_type'] == 'filterrangefloatgt') {

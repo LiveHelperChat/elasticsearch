@@ -91,6 +91,9 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('mail.message.after_save', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
                 $dispatcher->listen('mail.message.after_update', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
                 $dispatcher->listen('mail.message.after_remove', 'erLhcoreClassElasticSearchIndex::mailMessageRemove');
+
+                // Custom unordered parameters support
+                $dispatcher->listen('statistic.uparams_append', 'erLhcoreClassElasticSearchStatistic::uparamsAppend');
             }
         }
 
