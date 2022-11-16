@@ -91,6 +91,8 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('mail.message.after_save', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
                 $dispatcher->listen('mail.message.after_update', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
                 $dispatcher->listen('mail.message.after_remove', 'erLhcoreClassElasticSearchIndex::mailMessageRemove');
+                $dispatcher->listen('mail.subject_remove', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
+                $dispatcher->listen('mail.subject_add', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
 
                 // Custom unordered parameters support
                 $dispatcher->listen('statistic.uparams_append', 'erLhcoreClassElasticSearchStatistic::uparamsAppend');
