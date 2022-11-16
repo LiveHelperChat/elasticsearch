@@ -497,7 +497,6 @@ if ($tab == 'chats') {
             $iconsAdditional = erLhAbstractModelChatColumn::getList(array('ignore_fields' => array('position','conditions','column_identifier','enabled'), 'sort' => false, 'filter' => array('icon_mode' => 1, 'enabled' => 1, 'chat_enabled' => 1)));
             erLhcoreClassChat::prefillGetAttributes($chats, array(), array(), array('additional_columns' => $iconsAdditional, 'do_not_clean' => true));
             $tpl->set('icons_additional',$iconsAdditional);
-
             $tpl->set('items', $chats);
         }
 

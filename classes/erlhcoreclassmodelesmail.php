@@ -135,6 +135,13 @@ class erLhcoreClassModelESMail
                 $this->last_mail_front = erLhcoreClassChat::formatSeconds(time() - $this->time/1000);
                 return $this->last_mail_front;
 
+            case 'subjects':
+                $this->subjects = [];
+                if (is_array($this->subject_id) && !empty($this->subject_id)) {
+                    $this->subjects = erLhAbstractModelSubject::getList(['filterin' => ['id' => $this->subject_id]]);
+                }
+                return $this->subjects;
+
             default:
                 break;
         }

@@ -57,10 +57,14 @@
                             <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
                                 <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/raw')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
                             <?php endif; ?>
-
             		        </td>
             		        <td nowrap="nowrap" ng-non-bindable>
                                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/nick.tpl.php')); ?>
+                                <?php if (is_array($item->subjects)) : ?>
+                                    <?php foreach ($item->subjects as $subject) : ?>
+                                        <span class="badge badge-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </td>
                             <td ng-non-bindable>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
