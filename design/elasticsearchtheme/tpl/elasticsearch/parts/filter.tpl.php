@@ -403,6 +403,17 @@
                                         'list_function_params'  => array('limit' => false)
                                     )); ?>
                                 </div>
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Channel');?></label>
+                                    <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                                        'input_name'     => 'iwh_ids[]',
+                                        'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose a channel'),
+                                        'selected_id'    => $input->iwh_ids,
+                                        'css_class'      => 'form-control',
+                                        'display_name'   => 'name',
+                                        'list_function'  => 'erLhcoreClassModelChatIncomingWebhook::getList'
+                                    )); ?>
+                                </div>
                             </div>
 
                             <div class="col-md-2">

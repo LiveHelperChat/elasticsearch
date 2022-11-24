@@ -268,14 +268,21 @@ if ($tab == 'chats') {
         }
     }
 
-
-
     if (isset($filterParams['input']->bot_ids) && is_array($filterParams['input']->bot_ids) && !empty($filterParams['input']->bot_ids)) {
 
         erLhcoreClassChat::validateFilterInString($filterParams['input']->bot_ids);
 
         if (!empty($filterParams['input']->bot_ids)) {
             $sparams['body']['query']['bool']['must'][]['terms']['gbot_id'] = $filterParams['input']->bot_ids;
+        }
+    }
+
+    if (isset($filterParams['input']->iwh_ids) && is_array($filterParams['input']->iwh_ids) && !empty($filterParams['input']->iwh_ids)) {
+
+        erLhcoreClassChat::validateFilterInString($filterParams['input']->iwh_ids);
+
+        if (!empty($filterParams['input']->iwh_ids)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['iwh_id'] = $filterParams['input']->iwh_ids;
         }
     }
 

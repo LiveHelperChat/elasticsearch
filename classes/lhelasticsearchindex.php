@@ -156,6 +156,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->auto_responder_id = $item->auto_responder_id;
             $esChat->invitation_id = $item->invitation_id;
             $esChat->gbot_id = $item->gbot_id;
+            $esChat->iwh_id = $item->iwh_id;
             $esChat->abnd = ($item->lsync < ($item->pnd_time + $item->wait_time) && $item->wait_time > 1) || ($item->lsync > ($item->pnd_time + $item->wait_time) && $item->wait_time > 1 && $item->user_id == 0) ? 1 : 0;
             $esChat->drpd = $item->lsync > ($item->pnd_time + $item->wait_time) && $item->has_unread_op_messages == 1 && $item->user_id > 0 ? 1 : 0;
 

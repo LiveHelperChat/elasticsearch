@@ -278,6 +278,18 @@ $fieldsSearch['country_ids'] = array (
     )
 );
 
+$fieldsSearch['iwh_ids'] = array (
+    'type' => 'text',
+    'trans' => 'Incoming webhooks IDS',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => false,
+    'filter_table_field' => 'iwh_ids',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'string', array(), FILTER_REQUIRE_ARRAY
+    )
+);
+
 $fieldsSearch['group_id'] = array (
     'type' => 'text',
     'trans' => 'Group',

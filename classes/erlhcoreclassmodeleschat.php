@@ -84,6 +84,7 @@ class erLhcoreClassModelESChat
             'abnd' => $this->abnd,
             'drpd' => $this->drpd,
             'cls_us' => $this->cls_us,
+            'iwh_id' => $this->iwh_id,
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate', array(
@@ -125,6 +126,35 @@ class erLhcoreClassModelESChat
     public function __get($var)
     {
         switch ($var) {
+
+            case 'iwh':
+                $this->iwh = $this->iwh_id > 0 ? erLhcoreClassModelChatIncomingWebhook::fetch($this->iwh_id) : null;
+                return $this->iwh;
+
+            case 'aicons':
+                $this->aicons = [];
+                $chatVariables = $this->chat_variables_array;
+                if (isset($chatVariables['aicons']) ) {
+                    foreach ($chatVariables['aicons'] as $icon => $params) {
+                        $iconParams = ['i' => $icon];
+                        if (isset($params['icolor'])) {
+                            $iconParams['c'] = $params['icolor'];
+                        }
+                        if (isset($params['t']) && $params['t'] != '') {
+                            $iconParams['t'] = $params['t'];
+                        }
+                        $this->aicons[$icon] = $iconParams;
+                    }
+                }
+                if ($this->iwh_id > 0 && is_object($this->iwh) && $this->iwh->icon != '') {
+                    $iconParams = ['i' => $this->iwh->icon];
+                    if ($this->iwh->icon_color != '') {
+                        $iconParams['c'] = $this->iwh->icon_color ;
+                    }
+                    $iconParams['t'] = (string)$this->iwh;
+                    $this->aicons[$this->iwh->icon] = $iconParams;
+                }
+                return $this->aicons;
 
             case 'department':
                 $this->department = false;
@@ -256,4 +286,5 @@ class erLhcoreClassModelESChat
     public $abnd = null;
     public $drpd = null;
     public $cls_us = null;
+    public $iwh_id = null;
 }

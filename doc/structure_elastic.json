@@ -181,6 +181,9 @@
 			"dep_id": {
 				"type": "integer"
 			},
+            "iwh_id": {
+				"type": "integer"
+			},
             "subject_id": {
 				"type": "integer"
 			},
