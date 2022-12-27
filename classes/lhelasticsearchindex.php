@@ -180,7 +180,7 @@ class erLhcoreClassElasticSearchIndex
             ));
 
             // Store hour as UTC for easier grouping
-            $date_utc = new \DateTime(null, new \DateTimeZone("UTC"));
+            $date_utc = new \DateTime("", new \DateTimeZone("UTC"));
             $date_utc->setTimestamp($item->time);
             $esChat->hour = $date_utc->format("H");
 
