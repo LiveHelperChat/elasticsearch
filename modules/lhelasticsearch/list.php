@@ -332,8 +332,9 @@ if ($tab == 'chats') {
             'query' => $filterParams['input_form']->keyword
         ];
 
-        if ($filterParams['input_form']->fuzzy == 1) {
+        if ($filterParams['input_form']->fuzzy == 1 && $filterParams['input_form']->exact_match != 1) {
             $paramQuery['fuzziness'] = 'AUTO';
+            $paramQuery['prefix_length'] = 2;
         }
 
         if (empty($filterParams['input_form']->search_in) || in_array(1,$filterParams['input_form']->search_in)) {
