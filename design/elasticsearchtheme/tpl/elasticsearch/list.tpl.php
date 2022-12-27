@@ -64,11 +64,6 @@
             		        </td>
             		        <td nowrap="nowrap" ng-non-bindable>
                                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/nick.tpl.php')); ?>
-                                <?php if (is_array($item->subjects)) : ?>
-                                    <?php foreach ($item->subjects as $subject) : ?>
-                                        <span class="badge badge-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
                             </td>
                             <td ng-non-bindable>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
@@ -86,6 +81,13 @@
                                             <?php echo $highlightText;?></div>
                                     <?php endforeach; ?>
                                 </a>
+                                <?php endif; ?>
+                                <?php if (is_array($item->subjects) && !empty($item->subjects)) : ?>
+                                <div>
+                                    <?php foreach ($item->subjects as $subject) : ?>
+                                        <span class="badge badge-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
+                                    <?php endforeach; ?>
+                                </div>
                                 <?php endif; ?>
                             </td>
                             <td><?php echo htmlspecialchars($item->department)?></td>
