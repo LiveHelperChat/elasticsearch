@@ -424,6 +424,18 @@ $fieldsSearch['exact_match'] = array (
     )
 );
 
+$fieldsSearch['fuzzy'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'none',
+    'filter_table_field' => 'fuzzy',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+    )
+);
+
 $fieldsSearch['sort_chat'] = array (
     'type' => 'text',
     'trans' => 'Sort by',

@@ -212,56 +212,64 @@ if (trim($filterParams['input_form']->keyword) != '') {
 
     $exactMatch = $filterParams['input_form']->exact_match == 1 ? 'match_phrase' : 'match';
 
+    $paramQuery = [
+        'query' => $filterParams['input_form']->keyword
+    ];
+
+    if ($filterParams['input_form']->fuzzy == 1) {
+        $paramQuery['fuzziness'] = 'AUTO';
+    }
+
     if (empty($filterParams['input_form']->search_in)) {
-        $sparams['body']['query']['bool']['should'][][$exactMatch]['subject'] = $filterParams['input_form']->keyword;
-        $sparams['body']['query']['bool']['should'][][$exactMatch]['alt_body'] = $filterParams['input_form']->keyword;
+        $sparams['body']['query']['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
+        $sparams['body']['query']['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
     } else {
         if (in_array(1,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['subject'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
         }
 
         if (in_array(2,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['alt_body'] = $filterParams['input_form']->alt_body;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
         }
 
         if (in_array(3,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['from_name'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['from_name'] = $paramQuery;
         }
 
         if (in_array(4,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['sender_name'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['sender_name'] = $paramQuery;
         }
 
         if (in_array(5,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['delivery_status'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['delivery_status'] = $paramQuery;
         }
 
         if (in_array(6,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['rfc822_body'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['rfc822_body'] = $paramQuery;
         }
 
         if (in_array(7,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['reply_to_data'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['reply_to_data'] = $paramQuery;
         }
 
         if (in_array(8,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['to_data'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['to_data'] = $paramQuery;
         }
 
         if (in_array(9,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['cc_data'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['cc_data'] = $paramQuery;
         }
 
         if (in_array(10,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['bcc_data'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['bcc_data'] = $paramQuery;
         }
 
         if (in_array(11,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['mb_folder'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['mb_folder'] = $paramQuery;
         }
 
         if (in_array(12,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['customer_name'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['customer_name'] = $paramQuery;
         }
     }
 

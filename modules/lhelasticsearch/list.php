@@ -328,21 +328,29 @@ if ($tab == 'chats') {
 
         $exactMatch = $filterParams['input_form']->exact_match == 1 ? 'match_phrase' : 'match';
 
+        $paramQuery = [
+            'query' => $filterParams['input_form']->keyword
+        ];
+
+        if ($filterParams['input_form']->fuzzy == 1) {
+            $paramQuery['fuzziness'] = 'AUTO';
+        }
+
         if (empty($filterParams['input_form']->search_in) || in_array(1,$filterParams['input_form']->search_in)) {
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $filterParams['input_form']->keyword;
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $filterParams['input_form']->keyword;
-            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $filterParams['input_form']->keyword;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $paramQuery;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $paramQuery;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
         } else {
             if (in_array(2,$filterParams['input_form']->search_in)) {
-                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $filterParams['input_form']->keyword;
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $paramQuery;
             }
             
             if (in_array(3,$filterParams['input_form']->search_in)) {
-                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $filterParams['input_form']->keyword;
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $paramQuery;
             }
             
             if (in_array(4,$filterParams['input_form']->search_in)) {
-                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $filterParams['input_form']->keyword;
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
             }
         }
 

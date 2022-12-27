@@ -51,7 +51,8 @@
                             <td ng-non-bindable>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
                                     <div class="abbr-list-general action-image">
-                                        <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode($fields,"\n")))); ?>
+                                        <?php foreach ($item->meta_data['highlight'] as $field => $fields) :
+                                            $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n",$fields)))); ?>
                                             <div>
                                                 <?php if ($field == 'msg_system') : ?>
                                                     <i>System:</i>
@@ -65,6 +66,13 @@
                                                     <i>Visitor:</i>
                                                 <?php endif; ?>
                                                 <?php echo $highlightText;?></div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (is_array($item->subjects) && !empty($item->subjects)) : ?>
+                                    <div>
+                                        <?php foreach ($item->subjects as $subject) : ?>
+                                            <span class="badge badge-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
                                         <?php endforeach; ?>
                                     </div>
                                 <?php endif; ?>

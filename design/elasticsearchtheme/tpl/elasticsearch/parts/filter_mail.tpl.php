@@ -31,6 +31,7 @@
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(11,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="11" /> In mailbox path</label>
                         <div role="separator" class="dropdown-divider"></div>
                         <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if ($input->exact_match == true) : ?>checked="checked"<?php endif;?> name="exact_match" value="on" /> Exact match phrase</label>
+                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if ($input->fuzzy == true) : ?>checked="checked"<?php endif;?> name="fuzzy" value="on" /> Fuzzy search, allow typos</label>
                     </div>
                 </div>
             </div>

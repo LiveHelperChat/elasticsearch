@@ -41,31 +41,39 @@ if (trim($filterParams['input_form']->keyword) != '') {
     $exactMatch = $filterParams['input_form']->exact_match == 1 ? 'match_phrase' : 'match';
     $booldConditions = [];
 
+    $paramQuery = [
+        'query' => $filterParams['input_form']->keyword
+    ];
+
+    if ($filterParams['input_form']->fuzzy == 1) {
+        $paramQuery['fuzziness'] = 'AUTO';
+    }
+
     if (empty($filterParams['input_form']->search_in) || in_array(1,$filterParams['input_form']->search_in)) {
-        $booldConditions['bool']['should'][][$exactMatch]['msg_visitor'] = $filterParams['input_form']->keyword;
-        $booldConditions['bool']['should'][][$exactMatch]['msg_operator'] = $filterParams['input_form']->keyword;
-        $booldConditions['bool']['should'][][$exactMatch]['msg_system'] = $filterParams['input_form']->keyword;
-        $booldConditions['bool']['should'][][$exactMatch]['subject'] = $filterParams['input_form']->keyword;
-        $booldConditions['bool']['should'][][$exactMatch]['alt_body'] = $filterParams['input_form']->keyword;
+        $booldConditions['bool']['should'][][$exactMatch]['msg_visitor'] = $paramQuery;
+        $booldConditions['bool']['should'][][$exactMatch]['msg_operator'] = $paramQuery;
+        $booldConditions['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
+        $booldConditions['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
+        $booldConditions['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
     } else {
         if (in_array(2,$filterParams['input_form']->search_in)) {
-            $booldConditions['bool']['should'][][$exactMatch]['msg_visitor'] = $filterParams['input_form']->keyword;
+            $booldConditions['bool']['should'][][$exactMatch]['msg_visitor'] = $paramQuery;
         }
 
         if (in_array(3,$filterParams['input_form']->search_in)) {
-            $booldConditions['bool']['should'][][$exactMatch]['msg_operator'] = $filterParams['input_form']->keyword;
+            $booldConditions['bool']['should'][][$exactMatch]['msg_operator'] = $paramQuery;
         }
 
         if (in_array(4,$filterParams['input_form']->search_in)) {
-            $booldConditions['bool']['should'][][$exactMatch]['msg_system'] = $filterParams['input_form']->keyword;
+            $booldConditions['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
         }
 
         if (in_array(5,$filterParams['input_form']->search_in)) {
-            $booldConditions['bool']['should'][][$exactMatch]['subject'] = $filterParams['input_form']->keyword;
+            $booldConditions['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
         }
 
         if (in_array(6,$filterParams['input_form']->search_in)) {
-            $booldConditions['bool']['should'][][$exactMatch]['alt_body'] = $filterParams['input_form']->keyword;
+            $booldConditions['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
         }
     }
 
