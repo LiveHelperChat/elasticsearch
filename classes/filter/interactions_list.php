@@ -88,6 +88,18 @@ $fieldsSearch['fuzzy'] = array (
     )
 );
 
+$fieldsSearch['fuzzy_prefix'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'none',
+    'filter_table_field' => 'fuzzy_prefix',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', ['min_range' => 1]
+    )
+);
+
 $fieldsSearch['attr'] = array (
     'type' => 'text',
     'trans' => 'Sort by',

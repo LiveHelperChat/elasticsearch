@@ -218,7 +218,7 @@ if (trim($filterParams['input_form']->keyword) != '') {
 
     if ($filterParams['input_form']->fuzzy == 1 && $filterParams['input_form']->exact_match != 1) {
         $paramQuery['fuzziness'] = 'AUTO';
-        $paramQuery['prefix_length'] = 2;
+        $paramQuery['prefix_length'] = min((mb_strlen($filterParams['input_form']->keyword) - (is_numeric($filterParams['input_form']->fuzzy_prefix) ? $filterParams['input_form']->fuzzy_prefix : 2)),0);
     }
 
     if (empty($filterParams['input_form']->search_in)) {
