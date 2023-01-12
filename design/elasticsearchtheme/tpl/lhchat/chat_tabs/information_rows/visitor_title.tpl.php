@@ -1,4 +1,4 @@
-<h6 class="font-weight-bold">
+<h6 class="fw-bold">
     <?php if ($chat->email != '') : ?>
         <a target="_blank" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/interactions')?>/(attr)/email/(val)/<?php echo rawurlencode($chat->email) ?>" class="text-dark">
         <i class="material-icons">open_in_new</i>

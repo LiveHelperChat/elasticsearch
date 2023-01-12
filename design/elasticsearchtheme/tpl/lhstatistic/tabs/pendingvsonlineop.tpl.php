@@ -147,7 +147,7 @@
             <ul class="nav">
                 <li class="dropdown">
 
-                    <button type="button" class="btn btn-secondary btn-block btn-sm dropdown-toggle btn-department-dropdown" data-toggle="dropdown" aria-expanded="false">Display <span class="caret"></span></button>
+                    <button type="button" class="btn btn-secondary btn-block btn-sm dropdown-toggle btn-department-dropdown" data-bs-toggle="dropdown" aria-expanded="false">Display <span class="caret"></span></button>
 
                     <ul class="dropdown-menu" role="menu">
                         <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="PendingChats"> Pending chats</label></li>

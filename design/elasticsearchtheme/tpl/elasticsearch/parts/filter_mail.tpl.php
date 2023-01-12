@@ -14,31 +14,31 @@
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Keyword messages');?></label>
             <div class="input-group input-group-sm">
                 <input type="text" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Search in Subject or Body or selected fields');?>" class="form-control form-control-sm" name="keyword" value="<?php echo htmlspecialchars($input->keyword)?>" />
-                <div class="input-group-append ">
-                    <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
+                
+                    <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
                     <div class="dropdown-menu">
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(1,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="1" /> Subject</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(2,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="2" /> Body</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(3,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="3" /> From name</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(4,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="4" /> Sender name</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(12,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="12" /> Customer name</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(5,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="5" /> Delivery status</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(6,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="6" /> Undelivered mail body</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(7,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="7" /> In Reply to data</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(8,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="8" /> In To data</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(9,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="9" /> In CC data</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(10,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="10" /> In BCC data</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(11,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="11" /> In mailbox path</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(1,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="1" /> Subject</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(2,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="2" /> Body</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(3,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="3" /> From name</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(4,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="4" /> Sender name</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(12,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="12" /> Customer name</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(5,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="5" /> Delivery status</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(6,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="6" /> Undelivered mail body</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(7,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="7" /> In Reply to data</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(8,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="8" /> In To data</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(9,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="9" /> In CC data</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(10,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="10" /> In BCC data</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(11,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="11" /> In mailbox path</label>
                         <div role="separator" class="dropdown-divider"></div>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if ($input->exact_match == true) : ?>checked="checked"<?php endif;?> name="exact_match" value="on" /> Exact match phrase</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="checkbox" <?php if ($input->fuzzy == true) : ?>checked="checked"<?php endif;?> name="fuzzy" value="on" /> Fuzzy search, allow typos</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if ($input->fuzzy_prefix == 1) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="1" /> Length of the keyword minus 1 character (default)</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if ($input->fuzzy_prefix == 2) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="2" /> Length of the keyword minus 2 character's</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if ($input->fuzzy_prefix == 3) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="3" /> Length of the keyword minus 3 character's</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if ($input->fuzzy_prefix == 4) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="4" /> Length of the keyword minus 4 character's</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if ($input->fuzzy_prefix == 5) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="5" /> Length of the keyword minus 5 character's</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if ($input->exact_match == true) : ?>checked="checked"<?php endif;?> name="exact_match" value="on" /> Exact match phrase</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if ($input->fuzzy == true) : ?>checked="checked"<?php endif;?> name="fuzzy" value="on" /> Fuzzy search, allow typos</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->fuzzy_prefix == 1) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="1" /> Length of the keyword minus 1 character (default)</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->fuzzy_prefix == 2) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="2" /> Length of the keyword minus 2 character's</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->fuzzy_prefix == 3) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="3" /> Length of the keyword minus 3 character's</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->fuzzy_prefix == 4) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="4" /> Length of the keyword minus 4 character's</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->fuzzy_prefix == 5) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="5" /> Length of the keyword minus 5 character's</label>
                     </div>
-                </div>
+
             </div>
         </div>
 
@@ -53,13 +53,13 @@
             <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','E-mail');?></label>
             <div class="input-group input-group-sm">
                 <input type="text" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','E-mail');?>" class="form-control form-control-sm" name="email" value="<?php echo htmlspecialchars($input->email)?>" />
-                <div class="input-group-append ">
-                    <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
+
+                    <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
                     <div class="dropdown-menu">
-                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if (empty($input->search_email_in) || $input->search_email_in == 1) : ?>checked="checked"<?php endif;?> name="search_email_in" value="1" /> Customer e-mail</label>
-                        <label class="dropdown-item mb-0 pl-2"><input type="radio" <?php if ($input->search_email_in == 2) : ?>checked="checked"<?php endif;?> name="search_email_in" value="2" /> Sender e-mail</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if (empty($input->search_email_in) || $input->search_email_in == 1) : ?>checked="checked"<?php endif;?> name="search_email_in" value="1" /> Customer e-mail</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->search_email_in == 2) : ?>checked="checked"<?php endif;?> name="search_email_in" value="2" /> Sender e-mail</label>
                     </div>
-                </div>
+
             </div>
         </div>
 
@@ -363,7 +363,7 @@
     </div>
 
     <?php if (isset($total_literal)) : ?>
-        <div class="float-right">
+        <div class="float-end">
             <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Records in total');?> - <?php echo $total_literal;?>
         </div>
     <?php endif; ?>

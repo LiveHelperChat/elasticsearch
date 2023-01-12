@@ -12,10 +12,10 @@
     <?php endif;?>
 
     <ul class="nav nav-pills" role="tablist">
-        <li role="presentation" class="nav-item"><a class="nav-link active" href="#chats" aria-controls="chats" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Mails');?></a></li>
+        <li role="presentation" class="nav-item"><a class="nav-link active" href="#chats" aria-controls="chats" role="tab" data-bs-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Mails');?></a></li>
     </ul>
 
-    <div class="tab-content pl-2">
+    <div class="tab-content ps-2">
         <div role="tabpanel" class="tab-pane active" id="chats">
             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter_mail.tpl.php')); ?>
 
@@ -47,7 +47,7 @@
                                     <?php endif; ?>
 
                                     <?php if ($item->has_many_messages && ($previousConversationId == 0 || $previousConversationId != $item->conversation_id)) : ?>
-                                    <a class="material-icons text-primary mr-0" onclick="$('.conversation-id-<?php echo $item->conversation_id?>').toggle()">expand_more</a>
+                                    <a class="material-icons text-primary me-0" onclick="$('.conversation-id-<?php echo $item->conversation_id?>').toggle()">expand_more</a>
                                     <?php endif;?>
 
                                     <?php if ($item->undelivered == 1) : ?>
@@ -76,7 +76,7 @@
 
                                     <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->subject)?>" onclick="lhinst.startMailNewWindow(<?php echo $item->conversation_id?>,$(this).attr('data-title'))" >open_in_new</a>
 
-                                    <span class="mr-2">
+                                    <span class="me-2">
                                     <?php echo $item->conversation_id?>
                                     </span>
 
@@ -106,7 +106,7 @@
                                     <?php if (is_array($item->subjects) && !empty($item->subjects)) : ?>
                                     <div>
                                         <?php foreach ($item->subjects as $subject) : ?>
-                                            <span class="badge badge-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
+                                            <span class="badge bg-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
                                         <?php endforeach; ?>
                                     </div>
                                     <?php endif; ?>

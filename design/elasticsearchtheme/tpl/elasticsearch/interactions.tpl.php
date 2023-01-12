@@ -12,10 +12,10 @@
 <?php endif;?>
 
     <ul class="nav nav-pills" role="tablist">
-        <li role="presentation" class="nav-item"><a class="nav-link active" href="#chats" aria-controls="chats" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Interactions');?></a></li>
+        <li role="presentation" class="nav-item"><a class="nav-link active" href="#chats" aria-controls="chats" role="tab" data-bs-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Interactions');?></a></li>
     </ul>
 
-    <div class="tab-content pl-2">
+    <div class="tab-content ps-2">
         <div role="tabpanel" class="tab-pane active" id="chats">
             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter_interactions.tpl.php')); ?>
 
@@ -72,7 +72,7 @@
                                 <?php if (is_array($item->subjects) && !empty($item->subjects)) : ?>
                                     <div>
                                         <?php foreach ($item->subjects as $subject) : ?>
-                                            <span class="badge badge-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
+                                            <span class="badge bg-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
                                         <?php endforeach; ?>
                                     </div>
                                 <?php endif; ?>
