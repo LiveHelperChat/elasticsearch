@@ -43,7 +43,7 @@ if (trim($filterParams['input_form']->conversation_id) != '') {
     $sparams['body']['query']['bool']['must'][]['terms']['conversation_id'] = $chat_ids;
 }
 
-if (trim($filterParams['input_form']->message_id) != '') {
+if (trim((string)$filterParams['input_form']->message_id) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['id'] = (int)trim($filterParams['input_form']->message_id);
 }
 
@@ -75,19 +75,19 @@ if ($filterParams['input_form']->from_host != '') {
     $sparams['body']['query']['bool']['must'][]['term']['from_host'] = trim($filterParams['input_form']->from_host);
 }
 
-if (trim($filterParams['input_form']->user_id) != '') {
+if (trim((string)$filterParams['input_form']->user_id) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['conv_user_id'] = (int)trim($filterParams['input_form']->user_id);
 }
 
-if (trim($filterParams['input_form']->response_type) != '') {
+if (trim((string)$filterParams['input_form']->response_type) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['response_type'] = (int)trim($filterParams['input_form']->response_type);
 }
 
-if (trim($filterParams['input_form']->status) != '') {
+if (trim((string)$filterParams['input_form']->status) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['status'] = (int)trim($filterParams['input_form']->status);
 }
 
-if (trim($filterParams['input_form']->opened) != '') {
+if (trim((string)$filterParams['input_form']->opened) != '') {
     if ($filterParams['input_form']->opened === 0) {
         $sparams['body']['query']['bool']['must_not'][]['range']['opened_at']['gte'] = 1;
     } else {
@@ -95,15 +95,15 @@ if (trim($filterParams['input_form']->opened) != '') {
     }
 }
 
-if (trim($filterParams['input_form']->status_conv) != '') {
+if (trim((string)$filterParams['input_form']->status_conv) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['status_conv'] = (int)trim($filterParams['input_form']->status_conv);
 }
 
-if (trim($filterParams['input_form']->department_id) != '') {
+if (trim((string)$filterParams['input_form']->department_id) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = (int)trim($filterParams['input_form']->department_id);
 }
 
-if (trim($filterParams['input_form']->department_group_id) != '') {
+if (trim((string)$filterParams['input_form']->department_group_id) != '') {
     $db = ezcDbInstance::get();
     $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
     $stmt->bindValue( ':group_id', $filterParams['input']->department_group_id, PDO::PARAM_INT);

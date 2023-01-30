@@ -336,7 +336,7 @@ trait erLhcoreClassElasticTrait
         return $objects;
     }
     
-    public static function getAggregation($params = array(), $executionParams = array(), $aggregationName)
+    public static function getAggregation($params, $executionParams, $aggregationName)
     {
         $paramsDefault = array(
             'limit' => 0
