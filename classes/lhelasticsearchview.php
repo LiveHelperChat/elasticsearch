@@ -40,6 +40,20 @@ class erLhcoreClassElasticSearchView
                 $dateFilter['gte'] = time() - $params['search']->days * 24 * 3600;
             }
 
+            if (isset($params['search']->params_array['sparams']['body']['query']['bool']['must'])) {
+                $mustPresent = $params['search']->params_array['sparams']['body']['query']['bool']['must'];
+                foreach ($mustPresent as $indexMust => $mustItem) {
+                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['user_id'])) {
+                        unset($mustPresent[$indexMust]);
+                    }
+                }
+                self::applyDynamicFilter($mustPresent, (object)$params['search']->params_array['input_form'], ['user_attr' => 'user_id']);
+            }
+
+            if (isset($mustPresent) && !empty($mustPresent)) {
+                $params['search']->params_array['sparams']['body']['query']['bool']['must'] = array_values($mustPresent);
+            }
+
             $totalRecords = erLhcoreClassModelESChat::getCount($params['search']->params_array['sparams'], array('date_index' => $dateFilter));
 
             $params['search']->updated_at = time();
@@ -58,6 +72,21 @@ class erLhcoreClassElasticSearchView
                 $dateFilter['gte'] = time() - $params['search']->days * 24 * 3600;
             }
 
+            if (isset($params['search']->params_array['sparams']['body']['query']['bool']['must'])) {
+                $mustPresent = $params['search']->params_array['sparams']['body']['query']['bool']['must'];
+                foreach ($mustPresent as $indexMust => $mustItem) {
+                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['conv_user_id'])) {
+                        unset($mustPresent[$indexMust]);
+                    }
+                }
+
+                self::applyDynamicFilter($mustPresent, (object)$params['search']->params_array['input_form'], ['user_attr' => 'conv_user_id']);
+            }
+
+            if (isset($mustPresent) && !empty($mustPresent)) {
+                $params['search']->params_array['sparams']['body']['query']['bool']['must'] = array_values($mustPresent);
+            }
+
             $totalRecords = erLhcoreClassModelESMail::getCount($params['search']->params_array['sparams'], array('date_index' => $dateFilter));
 
             $params['search']->updated_at = time();
@@ -70,6 +99,72 @@ class erLhcoreClassElasticSearchView
             }
         }
 
+    }
+
+    public static function applyDynamicFilter( & $termsFilter, $input, $attrOptions)
+    {
+        // User ids, group, group ids
+        if (isset($input->group_ids) && is_array($input->group_ids) && !empty($input->group_ids)) {
+
+            erLhcoreClassChat::validateFilterIn($input->group_ids);
+
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT user_id FROM lh_groupuser WHERE group_id IN (' . implode(',',$input->group_ids) .')');
+            $stmt->execute();
+            $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            if (!empty($userIds)) {
+                $termsFilter[]['terms'][$attrOptions['user_attr']] = $userIds;
+            }
+        }
+
+        if (isset($input->user_ids) && is_array($input->user_ids) && !empty($input->user_ids)) {
+            erLhcoreClassChat::validateFilterIn($input->user_ids);
+            $termsFilter[]['terms'][$attrOptions['user_attr']] = $input->user_ids;
+        }
+
+        if (isset($input->group_id) && is_numeric($input->group_id) && $input->group_id > 0 ) {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT user_id FROM lh_groupuser WHERE group_id = :group_id');
+            $stmt->bindValue( ':group_id', $input->group_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            if (!empty($userIds)) {
+                $termsFilter[]['terms'][$attrOptions['user_attr']] = $userIds;
+            }
+        }
+
+        if (trim((string)$input->department_group_id) != '') {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
+            $stmt->bindValue( ':group_id', $input->department_group_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $depIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            if (!empty($depIds)) {
+                $termsFilter[]['terms']['dep_id'] = $depIds;
+            }
+        }
+
+        if (isset($input->department_group_ids) && is_array($input->department_group_ids) && !empty($input->department_group_ids)) {
+
+            erLhcoreClassChat::validateFilterIn($input->department_group_ids);
+
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id IN (' . implode(',',$input->department_group_ids) . ')');
+            $stmt->execute();
+            $depIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            if (!empty($depIds)) {
+                $termsFilter[]['terms']['dep_id'] = $depIds;
+            }
+        }
+
+        if (isset($input->department_ids) && is_array($input->department_ids) && !empty($input->department_ids)) {
+            erLhcoreClassChat::validateFilterIn($input->department_ids);
+            $termsFilter[]['terms']['dep_id'] = $input->department_ids;
+        }
     }
 
     // Load view handler
@@ -85,6 +180,20 @@ class erLhcoreClassElasticSearchView
 
             if ($search->days > 0) {
                 $dateFilter['gte'] = time() - $search->days * 24 * 3600;
+            }
+
+            if (isset($search->params_array['sparams']['body']['query']['bool']['must'])) {
+                $mustPresent = $search->params_array['sparams']['body']['query']['bool']['must'];
+                foreach ($mustPresent as $indexMust => $mustItem) {
+                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['user_id'])) {
+                        unset($mustPresent[$indexMust]);
+                    }
+                }
+                self::applyDynamicFilter($mustPresent, (object)$search->params_array['input_form'], ['user_attr' => 'user_id']);
+            }
+
+            if (isset($mustPresent) && !empty($mustPresent)) {
+                $search->params_array['sparams']['body']['query']['bool']['must'] = array_values($mustPresent);
             }
 
             $total = erLhcoreClassModelESChat::getCount($search->params_array['sparams'], array('date_index' => $dateFilter));
@@ -148,6 +257,21 @@ class erLhcoreClassElasticSearchView
 
             if ($search->days > 0) {
                 $dateFilter['gte'] = time() - $search->days * 24 * 3600;
+            }
+
+            if (isset($search->params_array['sparams']['body']['query']['bool']['must'])) {
+                $mustPresent = $search->params_array['sparams']['body']['query']['bool']['must'];
+                foreach ($mustPresent as $indexMust => $mustItem) {
+                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['conv_user_id'])) {
+                        unset($mustPresent[$indexMust]);
+                    }
+                }
+
+                self::applyDynamicFilter($mustPresent, (object)$search->params_array['input_form'], ['user_attr' => 'conv_user_id']);
+            }
+
+            if (isset($mustPresent) && !empty($mustPresent)) {
+                $search->params_array['sparams']['body']['query']['bool']['must'] = array_values($mustPresent);
             }
 
             $total = erLhcoreClassModelESMail::getCount($search->params_array['sparams'], array('date_index' => $dateFilter));

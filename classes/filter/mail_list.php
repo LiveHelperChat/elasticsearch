@@ -2,6 +2,30 @@
 
 $fieldsSearch = array();
 
+$fieldsSearch['status_conv_id'] = array (
+    'type' => 'text',
+    'trans' => 'Conversation status',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterin',
+    'filter_table_field' => 'status_conv',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 0), FILTER_REQUIRE_ARRAY
+    )
+);
+
+$fieldsSearch['status_msg_id'] = array (
+    'type' => 'text',
+    'trans' => 'Message status',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterin',
+    'filter_table_field' => 'status',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 0), FILTER_REQUIRE_ARRAY
+    )
+);
+
 $fieldsSearch['conversation_id'] = array (
     'type' => 'text',
     'trans' => 'Sort by',

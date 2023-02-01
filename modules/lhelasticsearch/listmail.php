@@ -204,6 +204,20 @@ if (isset($filterParams['input']->subject_id) && is_array($filterParams['input']
     }
 }
 
+if (isset($filterParams['input']->status_conv_id) && is_array($filterParams['input']->status_conv_id) && !empty($filterParams['input']->status_conv_id)) {
+    erLhcoreClassChat::validateFilterInString($filterParams['input']->status_conv_id);
+    if (!empty($filterParams['input']->status_conv_id)) {
+        $sparams['body']['query']['bool']['must'][]['terms']['status_conv'] = $filterParams['input']->status_conv_id;
+    }
+}
+
+if (isset($filterParams['input']->status_msg_id) && is_array($filterParams['input']->status_msg_id) && !empty($filterParams['input']->status_msg_id)) {
+    erLhcoreClassChat::validateFilterInString($filterParams['input']->status_msg_id);
+    if (!empty($filterParams['input']->status_msg_id)) {
+        $sparams['body']['query']['bool']['must'][]['terms']['status'] = $filterParams['input']->status_msg_id;
+    }
+}
+
 if ($filterParams['input_form']->hvf == 1) {
     $sparams['body']['query']['bool']['must'][]['terms']['has_attachment'] = [1,2,3];
 }

@@ -256,24 +256,68 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Conversation status');?></label>
-                                <select name="status_conv" class="form-control form-control-sm">
-                                    <option value="">Select</option>
-                                    <option value="0" <?php ($input->status_conv === erLhcoreClassModelMailconvConversation::STATUS_PENDING) ? print 'selected="selected"' : null?> >New</option>
-                                    <option value="1" <?php ($input->status_conv === erLhcoreClassModelMailconvConversation::STATUS_ACTIVE) ? print 'selected="selected"' : null?> >Active</option>
-                                    <option value="2" <?php ($input->status_conv === erLhcoreClassModelMailconvConversation::STATUS_CLOSED) ? print 'selected="selected"' : null?> >Closed</option>
-                                </select>
+                                <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                                    'input_name'     => 'status_conv_id[]',
+                                    'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose status'),
+                                    'selected_id'    => $input->status_conv_id,
+                                    'css_class'      => 'form-control',
+                                    'display_name'   => 'name',
+                                    'list_function_params' => array(),
+                                    'list_function'  => function () {
+                                        $items = array();
+
+                                        $item = new StdClass();
+                                        $item->name = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','New mails');
+                                        $item->id = erLhcoreClassModelMailconvConversation::STATUS_PENDING;
+                                        $items[] = $item;
+
+                                        $item = new StdClass();
+                                        $item->name = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Active mails');
+                                        $item->id = erLhcoreClassModelMailconvConversation::STATUS_ACTIVE;
+                                        $items[] = $item;
+
+                                        $item = new StdClass();
+                                        $item->name = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Closed mails');
+                                        $item->id = erLhcoreClassModelMailconvConversation::STATUS_CLOSED;
+                                        $items[] = $item;
+
+                                        return $items;
+                                    }
+                                )); ?>
                             </div>
                         </div>
 
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Message status');?></label>
-                                <select name="status" class="form-control form-control-sm">
-                                    <option value="">Select</option>
-                                    <option value="0" <?php ($input->status === erLhcoreClassModelMailconvMessage::STATUS_PENDING) ? print 'selected="selected"' : null?> >New</option>
-                                    <option value="1" <?php ($input->status === erLhcoreClassModelMailconvMessage::STATUS_ACTIVE) ? print 'selected="selected"' : null?> >Active</option>
-                                    <option value="2" <?php ($input->status === erLhcoreClassModelMailconvMessage::STATUS_RESPONDED) ? print 'selected="selected"' : null?> >Responded</option>
-                                </select>
+                                <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                                    'input_name'     => 'status_msg_id[]',
+                                    'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose status'),
+                                    'selected_id'    => $input->status_msg_id,
+                                    'css_class'      => 'form-control',
+                                    'display_name'   => 'name',
+                                    'list_function_params' => array(),
+                                    'list_function'  => function () {
+                                        $items = array();
+
+                                        $item = new StdClass();
+                                        $item->name = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','New');
+                                        $item->id = erLhcoreClassModelMailconvMessage::STATUS_PENDING;
+                                        $items[] = $item;
+
+                                        $item = new StdClass();
+                                        $item->name = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Active');
+                                        $item->id = erLhcoreClassModelMailconvMessage::STATUS_ACTIVE;
+                                        $items[] = $item;
+
+                                        $item = new StdClass();
+                                        $item->name = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Responded');
+                                        $item->id = erLhcoreClassModelMailconvMessage::STATUS_RESPONDED;
+                                        $items[] = $item;
+
+                                        return $items;
+                                    }
+                                )); ?>
                             </div>
                         </div>
 
