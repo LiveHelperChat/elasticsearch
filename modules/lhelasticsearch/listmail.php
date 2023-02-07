@@ -218,6 +218,13 @@ if (isset($filterParams['input']->status_msg_id) && is_array($filterParams['inpu
     }
 }
 
+if (isset($filterParams['input']->mailbox_ids) && is_array($filterParams['input']->mailbox_ids) && !empty($filterParams['input']->mailbox_ids)) {
+    erLhcoreClassChat::validateFilterInString($filterParams['input']->mailbox_ids);
+    if (!empty($filterParams['input']->mailbox_ids)) {
+        $sparams['body']['query']['bool']['must'][]['terms']['mailbox_id'] = $filterParams['input']->mailbox_ids;
+    }
+}
+
 if ($filterParams['input_form']->hvf == 1) {
     $sparams['body']['query']['bool']['must'][]['terms']['has_attachment'] = [1,2,3];
 }

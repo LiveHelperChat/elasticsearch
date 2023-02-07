@@ -58,7 +58,7 @@ $ViewList['listmail'] = array(
         'department_group_ids','group_ids','hvf','response_type','status','status_conv',
         'sender_host','from_host','sender_address','is_followup','undelivered','lang_ids',
         'phone','opened','search_email_in','timefromts','fuzzy','fuzzy_prefix','status_conv_id',
-        'status_msg_id'
+        'status_msg_id','mailbox_ids'
     ),
     'multiple_arguments' => array(
         'search_in',
@@ -74,6 +74,7 @@ $ViewList['listmail'] = array(
         'lang_ids',
         'status_conv_id',
         'status_msg_id',
+        'mailbox_ids'
     ),
     'functions' => array('use')
 );

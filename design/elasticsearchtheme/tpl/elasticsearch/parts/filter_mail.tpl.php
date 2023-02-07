@@ -65,6 +65,22 @@
 
         <div class="col-md-2">
             <div class="form-group">
+                <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Mailbox');?></label>
+                <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                    'input_name'     => 'mailbox_ids[]',
+                    'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose mailbox'),
+                    'selected_id'    => $input->mailbox_ids,
+                    'css_class'      => 'form-control',
+                    'display_name'   => 'mail',
+                    'list_function_params' => ['limit' => false, 'sort' => '`mail` ASC'],
+                    'list_function'  => 'erLhcoreClassModelMailconvMailbox::getList'
+                )); ?>
+            </div>
+        </div>
+
+
+        <div class="col-md-1">
+            <div class="form-group">
                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/user_title.tpl.php')); ?>
                 <label><?php echo $userTitle['user'];?></label>
                 <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
@@ -113,7 +129,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
             <div class="form-group">
                 <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Subject')?></label>
                 <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (

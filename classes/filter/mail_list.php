@@ -26,6 +26,18 @@ $fieldsSearch['status_msg_id'] = array (
     )
 );
 
+$fieldsSearch['mailbox_ids'] = array (
+    'type' => 'text',
+    'trans' => 'Message status',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterin',
+    'filter_table_field' => 'mailbox_id',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 0), FILTER_REQUIRE_ARRAY
+    )
+);
+
 $fieldsSearch['conversation_id'] = array (
     'type' => 'text',
     'trans' => 'Sort by',
