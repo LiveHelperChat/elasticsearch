@@ -423,6 +423,14 @@ if ($filterParams['input_form']->ds == 1)
             $previousConversation = $prevChat;
         }
 
+        $iconsAdditional = erLhAbstractModelChatColumn::getList(array('ignore_fields' => array('position','conditions','column_identifier','enabled'), 'sort' => false, 'filter' => array('icon_mode' => 1, 'enabled' => 1, 'mail_enabled' => 1)));
+        $iconsAdditionalColumn = erLhAbstractModelChatColumn::getList(array('ignore_fields' => array('position','conditions','column_identifier','enabled'), 'sort' => 'position ASC, id ASC','filter' => array('enabled' => 1, 'icon_mode' => 0, 'mail_list_enabled' => 1)));
+
+        erLhcoreClassChat::prefillGetAttributes($chats, array(), array(), array('additional_columns' => ($iconsAdditional + $iconsAdditionalColumn), 'do_not_clean' => true));
+
+        $tpl->set('icons_additional',$iconsAdditional);
+        $tpl->set('additional_chat_columns',$iconsAdditionalColumn);
+
         $tpl->set('items', $chats);
     }
 

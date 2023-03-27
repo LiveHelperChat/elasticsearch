@@ -26,6 +26,7 @@
                             <th width="40%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Conversation ID')?></th>
                             <th width="20%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Sender')?></th>
                             <th width="20%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
+                            <?php include(erLhcoreClassDesign::designtpl('elasticsearch/lists_chats_parts/additional_chat_column.tpl.php'));?>
                             <th width="1%" nowrap><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Priority')?></th>
                             <th width="1%" nowrap><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Operator')?></th>
                             <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Department')?></th>
@@ -111,6 +112,7 @@
                                     </div>
                                     <?php endif; ?>
                                 </td>
+                                <?php include(erLhcoreClassDesign::designtpl('elasticsearch/lists_chats_parts/additional_mail_column_row.tpl.php'));?>
                                 <td ng-non-bindable>
                                     <?php echo $item->priority?>
                                 </td>

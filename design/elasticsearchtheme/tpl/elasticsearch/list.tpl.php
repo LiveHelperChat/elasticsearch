@@ -31,6 +31,9 @@
                                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/nick_title.tpl.php')); ?>
                             </th>
             			    <th width="65%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
+
+                            <?php include(erLhcoreClassDesign::designtpl('elasticsearch/lists_chats_parts/additional_chat_column.tpl.php'));?>
+
             			    <th width="21%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Department')?></th>
             			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
             			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','IP')?></th>
@@ -90,6 +93,7 @@
                                 </div>
                                 <?php endif; ?>
                             </td>
+                            <?php include(erLhcoreClassDesign::designtpl('lhchat/lists_chats_parts/additional_chat_column_row.tpl.php'));?>
                             <td><?php echo htmlspecialchars($item->department)?></td>
             		        <td nowrap="nowrap"><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
             		        <td ng-non-bindable><?php echo htmlspecialchars((string)$item->ip)?></td>
