@@ -41,7 +41,7 @@
             			</tr>  
             		</thead>
             		<?php foreach ($items as $item) : ?>
-            		    <tr>
+            		    <tr data-chat-id="<?php echo $item->chat_id?>" class="chat-row-tr" id="chat-row-tr-<?php echo $item->chat_id?>">
             		        <td nowrap="nowrap">
 
                             <?php $chat = $item;?>
@@ -52,11 +52,11 @@
                             <?php endforeach; ?>
 
                             <?php $chatArchivePreview = false; if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : $chatArchivePreview = true;?>
-                                <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" onclick="lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this)"><i class="material-icons">info_outline</i></a>
+                                <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" id="preview-item-<?php echo $item->chat_id?>" data-list-navigate="true" onclick="lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this)"><i class="material-icons">info_outline</i></a>
                                 <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
                                 <a href="<?php echo erLhcoreClassDesign::baseurl('chatarchive/viewarchivedchat')?>/<?php echo $itemsArchive[$item->chat_id]['archive_id']?>/<?php echo $item->chat_id;?>"><?php echo $item->chat_id?></a>
                             <?php else : ?>
-                                <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" onclick="lhc.previewChat(<?php echo $item->chat_id?>,this)"><i class="material-icons">info_outline</i></a>
+                                <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" id="preview-item-<?php echo $item->chat_id?>" data-list-navigate="true" onclick="lhc.previewChat(<?php echo $item->chat_id?>,this)"><i class="material-icons">info_outline</i></a>
                                 <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
                                 <a href="#!#Fchat-id-<?php echo $item->chat_id?>" ng-click="lhc.startChatByID(<?php echo $item->chat_id?>)"><?php echo $item->chat_id?></a>
                             <?php endif; ?>
