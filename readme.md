@@ -46,6 +46,9 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
 #### Indexing existing online sessions
 `php cron.php -s site_admin -e elasticsearch -c cron/index_os`
 
+#### Indexing existing participant data
+`php cron.php -s site_admin -e elasticsearch -c cron/index_participant`
+
 #### Setup automatic indexing [Required]
 `*/5 * * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/cron > log_index.txt /dev/null 2>&1`
 

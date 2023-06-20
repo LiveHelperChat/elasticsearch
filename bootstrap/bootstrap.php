@@ -34,6 +34,7 @@ class erLhcoreClassExtensionElasticsearch
             if (isset($this->settings_personal['use_es_statistic']) && $this->settings_personal['use_es_statistic'] == true)
             {
                 $dispatcher->listen('statistic.gettopchatsbycountry', 'erLhcoreClassElasticSearchStatistic::statisticGettopchatsbycountry');
+                $dispatcher->listen('statistic.numberofchatsdialogsbyuserparticipant', 'erLhcoreClassElasticSearchStatistic::numberOfChatsDialogsByUserParticipant');
                 $dispatcher->listen('statistic.numberofchatsdialogsbyuser', 'erLhcoreClassElasticSearchStatistic::statisticNumberofchatsdialogsbyuser');
                 $dispatcher->listen('statistic.numberofchatsdialogsbydepartment', 'erLhcoreClassElasticSearchStatistic::statisticNumberofchatsdialogsbydepartment');
                 $dispatcher->listen('statistic.avgwaittimeuser', 'erLhcoreClassElasticSearchStatistic::statisticAvgwaittimeuser');
@@ -114,6 +115,7 @@ class erLhcoreClassExtensionElasticsearch
             'erLhcoreClassElasticSearchStatistic'=> 'extension/elasticsearch/classes/lhelasticsearchstatistic.php',
             'erLhcoreClassModelESChat'           => 'extension/elasticsearch/classes/erlhcoreclassmodeleschat.php',
             'erLhcoreClassModelESMsg'            => 'extension/elasticsearch/classes/erlhcoreclassmodelesmsg.php',
+            'erLhcoreClassModelESParticipant'    => 'extension/elasticsearch/classes/erlhcoreclassmodelesparticipant.php',
             'erLhcoreClassModelESOnlineSession'  => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlinesession.php',
             'erLhcoreClassModelESPendingChat'    => 'extension/elasticsearch/classes/erlhcoreclassmodelespendingchat.php',
             'erLhcoreClassModelESOnlineOperator' => 'extension/elasticsearch/classes/erlhcoreclassmodelesonlineoperator.php',

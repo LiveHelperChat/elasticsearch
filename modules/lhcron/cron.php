@@ -12,12 +12,51 @@ if (!isset($data['last_index_msg_id'])) {
     exit;
 }
 
+if (!isset($data['last_index_part_id'])) {
+    echo "Please set last participant id in back office\n";
+    exit;
+}
+
 if (isset($data['disable_es']) && $data['disable_es'] == 1) {
     echo "Elastic Search is disabled!\n";
     exit;
 }
 
 erLhcoreClassElasticSearchIndex::$ts = time();
+
+echo "\n==Indexing participants == \n";
+
+$pageLimit = 500;
+
+$parts = ceil(erLhcoreClassChat::getCount(array('filtergt' => array('id' => $data['last_index_part_id'])),'lh_chat_participant')/$pageLimit);
+
+$lastMessageId = $data['last_index_part_id'];
+$totalIndex = 0;
+
+for ($i = 0; $i < $parts; $i++) {
+
+    echo "Saving participant - ",($i + 1),"\n";
+    $messages = \LiveHelperChat\Models\LHCAbstract\ChatParticipant::getList(array('filtergt' => array('id' => $data['last_index_part_id']), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
+    erLhcoreClassElasticSearchIndex::indexParticipant(array('participant' => $messages));
+
+    $totalIndex += count($messages);
+
+    if (!empty($messages)) {
+        end($messages);
+        $lastMsg = current($messages);
+
+        $lastMessageId = $lastMsg->id;
+    }
+}
+
+$data['last_index_part_id'] = $lastMessageId;
+
+echo "Last participant id - ",$data['last_index_part_id'],", total indexed - {$totalIndex}\n";
+
+$esOptions->value = serialize($data);
+$esOptions->saveThis();
+
+echo "\n==Indexing messages == \n";
 
 $pageLimit = 500;
 
@@ -48,6 +87,8 @@ echo "Last message id - ",$data['last_index_msg_id'],", total indexed - {$totalI
 
 $esOptions->value = serialize($data);
 $esOptions->saveThis();
+
+
 
 echo "\n==Indexing chats== \n";
 

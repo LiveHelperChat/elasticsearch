@@ -38,6 +38,11 @@
     </div>
 
     <div class="form-group">
+        <label>Last indexed participant Id</label>
+        <input type="text" class="form-control" name="last_index_part_id" value="<?php isset($es_options['last_index_part_id']) ? print $es_options['last_index_part_id'] : ''?>" />
+    </div>
+
+    <div class="form-group">
         <label>Index</label>
         <select name="indexType" class="form-control">
             <option value="static" <?php (isset($es_options['index_type']) && $es_options['index_type'] == 'static') ? print 'selected="selected"' : ''?> >Static</option>

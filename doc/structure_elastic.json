@@ -488,6 +488,50 @@
 			"itime": {
 				"type": "date"
 			}			
-		}
+		},
+        "lh_participant": {
+			"chat_id": {
+				"type": "long"
+			},
+            "user_id": {
+				"type": "long"
+			},
+            "duration": {
+				"type": "integer"
+			},
+            "dep_id": {
+				"type": "integer"
+			},
+			"time": {
+				"type": "date"
+			},
+            "subject_id": {
+              "type": "integer"
+            },
+            "abnd": {
+              "type": "integer"
+            },
+            "status_sub": {
+              "type": "integer"
+            },
+            "drpd": {
+              "type": "integer"
+            },
+            "gbot_id": {
+              "type": "integer"
+            },
+            "iwh_id": {
+              "type": "integer"
+            },
+            "country_code": {
+              "type": "keyword"
+            },
+            "transfer_uid": {
+              "type": "long"
+            },
+            "invitation_id": {
+              "type": "integer"
+            }
+        }
 	}  
 }

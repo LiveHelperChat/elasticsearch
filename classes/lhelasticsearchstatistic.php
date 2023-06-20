@@ -24,7 +24,7 @@ class erLhcoreClassElasticSearchStatistic
             $dateIndexFilter['lte'] = $filter['filterlte']['time'];
         }
 
-        $indexSearch = erLhcoreClassElasticTrait::extractIndexFilter($dateIndexFilter, erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'], $elasticType);
+        $indexSearch = erLhcoreClassModelESChat::extractIndexFilter($dateIndexFilter, erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index'], $elasticType);
 
         return $indexSearch;
     }
@@ -600,6 +600,64 @@ class erLhcoreClassElasticSearchStatistic
             );
         }
         
+        return array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+            'list' => $statsAggr
+        );
+    }
+    public static function numberOfChatsDialogsByUserParticipant($params)
+    {
+        $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESParticipant::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
+        self::formatFilter($params['filter'], $sparams, array('subject_ids' => 'subject_id'));
+
+        if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
+            $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
+            $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
+            $params['filter']['filtergte']['time'] = $ts;
+        }
+
+        $indexSearch = self::getIndexByFilter($params['filter'], erLhcoreClassModelESParticipant::$elasticType);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+        $sparams['body']['aggs']['group_by_participant_count']['terms']['field'] = isset($params['group_field']) ? str_replace('lh_chat_participant.','',$params['group_field']) : 'user_id';
+        $sparams['body']['aggs']['group_by_participant_count']['terms']['size'] = 40;
+
+        $response = $elasticSearchHandler->search($sparams);
+
+        $statsAggr = array();
+
+        foreach ($response['aggregations']['group_by_participant_count']['buckets'] as $item) {
+            $statsAggr[] = array(
+                'number_of_chats' => $item['doc_count'],
+                'user_id' => (trim($item['key']) == '' ? '-' : $item['key'])
+            );
+        }
+
         return array(
             'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
             'list' => $statsAggr
@@ -1744,6 +1802,55 @@ class erLhcoreClassElasticSearchStatistic
             $usersStats[$bucket['key']]['online_hours'] = $bucket['duration_sum']['value'];
         }
 
+        // Participant aggregation
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESParticipant::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+
+        $userIdFilter = array_keys($usersStats);
+        if (!empty($userIdFilter)) {
+            $params['filter']['filterin']['user_id'] = $userIdFilter;
+        } else {
+            return array(
+                'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+                'list' => array()
+            );
+        }
+
+        // Remove department filter
+        $filterParticipant = $params['filter'];
+
+        self::formatFilter($filterParticipant, $sparams);
+
+        $paramsIndex = $params;
+
+        if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
+            $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
+            $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
+            $paramsIndex['filter']['filtergte']['time'] = $ts;
+        }
+
+        $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESParticipant::$elasticType);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+        $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
+        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
+        $sparams['body']['aggs']['group_by_user']['aggs']['duration_sum']['sum']['field'] = 'duration';
+
+        $result = $elasticSearchHandler->search($sparams);
+
+        foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
+            $usersStats[$bucket['key']]['total_chats_participant'] = $bucket['doc_count'];
+            $usersStats[$bucket['key']]['total_hours_participant'] = $bucket['duration_sum']['value'];
+        }
+
+
+        // Default logic
         $list = array();
 
         // Set again user List
@@ -1752,6 +1859,8 @@ class erLhcoreClassElasticSearchStatistic
         foreach ($params['user_list'] as $user) {
             $agentName = trim($user->name .' '. $user->surname);
             $numberOfChats = isset($usersStats[$user->id]['total_chats']) ? $usersStats[$user->id]['total_chats'] : 0;
+
+
             $numberOfChatsOnline = isset($usersStats[$user->id]['total_chats_usaccept']) ? $usersStats[$user->id]['total_chats_usaccept'] : 0;
             
             $totalHoursOnline = isset($usersStats[$user->id]['online_hours']) ? $usersStats[$user->id]['online_hours'] : 0;
@@ -1763,10 +1872,20 @@ class erLhcoreClassElasticSearchStatistic
             } else {
                 $aveNumber = $numberOfChatsOnline;
             }
-            
+
             $avgWaitTime = isset($usersStats[$user->id]['wait_time']) ? $usersStats[$user->id]['wait_time'] : 0;
             $totalHours = isset($usersStats[$user->id]['chat_duration_sum']) ? $usersStats[$user->id]['chat_duration_sum'] : 0;
             $avgDuration = isset($usersStats[$user->id]['chat_duration_avg']) ? $usersStats[$user->id]['chat_duration_avg'] : 0;
+
+            // Participant data
+            $numberOfChatsParticipant = isset($usersStats[$user->id]['total_chats_participant']) ? $usersStats[$user->id]['total_chats_participant'] : 0;
+            $totalHoursParticipant = isset($usersStats[$user->id]['total_hours_participant']) ? $usersStats[$user->id]['total_hours_participant'] : 0;
+
+            if ($totalHoursOnlineCount > 1) {
+                $aveNumberParticipant = round($numberOfChatsParticipant / $totalHoursOnlineCount, 2);
+            } else {
+                $aveNumberParticipant = $numberOfChatsParticipant;
+            }
 
             $statsRecord = array(
                 'agentName' => $agentName,
@@ -1787,6 +1906,11 @@ class erLhcoreClassElasticSearchStatistic
                 'mail_statistic_1' => (isset($usersStats[$user->id]['mail_statistic_1']) ? $usersStats[$user->id]['mail_statistic_1'] : 0),
                 'mail_statistic_2' => (isset($usersStats[$user->id]['mail_statistic_2']) ? $usersStats[$user->id]['mail_statistic_2'] : 0),
                 'mail_statistic_3' => (isset($usersStats[$user->id]['mail_statistic_3']) ? $usersStats[$user->id]['mail_statistic_3'] : 0),
+
+                'aveNumberParticipant' => $aveNumberParticipant,
+                'numberOfChatsParticipant' => $numberOfChatsParticipant,
+                'totalHoursParticipant' => $totalHoursParticipant,
+                'totalHoursParticipant_front' => erLhcoreClassChat::formatSeconds($totalHoursParticipant),
             );
 
             $statsRecord['mail_statistic_total'] = $statsRecord['mail_statistic_0'] + $statsRecord['mail_statistic_1'] + $statsRecord['mail_statistic_2'] + $statsRecord['mail_statistic_3'];
@@ -2201,6 +2325,7 @@ class erLhcoreClassElasticSearchStatistic
                 
                 $field = str_replace('lh_chat.', '', $field);
                 $field = str_replace('lhc_mailconv_msg.', '', $field);
+                $field = str_replace('lh_chat_participant.', '', $field);
 
                 if ($field == 'time' || $field == 'itime') {
                     $value = $value * 1000;

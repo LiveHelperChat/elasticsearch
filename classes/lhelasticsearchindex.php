@@ -547,6 +547,121 @@ class erLhcoreClassElasticSearchIndex
         }
     }
 
+    public static function indexParticipant($params)
+    {
+        $items = $params['participant'];
+
+        $dateRange = array();
+        $chatsIds = array();
+        foreach ($items as $item) {
+             $chatsIds[] = $item->chat_id;
+             if ($item->time > 0) {
+                $dateRange[] = $item->time;
+            }
+        }
+
+        if (empty($chatsIds)) {
+            return;
+        }
+
+        $chatsData = erLhcoreClassModelChat::getList(['limit' => false, 'filterin' => ['id' => $chatsIds]]);
+
+        /*$sql = "SELECT id, gbot_id, status_sub, transfer_uid, country_code FROM lh_chat WHERE id IN (" . implode(',', $chatsIds) . ')';
+
+        $db = ezcDbInstance::get();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $chatsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $infoChat = array();
+
+        foreach ($chatsData as $chatData) {
+            $infoChat[$chatData['id']]['gbot_id'] = $chatData['gbot_id'];
+            $infoChat[$chatData['id']]['status_sub'] = $chatData['status_sub'];
+            $infoChat[$chatData['id']]['transfer_uid'] = $chatData['transfer_uid'];
+            $infoChat[$chatData['id']]['country_code'] = $chatData['country_code'];
+            $infoChat[$chatData['id']]['iwh_id'] = $chatData['iwh_id'];
+        }*/
+
+
+        $sparams = array();
+        $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['participant']);
+        $sparams['limit'] = 1000;
+
+        $documents = erLhcoreClassModelESParticipant::getList($sparams, array('date_index' => array('gte' => min($dateRange), 'lte' => max($dateRange))));
+
+        $documentsReindexed = array();
+        foreach ($documents as $document) {
+            $documentsReindexed[$document->id] = $document;
+        }
+
+        $objectsSave = array();
+
+        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
+        $dataOptions = (array)$esOptions->data;
+
+        erLhcoreClassModelESParticipant::getSession();
+
+        foreach ($params['participant'] as $keyValue => $item) {
+
+            if (isset($documentsReindexed[$keyValue])) {
+                $esMsg = $documentsReindexed[$keyValue];
+            } else {
+                $esMsg = new erLhcoreClassModelESParticipant();
+            }
+
+            $esMsg->id = $item->id;
+            $esMsg->chat_id = $item->chat_id;
+            $esMsg->user_id = $item->user_id;
+            $esMsg->duration = $item->duration;
+            $esMsg->time = $item->time * 1000;
+            $esMsg->dep_id = $item->dep_id;
+
+            // Start of chat based attributes for filtering support
+            $esMsg->gbot_id = isset($chatsData[$item->chat_id]->gbot_id) ? $chatsData[$item->chat_id]->gbot_id : 0;
+            $esMsg->iwh_id = isset($chatsData[$item->chat_id]->iwh_id) ? $chatsData[$item->chat_id]->iwh_id : 0;
+            $esMsg->country_code = isset($chatsData[$item->chat_id]->country_code) ? $chatsData[$item->chat_id]->country_code : '';
+            $esMsg->transfer_uid = isset($chatsData[$item->chat_id]->transfer_uid) ? $chatsData[$item->chat_id]->transfer_uid : 0;
+            $esMsg->status_sub = isset($chatsData[$item->chat_id]->status_sub) ? $chatsData[$item->chat_id]->status_sub : 0;
+            $esMsg->invitation_id = isset($chatsData[$item->chat_id]->invitation_id) ? $chatsData[$item->chat_id]->invitation_id : 0;
+            $esMsg->abnd = isset($chatsData[$item->chat_id]) ? (($chatsData[$item->chat_id]->lsync < ($chatsData[$item->chat_id]->pnd_time + $chatsData[$item->chat_id]->wait_time) && $chatsData[$item->chat_id]->wait_time > 1) || ($chatsData[$item->chat_id]->lsync > ($chatsData[$item->chat_id]->pnd_time + $chatsData[$item->chat_id]->wait_time) && $chatsData[$item->chat_id]->wait_time > 1 && $chatsData[$item->chat_id]->user_id == 0) ? 1 : 0) : 0;
+            $esMsg->drpd = isset($chatsData[$item->chat_id]) ? ($chatsData[$item->chat_id]->lsync > ($chatsData[$item->chat_id]->pnd_time + $chatsData[$item->chat_id]->wait_time) && $chatsData[$item->chat_id]->has_unread_op_messages == 1 && $chatsData[$item->chat_id]->user_id > 0 ? 1 : 0) : 0;
+            $esMsg->subject_id = [];
+
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare("SELECT `subject_id` FROM `lh_abstract_subject_chat` WHERE `chat_id` = :chat_id");
+            $stmt->bindValue(':chat_id', $item->chat_id,PDO::PARAM_INT);
+            $stmt->execute();
+            $subjectIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            if (!empty($subjectIds)) {
+                foreach ($subjectIds as $subjectId) {
+                    $esMsg->subject_id[] = (int)$subjectId;
+                }
+            }
+            // End of chat based attributes
+
+            $indexSave = erLhcoreClassModelESParticipant::$indexName . '-' . erLhcoreClassModelESParticipant::$elasticType;
+
+            if (isset($esMsg->meta_data['index']) && $esMsg->meta_data['index'] != '') {
+                $indexSave = $esMsg->meta_data['index'];
+            } else if (isset($dataOptions['index_type'])) {
+                if ($dataOptions['index_type'] == 'daily') {
+                    $indexSave = erLhcoreClassModelESParticipant::$indexName . '-' . erLhcoreClassModelESParticipant::$elasticType . '-' . date('Y.m.d', $item->time);
+                } elseif ($dataOptions['index_type'] == 'yearly') {
+                    $indexSave = erLhcoreClassModelESParticipant::$indexName . '-' . erLhcoreClassModelESParticipant::$elasticType . '-' . date('Y',$item->time);
+                } elseif ($dataOptions['index_type'] == 'monthly') {
+                    $indexSave = erLhcoreClassModelESParticipant::$indexName . '-' . erLhcoreClassModelESParticipant::$elasticType . '-' . date('Y.m',$item->time);
+                }
+            }
+
+            $objectsSave[$indexSave][] = $esMsg;
+        }
+
+        if (!empty($objectsSave)) {
+            erLhcoreClassModelESParticipant::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
+        }
+    }
+    
     public static function hasPreviousMessages($params)
     {
         if ($params['has_messages'] === false) {
