@@ -566,24 +566,6 @@ class erLhcoreClassElasticSearchIndex
 
         $chatsData = erLhcoreClassModelChat::getList(['limit' => false, 'filterin' => ['id' => $chatsIds]]);
 
-        /*$sql = "SELECT id, gbot_id, status_sub, transfer_uid, country_code FROM lh_chat WHERE id IN (" . implode(',', $chatsIds) . ')';
-
-        $db = ezcDbInstance::get();
-        $stmt = $db->prepare($sql);
-        $stmt->execute();
-        $chatsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $infoChat = array();
-
-        foreach ($chatsData as $chatData) {
-            $infoChat[$chatData['id']]['gbot_id'] = $chatData['gbot_id'];
-            $infoChat[$chatData['id']]['status_sub'] = $chatData['status_sub'];
-            $infoChat[$chatData['id']]['transfer_uid'] = $chatData['transfer_uid'];
-            $infoChat[$chatData['id']]['country_code'] = $chatData['country_code'];
-            $infoChat[$chatData['id']]['iwh_id'] = $chatData['iwh_id'];
-        }*/
-
-
         $sparams = array();
         $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['participant']);
         $sparams['limit'] = 1000;
