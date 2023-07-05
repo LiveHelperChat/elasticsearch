@@ -336,7 +336,7 @@ class erLhcoreClassElasticClient
 
             self::$handler = $elasticClient->setHosts(array($settings['host'] . ':' . $settings['port']))->setConnectionParams([
                 'client' => [
-                    RequestOptions::TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 15 : 3),
+                    RequestOptions::TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 15 : 10),
                     RequestOptions::CONNECT_TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 10 : 2),
                 ],
             ])->build();
