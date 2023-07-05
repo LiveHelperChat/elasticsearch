@@ -181,7 +181,12 @@
 						
 </form>
 
-
+<?php if (isset($do_search_first)) : ?>
+    <br/>
+    <div class="alert alert-info">
+        <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/statistic','Please choose statistic parameters first!');?>
+    </div>
+<?php else : ?>
 
 <canvas id="pendingvsonline-chart" width="400" height="300" style="cursor:pointer"></canvas>
 
@@ -261,3 +266,4 @@ new Chart(ctx, {
 });
 
 </script>
+<?php endif; ?>

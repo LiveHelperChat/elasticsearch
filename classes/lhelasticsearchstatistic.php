@@ -235,6 +235,14 @@ class erLhcoreClassElasticSearchStatistic
                 $filterParams = erLhcoreClassSearchHandler::getParams(array('customfilterfile' => 'extension/elasticsearch/classes/searchattr/pendingvsonlineop.php', 'format_filter' => true, 'uparams' => $Params['user_parameters_unordered']));
             }
 
+            if (!isset($_GET['doSearch']) && !isset($Params['user_parameters_unordered']['xls'])) {
+                $tpl = $paramsExecution['tpl'];
+                $tpl->set('input',$filterParams['input_form']);
+                $tpl->set('statistic', []);
+                $tpl->set('do_search_first', true);
+                return;
+            }
+
             $groupByData = array(
                 'interval' => 300000,
                 'divide' => 1
