@@ -440,6 +440,9 @@
             "status_sub": {
 				"type": "integer"
 			},
+            "del_st": {
+				"type": "short"
+			},
 			"name_support": {
 				"type": "text"
 			}

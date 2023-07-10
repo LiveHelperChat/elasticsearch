@@ -968,6 +968,14 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['aggs']['chats_over_time']['aggs']['msg_system']['filter']['term']['user_id'] = -1;
             $sparams['body']['aggs']['chats_over_time']['aggs']['msg_bot']['filter']['term']['user_id'] = -2;
 
+            // Bot messages delivery status
+            $sparams['body']['aggs']['chats_over_time']['aggs']['msg_del_bot']['filter']['term']['user_id'] = -2;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['msg_del_bot']['aggs']['msg_del_status']['terms']['field'] = 'del_st';
+
+            // Operator messages delivery status
+            $sparams['body']['aggs']['chats_over_time']['aggs']['msg_del_op']['filter']['range']['user_id']['gt'] = 0;
+            $sparams['body']['aggs']['chats_over_time']['aggs']['msg_del_op']['aggs']['msg_del_status']['terms']['field'] = 'del_st';
+
             $paramsOrigIndex = $paramsOrig = $params;
 
             if ($aggr == 'month') {
@@ -1003,6 +1011,21 @@ class erLhcoreClassElasticSearchStatistic
                     $numberOfChats[$keyDateUnix]['msg_user'] = $bucket['msg_user']['doc_count'];
                     $numberOfChats[$keyDateUnix]['msg_system'] = $bucket['msg_system']['doc_count'];
                     $numberOfChats[$keyDateUnix]['msg_bot'] = $bucket['msg_bot']['doc_count'];
+
+                    $numberOfChats[$keyDateUnix]['msgdelbot'] = [];
+                    $numberOfChats[$keyDateUnix]['msgdelop'] = [];
+
+                    if (isset($bucket['msg_del_op']['msg_del_status']['buckets'])) {
+                        foreach ($bucket['msg_del_op']['msg_del_status']['buckets'] as $buckedDelivery) {
+                            $numberOfChats[$keyDateUnix]['msgdelop'][$buckedDelivery['key']] = $buckedDelivery['doc_count'];
+                        }
+                    }
+
+                    if (isset($bucket['msg_del_bot']['msg_del_status']['buckets'])) {
+                        foreach ($bucket['msg_del_bot']['msg_del_status']['buckets'] as $buckedDelivery) {
+                            $numberOfChats[$keyDateUnix]['msgdelbot'][$buckedDelivery['key']] = $buckedDelivery['doc_count'];
+                        }
+                    }
                 }
             }
         }

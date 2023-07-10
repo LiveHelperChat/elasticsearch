@@ -519,6 +519,7 @@ class erLhcoreClassElasticSearchIndex
                 $esMsg->time = $item->time * 1000;
                 $esMsg->name_support = $item->name_support;
                 $esMsg->user_id = $item->user_id;
+                $esMsg->del_st = $item->del_st;
                 $esMsg->dep_id = (int)$infoChat[$item->chat_id]['dep_id'];
                 $esMsg->op_user_id = (int)$infoChat[$item->chat_id]['user_id'];
                 $esMsg->gbot_id = (int)$infoChat[$item->chat_id]['gbot_id'];

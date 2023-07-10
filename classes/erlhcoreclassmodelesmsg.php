@@ -16,7 +16,8 @@ class erLhcoreClassModelESMsg
             'name_support' => $this->name_support,
             'dep_id' => $this->dep_id,
             'gbot_id' => $this->gbot_id,
-            'status_sub' => $this->status_sub
+            'status_sub' => $this->status_sub,
+            'del_st' => $this->del_st
         );
         
         return $states;
@@ -48,6 +49,7 @@ class erLhcoreClassModelESMsg
     public $user_id = null;
 
     public $dep_id = null;
+    public $del_st = null;
 
     public $op_user_id = null;
 
