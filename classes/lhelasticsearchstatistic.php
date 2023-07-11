@@ -945,7 +945,11 @@ class erLhcoreClassElasticSearchStatistic
             $numberOfChats[$keyDateUnix]['msg_bot'] = 0;
         }
 
-        if (is_array($params['params_execution']['charttypes']) && in_array('msgtype', $params['params_execution']['charttypes'])) {
+        if (is_array($params['params_execution']['charttypes']) &&
+            in_array('msgtype', $params['params_execution']['charttypes']) ||
+            in_array('msgdelop', $params['params_execution']['charttypes']) ||
+            in_array('msgdelbot', $params['params_execution']['charttypes'])
+        ) {
             $sparams = array();
             $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESMsg::$elasticType;
             $sparams['ignore_unavailable'] = true;
