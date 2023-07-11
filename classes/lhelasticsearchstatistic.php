@@ -946,9 +946,11 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if (is_array($params['params_execution']['charttypes']) &&
-            in_array('msgtype', $params['params_execution']['charttypes']) ||
-            in_array('msgdelop', $params['params_execution']['charttypes']) ||
-            in_array('msgdelbot', $params['params_execution']['charttypes'])
+            (
+                in_array('msgtype', $params['params_execution']['charttypes']) ||
+                in_array('msgdelop', $params['params_execution']['charttypes']) ||
+                in_array('msgdelbot', $params['params_execution']['charttypes'])
+            )
         ) {
             $sparams = array();
             $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESMsg::$elasticType;
