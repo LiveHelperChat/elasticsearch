@@ -77,9 +77,9 @@
 
                                     <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->subject)?>" onclick="lhinst.startMailNewWindow(<?php echo $item->conversation_id?>,$(this).attr('data-title'))" >open_in_new</a>
 
-                                    <span class="me-2">
+                                    <a class="me-2" onclick='lhinst.startMailChat(<?php echo $item->conversation_id?>,$("#tabs"),<?php echo json_encode($item->subject_front,JSON_HEX_APOS)?>)' href="#!#chat-id-mc<?php echo $item->conversation_id?>">
                                     <?php echo $item->conversation_id?>
-                                    </span>
+                                    </a>
 
                                     <a class="user-select-none" onclick='lhinst.startMailChat(<?php echo $item->conversation_id?>,$("#tabs"),<?php echo json_encode($item->subject_front,JSON_HEX_APOS)?>)' href="#!#chat-id-mc<?php echo $item->conversation_id?>" ><?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->subject,50))?></a>
 
