@@ -4,6 +4,7 @@
  * Example of worker usage
  * 
  * */
+#[\AllowDynamicProperties]
 class erLhcoreClassElasticSearchWorker {
      
     public function perform()

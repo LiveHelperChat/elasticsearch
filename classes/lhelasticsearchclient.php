@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\RequestOptions;
-
+#[\AllowDynamicProperties]
 class erLhcoreClassElasticClient
 {
 

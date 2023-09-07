@@ -1,5 +1,5 @@
 <?php
-
+#[\AllowDynamicProperties]
 class erLhcoreClassElasticSearchUpdate
 {
     public static function getElasticStatus($definition, $elasticIndex)

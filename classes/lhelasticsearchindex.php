@@ -1,5 +1,5 @@
 <?php
-
+#[\AllowDynamicProperties]
 class erLhcoreClassElasticSearchIndex
 {
     public static $ts = null;

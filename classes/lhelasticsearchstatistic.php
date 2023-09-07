@@ -1,5 +1,5 @@
 <?php
-
+#[\AllowDynamicProperties]
 class erLhcoreClassElasticSearchStatistic
 {
     public static function uparamsAppend($params) {

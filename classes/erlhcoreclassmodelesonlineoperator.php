@@ -1,5 +1,5 @@
 <?php
-
+#[\AllowDynamicProperties]
 class erLhcoreClassModelESOnlineOperator
 {
     use erLhcoreClassElasticTrait;
