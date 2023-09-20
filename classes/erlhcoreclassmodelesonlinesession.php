@@ -24,21 +24,15 @@ class erLhcoreClassModelESOnlineSession
             case 'time_front':
                 $this->time_front = date('Ymd') == date('Ymd', $this->time / 1000) ? date(erLhcoreClassModule::$dateHourFormat, $this->time / 1000) : date(erLhcoreClassModule::$dateDateHourFormat, $this->time / 1000);
                 return $this->time_front;
-                ;
-                break;
-            
+
             case 'lactivity_front':
                 $this->lactivity_front = date('Ymd') == date('Ymd', $this->lactivity / 1000) ? date(erLhcoreClassModule::$dateHourFormat, $this->lactivity / 1000) : date(erLhcoreClassModule::$dateDateHourFormat, $this->lactivity / 1000);
                 return $this->lactivity_front;
-                ;
-                break;
-            
+
             case 'duration_front':
                 $this->duration_front = erLhcoreClassChat::formatSeconds($this->duration);
                 return $this->duration_front;
-                ;
-                break;
-            
+
             default:
                 break;
         }

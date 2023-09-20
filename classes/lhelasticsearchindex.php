@@ -272,7 +272,7 @@ class erLhcoreClassElasticSearchIndex
         }
 
         $sparams = array();
-        $sparams['body']['query']['bool']['must'][]['terms']['os_id'] = array_keys($params['items']);
+        $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['items']);
         $sparams['limit'] = 1000;
         $documents = erLhcoreClassModelESOnlineSession::getList($sparams, array('date_index' => array('gte' => min($dateRange), 'lte' => max($dateRange))));
 
@@ -293,6 +293,7 @@ class erLhcoreClassElasticSearchIndex
                 $osLog = $documentsReindexed[$keyValue];
             } else {
                 $osLog = new erLhcoreClassModelESOnlineSession();
+                $osLog->id = $item->id;
                 $osLog->user_id = $item->user_id;
                 $osLog->os_id = $item->id;
                 $osLog->time = $item->time * 1000;
@@ -318,7 +319,7 @@ class erLhcoreClassElasticSearchIndex
             $objectsSave[$indexSave][] = $osLog;
         }
 
-        erLhcoreClassModelESOnlineSession::bulkSave($objectsSave, array('custom_index' => true));
+        erLhcoreClassModelESOnlineSession::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
     }
 
     public static function indexChatDelay($params)
