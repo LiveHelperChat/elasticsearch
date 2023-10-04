@@ -38,6 +38,12 @@ $ViewList['list'] = array(
         'chat_status_ids',
         'region',
         'iwh_ids',
+        'frt_from',
+        'frt_till',
+        'mart_from',
+        'mart_till',
+        'aart_till',
+        'aart_from',
     ),
     'functions' => array('use')
 );

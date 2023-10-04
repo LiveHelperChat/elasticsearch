@@ -21,6 +21,9 @@ class erLhcoreClassModelESParticipant
             'abnd' => $this->abnd,
             'drpd' => $this->drpd,
             'subject_id' => $this->subject_id,
+            'frt' => $this->frt,
+            'aart' => $this->aart,
+            'mart' => $this->mart,
         );
 
         return $states;
@@ -63,6 +66,9 @@ class erLhcoreClassModelESParticipant
     public $transfer_uid = null;
     public $status_sub = null;
     public $invitation_id = null;
+    public $frt = null;
+    public $aart = null;
+    public $mart = null;
     public $abnd = null;
     public $drpd = null;
     public $subject_id = null;

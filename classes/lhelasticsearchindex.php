@@ -161,6 +161,9 @@ class erLhcoreClassElasticSearchIndex
             $esChat->drpd = $item->lsync > ($item->pnd_time + $item->wait_time) && $item->has_unread_op_messages == 1 && $item->user_id > 0 ? 1 : 0;
 
             $esChat->cls_us = $item->cls_us;
+            $esChat->frt  = $item->frt;
+            $esChat->aart = $item->aart;
+            $esChat->mart = $item->mart;
             $esChat->subject_id = [];
 
             $db = ezcDbInstance::get();
@@ -610,6 +613,9 @@ class erLhcoreClassElasticSearchIndex
             $esMsg->invitation_id = isset($chatsData[$item->chat_id]->invitation_id) ? $chatsData[$item->chat_id]->invitation_id : 0;
             $esMsg->abnd = isset($chatsData[$item->chat_id]) ? (($chatsData[$item->chat_id]->lsync < ($chatsData[$item->chat_id]->pnd_time + $chatsData[$item->chat_id]->wait_time) && $chatsData[$item->chat_id]->wait_time > 1) || ($chatsData[$item->chat_id]->lsync > ($chatsData[$item->chat_id]->pnd_time + $chatsData[$item->chat_id]->wait_time) && $chatsData[$item->chat_id]->wait_time > 1 && $chatsData[$item->chat_id]->user_id == 0) ? 1 : 0) : 0;
             $esMsg->drpd = isset($chatsData[$item->chat_id]) ? ($chatsData[$item->chat_id]->lsync > ($chatsData[$item->chat_id]->pnd_time + $chatsData[$item->chat_id]->wait_time) && $chatsData[$item->chat_id]->has_unread_op_messages == 1 && $chatsData[$item->chat_id]->user_id > 0 ? 1 : 0) : 0;
+            $esMsg->frt = $item->frt;
+            $esMsg->aart = $item->aart;
+            $esMsg->mart = $item->mart;
             $esMsg->subject_id = [];
 
             $db = ezcDbInstance::get();

@@ -232,6 +232,30 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['range']['wait_time']['lte'] = (int)$filterParams['filter']['filterlte']['wait_time'];
     }
 
+    if (isset($filterParams['filter']['filtergt']['frt'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['frt']['gt'] = (int)$filterParams['filter']['filtergt']['frt'];
+    }
+
+    if (isset($filterParams['filter']['filterlte']['frt'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['frt']['lte'] = (int)$filterParams['filter']['filterlte']['frt'];
+    }
+
+    if (isset($filterParams['filter']['filtergt']['aart'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['aart']['gt'] = (int)$filterParams['filter']['filtergt']['aart'];
+    }
+
+    if (isset($filterParams['filter']['filterlte']['aart'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['aart']['lte'] = (int)$filterParams['filter']['filterlte']['aart'];
+    }
+
+    if (isset($filterParams['filter']['filtergt']['mart'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['mart']['gt'] = (int)$filterParams['filter']['filtergt']['mart'];
+    }
+
+    if (isset($filterParams['filter']['filterlte']['mart'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['mart']['lte'] = (int)$filterParams['filter']['filterlte']['mart'];
+    }
+
     if ($filterParams['input_form']->has_operator == 1) {
         $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
     }

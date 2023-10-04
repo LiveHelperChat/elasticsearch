@@ -85,6 +85,9 @@ class erLhcoreClassModelESChat
             'drpd' => $this->drpd,
             'cls_us' => $this->cls_us,
             'iwh_id' => $this->iwh_id,
+            'frt' => $this->frt,
+            'aart' => $this->aart,
+            'mart' => $this->mart,
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate', array(
@@ -287,4 +290,7 @@ class erLhcoreClassModelESChat
     public $drpd = null;
     public $cls_us = null;
     public $iwh_id = null;
+    public $frt = null;
+    public $aart = null;
+    public $mart = null;
 }

@@ -1696,7 +1696,17 @@ class erLhcoreClassElasticSearchStatistic
         
         // getAverageChatduration
         $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['chat_duration_avg']['avg']['field'] = 'chat_duration';
-        
+
+
+        $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['frt_avg']['filter']['range']['frt']['gt'] = 0;
+        $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['frt_avg']['aggs']['frt_avg_value']['avg']['field'] = 'frt';
+
+        $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['aart_avg']['filter']['range']['aart']['gt'] = 0;
+        $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['aart_avg']['aggs']['aart_avg_value']['avg']['field'] = 'aart';
+
+        $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['mart_avg']['filter']['range']['mart']['gt'] = 0;
+        $sparams['body']['aggs']['group_by_user']['aggs']['closed_chats']['aggs']['mart_avg']['aggs']['mart_avg_value']['avg']['field'] = 'mart';
+
         // avgWaitTimeFilter
         $sparams['body']['aggs']['group_by_user']['aggs']['avg_wait_time_filter']['filter']['range']['wait_time']['lt'] = 600;
         $sparams['body']['aggs']['group_by_user']['aggs']['avg_wait_time_filter']['aggs']['wait_time']['avg']['field'] = 'wait_time';
@@ -1727,6 +1737,11 @@ class erLhcoreClassElasticSearchStatistic
                 'total_chats_usaccept' => $bucket['us_accept']['doc_count'],
                 'chat_duration_sum' => $bucket['closed_chats']['chat_duration_sum']['value'],
                 'chat_duration_avg' => $bucket['closed_chats']['chat_duration_avg']['value'],
+
+                'frt_avg' => $bucket['closed_chats']['frt_avg']['frt_avg_value']['value'],
+                'aart_avg' => $bucket['closed_chats']['aart_avg']['aart_avg_value']['value'],
+                'mart_avg' => $bucket['closed_chats']['mart_avg']['mart_avg_value']['value'],
+
                 'wait_time' => $bucket['avg_wait_time_filter']['wait_time']['value'],
                 'subject_stats' => $subjectStats
             );
@@ -1879,13 +1894,24 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
         $sparams['body']['aggs']['group_by_user']['aggs']['duration_sum']['sum']['field'] = 'duration';
 
+        $sparams['body']['aggs']['group_by_user']['aggs']['frt_avg_part']['filter']['range']['frt']['gt'] = 0;
+        $sparams['body']['aggs']['group_by_user']['aggs']['frt_avg_part']['aggs']['frt_avg_part_value']['avg']['field'] = 'frt';
+
+        $sparams['body']['aggs']['group_by_user']['aggs']['aart_avg_part']['filter']['range']['aart']['gt'] = 0;
+        $sparams['body']['aggs']['group_by_user']['aggs']['aart_avg_part']['aggs']['aart_avg_part_value']['avg']['field'] = 'aart';
+
+        $sparams['body']['aggs']['group_by_user']['aggs']['mart_avg_part']['filter']['range']['mart']['gt'] = 0;
+        $sparams['body']['aggs']['group_by_user']['aggs']['mart_avg_part']['aggs']['mart_avg_part_value']['avg']['field'] = 'mart';
+
         $result = $elasticSearchHandler->search($sparams);
 
         foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
             $usersStats[$bucket['key']]['total_chats_participant'] = $bucket['doc_count'];
             $usersStats[$bucket['key']]['total_hours_participant'] = $bucket['duration_sum']['value'];
+            $usersStats[$bucket['key']]['frt_avg_part'] = $bucket['frt_avg_part']['frt_avg_part_value']['value'];
+            $usersStats[$bucket['key']]['aart_avg_part'] = $bucket['aart_avg_part']['aart_avg_part_value']['value'];
+            $usersStats[$bucket['key']]['mart_avg_part'] = $bucket['mart_avg_part']['mart_avg_part_value']['value'];
         }
-
 
         // Default logic
         $list = array();
@@ -1913,6 +1939,14 @@ class erLhcoreClassElasticSearchStatistic
             $avgWaitTime = isset($usersStats[$user->id]['wait_time']) ? $usersStats[$user->id]['wait_time'] : 0;
             $totalHours = isset($usersStats[$user->id]['chat_duration_sum']) ? $usersStats[$user->id]['chat_duration_sum'] : 0;
             $avgDuration = isset($usersStats[$user->id]['chat_duration_avg']) ? $usersStats[$user->id]['chat_duration_avg'] : 0;
+
+            $avgFirstResponseTime = isset($usersStats[$user->id]['frt_avg']) ? $usersStats[$user->id]['frt_avg'] : 0;
+            $avgResponseTime = isset($usersStats[$user->id]['aart_avg']) ? $usersStats[$user->id]['aart_avg'] : 0;
+            $avgMaximumResponseTime = isset($usersStats[$user->id]['mart_avg']) ? $usersStats[$user->id]['mart_avg'] : 0;
+
+            $avgFirstResponseTimePar = isset($usersStats[$user->id]['frt_avg_part']) ? $usersStats[$user->id]['frt_avg_part'] : 0;
+            $avgResponseTimePar = isset($usersStats[$user->id]['aart_avg_part']) ? $usersStats[$user->id]['aart_avg_part'] : 0;
+            $avgMaximumResponseTimePar = isset($usersStats[$user->id]['mart_avg_part']) ? $usersStats[$user->id]['mart_avg_part'] : 0;
 
             // Participant data
             $numberOfChatsParticipant = isset($usersStats[$user->id]['total_chats_participant']) ? $usersStats[$user->id]['total_chats_participant'] : 0;
@@ -1948,6 +1982,23 @@ class erLhcoreClassElasticSearchStatistic
                 'numberOfChatsParticipant' => $numberOfChatsParticipant,
                 'totalHoursParticipant' => $totalHoursParticipant,
                 'totalHoursParticipant_front' => erLhcoreClassChat::formatSeconds($totalHoursParticipant),
+
+                // Response times
+                'avgFirstResponseTime' => $avgFirstResponseTime,
+                'avgFirstResponseTime_front' => erLhcoreClassChat::formatSeconds($avgFirstResponseTime),
+                'avgFirstResponseTimePar' => $avgFirstResponseTimePar,
+                'avgFirstResponseTimePar_front' => erLhcoreClassChat::formatSeconds($avgFirstResponseTimePar),
+
+                'avgResponseTime' => $avgResponseTime,
+                'avgResponseTime_front' => erLhcoreClassChat::formatSeconds($avgResponseTime),
+                'avgResponseTimePar' => $avgResponseTimePar,
+                'avgResponseTimePar_front' => erLhcoreClassChat::formatSeconds($avgResponseTimePar),
+
+                'avgMaximumResponseTime' => $avgMaximumResponseTime,
+                'avgMaximumResponseTime_front' => erLhcoreClassChat::formatSeconds($avgMaximumResponseTime),
+                'avgMaximumResponseTimePar' => $avgMaximumResponseTimePar,
+                'avgMaximumResponseTimePar_front' => erLhcoreClassChat::formatSeconds($avgMaximumResponseTimePar)
+
             );
 
             $statsRecord['mail_statistic_total'] = $statsRecord['mail_statistic_0'] + $statsRecord['mail_statistic_1'] + $statsRecord['mail_statistic_2'] + $statsRecord['mail_statistic_3'];
