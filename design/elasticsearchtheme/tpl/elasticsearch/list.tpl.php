@@ -72,14 +72,14 @@
                                 <?php if (isset($item->meta_data['highlight'])) : ?>
                                 <a class="abbr-list-general action-image preview-list preview-item-<?php echo $item->chat_id?>" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" href="#!#es-highlight-chat-<?php echo $item->chat_id?>" onclick="<?php if ($chatArchivePreview == true) : ?>lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this)<?php else : ?>lhc.previewChat(<?php echo $item->chat_id?>,this)<?php endif;?>">
                                     <?php foreach ($item->meta_data['highlight'] as $field => $fields) :
-                                        $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n", $fields )))); ?>
+                                        $highlightText = "➤" . erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n➤", $fields )))); ?>
                                         <div>
                                             <?php if ($field == 'msg_system') : ?>
-                                                <i>System:</i>
+                                                <i class="fw-bold">System:</i>
                                             <?php elseif ($field == 'msg_operator') : ?>
-                                                <i>Operator:</i>
+                                                <i class="fw-bold">Operator:</i>
                                             <?php else : ?>
-                                                <i>Visitor:</i>
+                                                <i class="fw-bold">Visitor:</i>
                                             <?php endif; ?>
                                             <?php echo $highlightText;?></div>
                                     <?php endforeach; ?>

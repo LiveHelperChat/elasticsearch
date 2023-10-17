@@ -307,7 +307,7 @@ if (trim($filterParams['input_form']->keyword) != '') {
 
     $sparams['body']['highlight']['order'] = 'score';
     $sparams['body']['highlight']['fragment_size'] = 40;
-    $sparams['body']['highlight']['number_of_fragments'] = 1;
+    $sparams['body']['highlight']['number_of_fragments'] = 5;
 
     $sparams['body']['highlight']['fields']['subject'] = new stdClass();
     $sparams['body']['highlight']['fields']['alt_body'] = new stdClass();

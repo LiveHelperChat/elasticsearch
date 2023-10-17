@@ -93,12 +93,12 @@
                                 <td ng-non-bindable>
                                     <?php if (isset($item->meta_data['highlight'])) : ?>
                                         <a class="abbr-list-general action-image preview-list preview-item-<?php echo $item->conversation_id?>" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" href="#!#es-highlight-mail-<?php echo $item->id?>" onclick="lhc.previewMail(<?php echo $item->conversation_id?>,this);">
-                                            <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n",$fields)))); ?>
+                                            <?php foreach ($item->meta_data['highlight'] as $field => $fields) : $highlightText = "➤".erLhcoreClassBBCode::make_clickable(htmlspecialchars(str_replace(array('<em>','</em>'),array('[mark]','[/mark]'),implode("\n➤",$fields)))); ?>
                                                 <div>
                                                     <?php if ($field == 'subject') : ?>
-                                                        <i><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Subject');?>:</i>
+                                                        <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Subject');?>:</i>
                                                     <?php else : ?>
-                                                        <i><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Body');?>:</i>
+                                                        <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Body');?>:</i>
                                                     <?php endif; ?>
                                                     <?php echo $highlightText;?></div>
                                             <?php endforeach; ?>

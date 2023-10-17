@@ -394,7 +394,7 @@ if ($tab == 'chats') {
 
         $sparams['body']['highlight']['order'] = 'score';
         $sparams['body']['highlight']['fragment_size'] = 40;
-        $sparams['body']['highlight']['number_of_fragments'] = 1;
+        $sparams['body']['highlight']['number_of_fragments'] = 5;
         $sparams['body']['highlight']['fields']['msg_operator'] = new stdClass();
         $sparams['body']['highlight']['fields']['msg_visitor'] = new stdClass();
         $sparams['body']['highlight']['fields']['msg_system'] = new stdClass();
