@@ -12,12 +12,14 @@
 		</div>
 
         <div class="col-md-2">
-            <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Keyword messages');?></label>
+            <label><a href="#" class="material-icons" onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'genericbot/help/elasticsearchkeyword'});">help</a><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Keyword messages');?></label>
             <div class="input-group input-group-sm">
                 <input type="text" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Keyword messages');?>" class="form-control form-control-sm" name="keyword" value="<?php echo htmlspecialchars($input->keyword)?>" />
                 
                     <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
                     <div class="dropdown-menu">
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if ($input->expression == true) : ?>checked="checked"<?php endif;?> name="expression" value="on" /> Expression. Bellow options becomes irrelevant</label>
+                        <div role="separator" class="dropdown-divider"></div>
                         <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(2,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="2" /> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Visitor messages');?></label>
                         <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(3,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="3" /> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Operator messages');?></label>
                         <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(4,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="4" /> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','System messages');?></label>

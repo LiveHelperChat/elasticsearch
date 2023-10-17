@@ -362,6 +362,18 @@ $fieldsSearch['fuzzy'] = array (
     )
 );
 
+$fieldsSearch['expression'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'none',
+    'filter_table_field' => 'expression',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+    )
+);
+
 $fieldsSearch['fuzzy_prefix'] = array (
     'type' => 'text',
     'trans' => 'id',

@@ -237,14 +237,19 @@ if (trim($filterParams['input_form']->keyword) != '') {
         'query' => $filterParams['input_form']->keyword
     ];
 
-    if ($filterParams['input_form']->fuzzy == 1 && $filterParams['input_form']->exact_match != 1) {
+    if ($filterParams['input_form']->fuzzy == 1 && $filterParams['input_form']->exact_match != 1 && $filterParams['input_form']->expression != 1) {
         $paramQuery['fuzziness'] = 'AUTO';
         $paramQuery['prefix_length'] = max((mb_strlen($filterParams['input_form']->keyword) - (is_numeric($filterParams['input_form']->fuzzy_prefix) ? $filterParams['input_form']->fuzzy_prefix : 1)),0);
     }
 
     if (empty($filterParams['input_form']->search_in)) {
-        $sparams['body']['query']['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
-        $sparams['body']['query']['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
+        if ($filterParams['input_form']->expression == 1) {
+            $queryStringParam = $paramQuery;
+            $sparams['body']['query']['bool']['must'][]["query_string"] = $queryStringParam;
+        } else {
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
+        }
     } else {
         if (in_array(1,$filterParams['input_form']->search_in)) {
             $sparams['body']['query']['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
@@ -295,7 +300,10 @@ if (trim($filterParams['input_form']->keyword) != '') {
         }
     }
 
-    $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
+    if ($filterParams['input_form']->expression != 1) {
+        $sparams['body']['query']['bool']['minimum_should_match'] = 1; // Minimum one condition should be matched
+    }
+
 
     $sparams['body']['highlight']['order'] = 'score';
     $sparams['body']['highlight']['fragment_size'] = 40;
