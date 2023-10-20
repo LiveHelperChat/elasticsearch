@@ -73,7 +73,7 @@
                                         <span class="material-icons">image</span>
                                     <?php endif; ?>
 
-                                    <a href="#!#Fchat-id-<?php echo $item->conversation_id?>" data-list-navigate="true" <?php if ($previousConversationId != $item->conversation_id) : ?>id="preview-item-<?php echo $item->conversation_id?>"<?php endif;?> onclick="lhc.previewMail(<?php echo $item->conversation_id?>,this);" class="material-icons">info_outline</a>
+                                    <a href="#!#Fchat-id-<?php echo $item->conversation_id?>" data-keyword="<?php echo htmlspecialchars($input->keyword)?>" data-list-navigate="true" <?php if ($previousConversationId != $item->conversation_id) : ?>id="preview-item-<?php echo $item->conversation_id?>"<?php endif;?> onclick="lhc.previewMail(<?php echo $item->conversation_id?>,this);" class="material-icons">info_outline</a>
 
                                     <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->subject)?>" onclick="lhinst.startMailNewWindow(<?php echo $item->conversation_id?>,$(this).attr('data-title'))" >open_in_new</a>
 
