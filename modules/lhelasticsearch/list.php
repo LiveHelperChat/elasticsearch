@@ -82,6 +82,10 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['term']['invitation_id'] = (int)$filterParams['input_form']->not_invitation;
     }
 
+    if ($filterParams['input_form']->ip != '') {
+        $sparams['body']['query']['bool']['must'][]['term']['ip'] = (string)$filterParams['input_form']->ip;
+    }
+
     if ($filterParams['input_form']->phone != '') {
         $sparams['body']['query']['bool']['must'][]['term']['phone'] = $filterParams['input_form']->phone;
     }
@@ -195,6 +199,11 @@ if ($tab == 'chats') {
     if (isset($filterParams['input']->department_ids) && is_array($filterParams['input']->department_ids) && !empty($filterParams['input']->department_ids)) {
         erLhcoreClassChat::validateFilterIn($filterParams['input']->department_ids);
         $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $filterParams['input']->department_ids;
+    }
+
+    if (isset($filterParams['input']->theme_ids) && is_array($filterParams['input']->theme_ids) && !empty($filterParams['input']->theme_ids)) {
+        erLhcoreClassChat::validateFilterIn($filterParams['input']->theme_ids);
+        $sparams['body']['query']['bool']['must'][]['terms']['theme_id'] = $filterParams['input']->theme_ids;
     }
 
     if (isset($filterParams['input']->user_ids) && is_array($filterParams['input']->user_ids) && !empty($filterParams['input']->user_ids)) {

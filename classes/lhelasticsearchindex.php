@@ -164,6 +164,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->frt  = $item->frt;
             $esChat->aart = $item->aart;
             $esChat->mart = $item->mart;
+            $esChat->theme_id = $item->theme_id;
             $esChat->subject_id = [];
 
             $db = ezcDbInstance::get();

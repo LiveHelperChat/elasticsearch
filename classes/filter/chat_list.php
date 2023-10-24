@@ -14,6 +14,30 @@ $fieldsSearch['proactive_chat'] = array(
     )
 );
 
+$fieldsSearch['theme_ids'] = array (
+    'type' => 'text',
+    'trans' => 'Theme',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterin',
+    'filter_table_field' => 'theme_id',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 0), FILTER_REQUIRE_ARRAY
+    )
+);
+
+$fieldsSearch['ip'] = array (
+    'type' => 'text',
+    'trans' => 'Nick',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filter',
+    'filter_table_field' => 'ip',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+    )
+);
+
 $fieldsSearch['not_invitation'] = array(
     'type' => 'text',
     'trans' => 'Not invitation',

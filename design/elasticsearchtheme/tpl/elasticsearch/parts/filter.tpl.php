@@ -622,6 +622,28 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Theme');?></label>
+                                    <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                                        'input_name'     => 'theme_ids[]',
+                                        'optional_field' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Choose a theme'),
+                                        'selected_id'    => $input->theme_ids,
+                                        'css_class'      => 'form-control',
+                                        'display_name'   => 'name',
+                                        'list_function'  => 'erLhAbstractModelWidgetTheme::getList'
+                                    )); ?>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','IP');?></label>
+                                    <input type="text" class="form-control form-control-sm" name="ip" value="<?php echo htmlspecialchars($input->ip)?>" />
+                                </div>
+                            </div>
+
+
                             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/parts/abandoned_chat.tpl.php')); ?>
                             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/parts/dropped_chat.tpl.php')); ?>
 

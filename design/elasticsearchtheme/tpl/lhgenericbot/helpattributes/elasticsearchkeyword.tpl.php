@@ -18,6 +18,7 @@ More information can be found at <a target="_blank" title="https://www.elastic.c
     <li><span class="badge bg-secondary">phone</span> - phone</li>
     <li><span class="badge bg-secondary">uagent</span> - Visitor browser agent headers</li>
     <li><span class="badge bg-secondary">device_type</span> 0 - PC, 1 - mobile, 2 - tablet</li>
+    <li><span class="badge bg-secondary">ip</span> - visitor IP</li>
     <?php include(erLhcoreClassDesign::designtpl('lhgenericbot/helpattributes/elasticsearchchat_multiinclude.tpl.php'));?>
 </ul>
 
@@ -29,6 +30,7 @@ More fields definition can be found at <a href="https://api.livehelperchat.com/#
 
 <ul>
     <li><span class="badge bg-secondary">country_code:de AND msg_visitor:"credit"</span> - search by country and search only in visitor messages</li>
+    <li><span class="badge bg-secondary">country_code:de OR ip:192.168.1.254</span> - search by country or IP of the visitor</li>
     <li><span class="badge bg-secondary">msg_visitor:credi*</span> - search in visitor messages by wildcard</li>
     <li><span class="badge bg-secondary">msg_visitor:"credit card"</span> - search in visitor message for exact match</li>
 </ul>
