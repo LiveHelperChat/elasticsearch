@@ -71,7 +71,7 @@ if ($tab == 'chats') {
     }
     
     if ($filterParams['input_form']->nick != '') {
-        $sparams['body']['query']['bool']['must'][]['match']['nick'] = $filterParams['input_form']->nick;
+        $sparams['body']['query']['bool']['must'][]['match']['nick_keyword'] = $filterParams['input_form']->nick;
     }
 
     if ($filterParams['input_form']->proactive_chat != '') {
@@ -527,7 +527,7 @@ if ($tab == 'chats') {
             echo $tpl->fetch();
             exit;
         }
-
+        
         $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
         $tpl->set('total_literal',$total);
 
