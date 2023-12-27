@@ -406,7 +406,11 @@ if ($filterParams['input_form']->ds == 1)
     $pages = new lhPaginator();
     $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append;
     $pages->items_total = $total > 9000 ? 9000 : $total;
-    $pages->setItemsPerPage(30);
+    if ($filterParams['input']->ipp > 0) {
+        $pages->setItemsPerPage($filterParams['input']->ipp);
+    } else {
+        $pages->setItemsPerPage(30);
+    }
     $pages->paginate();
 
     if ($pages->items_total > 0) {
