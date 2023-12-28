@@ -421,6 +421,8 @@ trait erLhcoreClassElasticTrait
 
         } else {
 
+            $bulkSave = [];
+
             foreach ($objects as $index => $objectCollection)
             {
                 $params['index'] = $index;
@@ -443,10 +445,11 @@ trait erLhcoreClassElasticTrait
                 if (! empty($operations)) {
                     $operations[] = "";
                     $params['body'] = implode("\n", $operations);
-
-                    erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objectCollection, $paramsExecution);
+                    $bulkSave[] = erLhcoreClassElasticClient::bulkSave($searchHandler, $params, $objectCollection, $paramsExecution);
                 }
             }
+
+            return $bulkSave;
         }
     }
 
