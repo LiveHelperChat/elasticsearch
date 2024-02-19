@@ -41,8 +41,45 @@ class erLhcoreClassElasticSearchWorker {
 
             if (!empty($chats)) {
                 try {
-                    erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+                    $response = erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+                    foreach ($response as $indexItem) {
+                        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+                            foreach ($indexItem['items'] as $item) {
+                                if (isset($item['index']['error'])) {
+                                    erLhcoreClassLog::write( 'Chat index error - ' . json_encode($item['index']['error']),
+                                        ezcLog::SUCCESS_AUDIT,
+                                        array(
+                                            'source' => 'lhc',
+                                            'category' => 'resque_fatal',
+                                            'line' => 0,
+                                            'file' => 0,
+                                            'object_id' => $item['index']['_id']
+                                        )
+                                    );
+                                    $indexRemove = array_search($item['index']['_id'],$chatsId);
+                                    if ($indexRemove !== false) {
+                                        unset($chatsId[$indexRemove]);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } catch (Exception $e) {
+                    // Try to log error to DB
+                    try {
+                        erLhcoreClassLog::write( implode(',',$chatsId) . "\n" . $e->getTraceAsString() . "\n" . $e->getMessage(),
+                            ezcLog::SUCCESS_AUDIT,
+                            array(
+                                'source' => 'lhc',
+                                'category' => 'resque_fatal',
+                                'line' => 0,
+                                'file' => 0,
+                                'object_id' => 0
+                            )
+                        );
+                    } catch (Exception $e) {
+
+                    }
                     error_log($e->getMessage() . "\n" . $e->getTraceAsString());
                     return;
                 }
@@ -56,8 +93,10 @@ class erLhcoreClassElasticSearchWorker {
                 return;
             }
 
-            $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
-            $stmt->execute();
+            if (!empty($chatsId)) {
+                $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+                $stmt->execute();
+            }
 
         } else {
             $db->rollback();
@@ -178,8 +217,49 @@ class erLhcoreClassElasticSearchWorker {
 
             if (!empty($mails)) {
                 try {
-                    erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mails));
+                    $response = erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mails));
+                    foreach ($response as $indexItem) {
+                        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+                            foreach ($indexItem['items'] as $item) {
+                                if (isset($item['index']['error'])) {
+                                    erLhcoreClassLog::write( 'Mail conversation index error - ' . json_encode($item['index']['error']),
+                                        ezcLog::SUCCESS_AUDIT,
+                                        array(
+                                            'source' => 'lhc',
+                                            'category' => 'resque_fatal',
+                                            'line' => 0,
+                                            'file' => 0,
+                                            'object_id' => $item['index']['_id']
+                                        )
+                                    );
+                                    foreach ($mails as $mail) {
+                                        if ($mail->id == $item['index']['_id']) {
+                                            $indexResult = array_search($mail->conversation_id,$chatsId);
+                                            if ($indexResult !== false) {
+                                                unset($chatsId[$indexResult]); // This time we look for conversation
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } catch (Exception $e) {
+                    try {
+                        erLhcoreClassLog::write( implode(',',$chatsId) . "\n" . $e->getTraceAsString() . "\n" . $e->getMessage(),
+                            ezcLog::SUCCESS_AUDIT,
+                            array(
+                                'source' => 'lhc',
+                                'category' => 'resque_fatal',
+                                'line' => 0,
+                                'file' => 0,
+                                'object_id' => 0
+                            )
+                        );
+                    } catch (Exception $e) {
+
+                    }
                     error_log($e->getMessage() . "\n" . $e->getTraceAsString());
                     return 0;
                 }
@@ -193,8 +273,10 @@ class erLhcoreClassElasticSearchWorker {
                 return 0;
             }
 
-            $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 1');
-            $stmt->execute();
+            if (!empty($chatsId)) {
+                $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 1');
+                $stmt->execute();
+            }
 
         } else {
             $db->rollback();
@@ -229,8 +311,45 @@ class erLhcoreClassElasticSearchWorker {
 
             if (!empty($mails)) {
                 try {
-                    erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mails));
+                    $response = erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mails));
+                    foreach ($response as $indexItem) {
+                        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+                            foreach ($indexItem['items'] as $item) {
+                                if (isset($item['index']['error'])) {
+                                    erLhcoreClassLog::write( 'Mail message index error - ' . json_encode($item['index']['error']),
+                                        ezcLog::SUCCESS_AUDIT,
+                                        array(
+                                            'source' => 'lhc',
+                                            'category' => 'resque_fatal',
+                                            'line' => 0,
+                                            'file' => 0,
+                                            'object_id' => $item['index']['_id']
+                                        )
+                                    );
+                                    $indexRemove = array_search($item['index']['_id'],$chatsId);
+                                    if ($indexRemove !== false) {
+                                        unset($chatsId[$indexRemove]);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } catch (Exception $e) {
+                    // Try to log error to DB
+                    try {
+                        erLhcoreClassLog::write( implode(',',$chatsId) . "\n" . $e->getTraceAsString() . "\n" . $e->getMessage(),
+                            ezcLog::SUCCESS_AUDIT,
+                            array(
+                                'source' => 'lhc',
+                                'category' => 'resque_fatal',
+                                'line' => 0,
+                                'file' => 0,
+                                'object_id' => 0
+                            )
+                        );
+                    } catch (Exception $e) {
+
+                    }
                     error_log($e->getMessage() . "\n" . $e->getTraceAsString());
                     return 0;
                 }
@@ -244,8 +363,10 @@ class erLhcoreClassElasticSearchWorker {
                 return 0;
             }
 
-            $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 0');
-            $stmt->execute();
+            if (!empty($chatsId)) {
+                $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 0');
+                $stmt->execute();
+            }
 
         } else {
             $db->rollback();
