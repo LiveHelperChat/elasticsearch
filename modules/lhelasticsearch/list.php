@@ -537,7 +537,7 @@ if ($tab == 'chats') {
         if ($filterParams['input']->ipp > 0) {
             $pages->setItemsPerPage($filterParams['input']->ipp);
         } else {
-            $pages->setItemsPerPage(30);
+            $pages->setItemsPerPage(60);
         }
         $pages->paginate();
 

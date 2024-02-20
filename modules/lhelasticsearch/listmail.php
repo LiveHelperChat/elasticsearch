@@ -409,7 +409,7 @@ if ($filterParams['input_form']->ds == 1)
     if ($filterParams['input']->ipp > 0) {
         $pages->setItemsPerPage($filterParams['input']->ipp);
     } else {
-        $pages->setItemsPerPage(30);
+        $pages->setItemsPerPage(60);
     }
     $pages->paginate();
 
