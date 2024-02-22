@@ -43,6 +43,38 @@ if (trim($filterParams['input_form']->conversation_id) != '') {
     $sparams['body']['query']['bool']['must'][]['terms']['conversation_id'] = $chat_ids;
 }
 
+if (is_numeric($filterParams['input_form']->has_attachment)) {
+    if ($filterParams['input_form']->has_attachment == erLhcoreClassModelMailconvConversation::ATTACHMENT_MIX) {
+        $sparams['body']['query']['bool']['must'][]['terms']['has_attachment_conv'] = [
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_INLINE,
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_FILE,
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_MIX
+        ];
+    } else if ($filterParams['input_form']->has_attachment == erLhcoreClassModelMailconvConversation::ATTACHMENT_INLINE) {
+        $sparams['body']['query']['bool']['must'][]['terms']['has_attachment_conv'] = [
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_INLINE,
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_MIX
+        ];
+    } else if ($filterParams['input_form']->has_attachment == erLhcoreClassModelMailconvConversation::ATTACHMENT_FILE) {
+        $sparams['body']['query']['bool']['must'][]['terms']['has_attachment_conv'] = [
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_FILE,
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_MIX
+        ];
+    } else if ($filterParams['input_form']->has_attachment == erLhcoreClassModelMailconvConversation::ATTACHMENT_EMPTY) {
+        $sparams['body']['query']['bool']['must'][]['term']['has_attachment_conv'] = erLhcoreClassModelMailconvConversation::ATTACHMENT_EMPTY;
+    } else if ($filterParams['input_form']->has_attachment == 5) { // No attachment (inline)
+        $sparams['body']['query']['bool']['must_not'][]['terms']['has_attachment_conv'] = [
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_INLINE,
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_MIX
+        ];
+    } else if ($filterParams['input_form']->has_attachment == 4) { // No attachment (as file)
+        $sparams['body']['query']['bool']['must_not'][]['terms']['has_attachment_conv'] = [
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_FILE,
+            erLhcoreClassModelMailconvConversation::ATTACHMENT_MIX
+        ];
+    }
+}
+
 if (trim((string)$filterParams['input_form']->message_id) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['id'] = (int)trim($filterParams['input_form']->message_id);
 }
@@ -101,6 +133,10 @@ if (trim((string)$filterParams['input_form']->status_conv) != '') {
 
 if (trim((string)$filterParams['input_form']->department_id) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = (int)trim($filterParams['input_form']->department_id);
+}
+
+if (is_numeric($filterParams['input_form']->is_external)) {
+    $sparams['body']['query']['bool']['must'][]['term']['is_external'] = $filterParams['input_form']->is_external;
 }
 
 if (trim((string)$filterParams['input_form']->department_group_id) != '') {
