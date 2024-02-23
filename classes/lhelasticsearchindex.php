@@ -959,6 +959,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->delivery_status = self::makeKeywords($item->delivery_status_keyed);
             $esChat->undelivered = $item->undelivered;
             $esChat->priority = $item->priority;
+            $esChat->is_external = $item->is_external;
 
             // Conversation attributes
             if ($item->conversation instanceof erLhcoreClassModelMailconvConversation) {
@@ -970,6 +971,7 @@ class erLhcoreClassElasticSearchIndex
                 $esChat->phone = $item->conversation->phone;
                 $esChat->customer_name = $item->conversation->from_name;
                 $esChat->customer_address = $item->conversation->from_address;
+                $esChat->has_attachment_conv = $item->conversation->has_attachment;
             }
 
             $esChat->subject_id = [];

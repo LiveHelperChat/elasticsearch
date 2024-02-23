@@ -2414,6 +2414,7 @@ class erLhcoreClassElasticSearchStatistic
                 $field = str_replace('lh_chat.', '', $field);
                 $field = str_replace('lhc_mailconv_msg.', '', $field);
                 $field = str_replace('lh_chat_participant.', '', $field);
+                $field = str_replace('`lhc_mailconv_msg_subject`.`subject_id`', 'subject_id', $field);
 
                 if ($field == 'time' || $field == 'itime') {
                     $value = $value * 1000;
@@ -2423,6 +2424,8 @@ class erLhcoreClassElasticSearchStatistic
                     $sparams['body']['query']['bool']['must'][]['term'][$field] = $value;
                 } elseif ($type == 'filterlte') {
                     $sparams['body']['query']['bool']['must'][]['range'][$field]['lte'] = $value;
+                } elseif ($type == 'filternotin') {
+                    $sparams['body']['query']['bool']['must_not'][]['terms'][$field] = $value;
                 } elseif ($type == 'filterlt') {
                     $sparams['body']['query']['bool']['must'][]['range'][$field]['lt'] = $value;
                 } elseif ($type == 'filtergte') {
@@ -2643,7 +2646,6 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
-
 
         $response = $elasticSearchHandler->search($sparams);
 

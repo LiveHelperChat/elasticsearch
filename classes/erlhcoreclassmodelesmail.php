@@ -48,6 +48,8 @@ class erLhcoreClassModelESMail
             'mb_folder' => $this->mb_folder,
             'conv_duration' => $this->conv_duration,
             'has_attachment' => $this->has_attachment,
+            'has_attachment_conv' => $this->has_attachment_conv,
+            'is_external' => $this->is_external,
             'rfc822_body' => $this->rfc822_body,
             'delivery_status' => $this->delivery_status,
             'undelivered' => $this->undelivered,
@@ -216,6 +218,8 @@ class erLhcoreClassModelESMail
     public $customer_address = null;
     public $customer_name = null;
     public $conversation_id_old = null;
+    public $has_attachment_conv = null;
+    public $is_external = null;
 
     // Dynamic attributes
     public $subject_id = null;

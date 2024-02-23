@@ -40,6 +40,12 @@
           "flagged": {
             "type": "integer"
           },
+          "has_attachment_conv": {
+            "type": "integer"
+          },
+          "is_external": {
+            "type": "integer"
+          },
           "msgno": {
             "type": "long"
           },
