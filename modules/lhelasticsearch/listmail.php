@@ -240,6 +240,13 @@ if (isset($filterParams['input']->subject_id) && is_array($filterParams['input']
     }
 }
 
+if (isset($filterParams['input']->ids) && is_array($filterParams['input']->ids) && !empty($filterParams['input']->ids)) {
+    erLhcoreClassChat::validateFilterInString($filterParams['input']->ids);
+    if (!empty($filterParams['input']->ids)) {
+        $sparams['body']['query']['bool']['must'][]['terms']['conversation_id'] = $filterParams['input']->ids;
+    }
+}
+
 if (isset($filterParams['input']->status_conv_id) && is_array($filterParams['input']->status_conv_id) && !empty($filterParams['input']->status_conv_id)) {
     erLhcoreClassChat::validateFilterInString($filterParams['input']->status_conv_id);
     if (!empty($filterParams['input']->status_conv_id)) {
@@ -433,6 +440,190 @@ if ($filterParams['input_form']->ds == 1)
             echo $tpl->fetch();
             exit;
         }
+    }
+
+    // Archive actions
+    if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 5) {
+        $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/lhmailconv/delete_conversations_archive.tpl.php');
+        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+
+        if (ezcInputForm::hasPostData() && isset($_GET['archive_id'])) {
+            session_write_close();
+
+            $archive = \LiveHelperChat\Models\mailConv\Archive\Range::fetch($_GET['archive_id']);
+
+            if (is_object($archive) && $archive->type == \LiveHelperChat\Models\mailConv\Archive\Range::ARCHIVE_TYPE_BACKUP) {
+
+                $chatsElastic = erLhcoreClassModelESMail::getList(array(
+                    'offset' => 0,
+                    'limit' => 20,
+                    'body' => array_merge(array(
+                        'sort' => $sort
+                    ), $sparams['body'])
+                ),array('date_index' => $dateFilter));
+
+                $chatsDatabaseIds = [];
+                foreach ($chatsElastic as $chatElastic) {
+                    $chatsDatabaseIds[] = $chatElastic->conversation_id;
+                }
+
+                if (!empty($chatsElastic)) {
+                    $items = erLhcoreClassModelMailconvConversation::getList(['filterin' => ['id' => $chatsDatabaseIds]]);
+                } else {
+                    erLhcoreClassRestAPIHandler::setHeaders();
+                    echo json_encode(['left_to_delete' => 0]);
+                    exit;
+                }
+
+                if (count($items) > 0) {
+                    $archive->process($items);
+                    // Delete elastic insantly
+                    foreach ($chatsElastic as $itemElastic) {
+                        try {
+                            $itemElastic->removeThis();
+                        } catch (Exception $e) {
+
+                        }
+                    }
+                    erLhcoreClassRestAPIHandler::setHeaders();
+                    echo json_encode(['left_to_delete' => erLhcoreClassModelESMail::getCount($sparams, array('date_index' => $dateFilter))]);
+                    exit;
+                } else {
+                    // Delete elastic insantly
+                    foreach ($chatsElastic as $itemElastic) {
+                        try {
+                            $itemElastic->removeThis();
+                        } catch (Exception $e) {
+
+                        }
+                    }
+                    erLhcoreClassRestAPIHandler::setHeaders();
+                    echo json_encode(['left_to_delete' => 1, 'waiting_elastic_search' => true]);
+                    exit;
+                }
+
+            } else {
+                erLhcoreClassRestAPIHandler::setHeaders();
+                echo json_encode(['left_to_delete' => 0]);
+                exit;
+            }
+        }
+
+        $tpl->set('update_records',erLhcoreClassModelESMail::getCount($sparams, array('date_index' => $dateFilter)));
+
+        echo $tpl->fetch();
+        exit;
+    }
+
+    if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 4) {
+        $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/lhmailconv/delete_conversations.tpl.php');
+        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+
+        if (ezcInputForm::hasPostData()) {
+
+            session_write_close();
+
+            $chatsElastic = erLhcoreClassModelESMail::getList(array(
+                'offset' => 0,
+                'limit' => 20,
+                'body' => array_merge(array(
+                    'sort' => $sort
+                ), $sparams['body'])
+            ),array('date_index' => $dateFilter));
+
+            $chatsDatabaseIds = [];
+            foreach ($chatsElastic as $chatElastic) {
+                $chatsDatabaseIds[] = $chatElastic->conversation_id;
+            }
+
+            if (!empty($chatsDatabaseIds)) {
+                $mails = erLhcoreClassModelMailconvConversation::getList(array('filterin' => array('id' => $chatsDatabaseIds)));
+                foreach ($chatsDatabaseIds as $conversationId) {
+                    if (isset($mails[$conversationId])) {
+                        $mails[$conversationId]->removeThis();
+                    } else {
+                        $mailData = \LiveHelperChat\mailConv\Archive\Archive::fetchMailById($conversationId);
+                        if (isset($mailData['mail'])) {
+                            $mailData['mail']->removeThis();
+                        }
+                    }
+                }
+
+                // Remove Elastic records directly
+                foreach ($chatsElastic as $mailElastic) {
+                    try {
+                        $mailElastic->removeThis();
+                    } catch (Exception $e) {
+                        // Ignore
+                    }
+                }
+
+                erLhcoreClassRestAPIHandler::setHeaders();
+                echo json_encode(['left_to_delete' => erLhcoreClassModelESMail::getCount($sparams, array('date_index' => $dateFilter))]);
+                exit;
+
+            } else {
+                erLhcoreClassRestAPIHandler::setHeaders();
+                echo json_encode(['left_to_delete' => 0]);
+                exit;
+            }
+        }
+
+        $tpl->set('update_records',erLhcoreClassModelESMail::getCount($sparams, array('date_index' => $dateFilter)));
+        echo $tpl->fetch();
+        exit;
+    }
+
+    if ($currentUser->hasAccessTo('lhelasticsearch','delete') && isset($_POST['doDelete'])) {
+        if (!isset($_POST['csfr_token']) || !$currentUser->validateCSFRToken($_POST['csfr_token'])) {
+            erLhcoreClassModule::redirect('elasticsearch/listmail');
+            exit;
+        }
+
+        $definition = array(
+            'ConversationID' => new ezcInputFormDefinitionElement(
+                ezcInputFormDefinitionElement::OPTIONAL, 'int', null, FILTER_REQUIRE_ARRAY
+            ),
+        );
+
+        $form = new ezcInputForm( INPUT_POST, $definition );
+        $Errors = array();
+
+        if ( $form->hasValidData( 'ConversationID' ) && !empty($form->ConversationID) ) {
+            $mails = erLhcoreClassModelMailconvConversation::getList(array('filterin' => array('id' => $form->ConversationID)));
+            foreach ($form->ConversationID as $conversationId) {
+                if (isset($mails[$conversationId])) {
+                    $mails[$conversationId]->removeThis();
+                } else {
+                    $mailData = \LiveHelperChat\mailConv\Archive\Archive::fetchMailById($conversationId);
+                    if (isset($mailData['mail'])) {
+                        $mailData['mail']->removeThis();
+                    }
+                }
+            }
+
+            $sparamsDelete = $sparams;
+            $sparamsDelete['body']['query']['bool']['must'][]['terms']['conversation_id'] = $form->ConversationID;
+
+            $chatsElastic = erLhcoreClassModelESMail::getList(array(
+                'offset' => 0,
+                'limit' => 1000,
+                'body' => array_merge(array(
+                    'sort' => $sort
+                ), $sparamsDelete['body'])
+            ),array('date_index' => $dateFilter));
+
+            // Remove Elastic Records directly
+            foreach ($chatsElastic as $mailElastic) {
+                try {
+                    $mailElastic->removeThis();
+                } catch (Exception $e) {
+                    // Ignore
+                }
+            }
+        }
+
+        $tpl->set('delete_processed',true);
     }
 
 

@@ -14,6 +14,20 @@ $fieldsSearch['has_attachment'] = array (
     )
 );
 
+$fieldsSearch['ids'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'multiple_id' => true,
+    'requires_positive' => true,
+    'filter_type' => 'none',
+    'filter_table_field' => 'conversation_id',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int', array( 'min_range' => 0), FILTER_REQUIRE_ARRAY
+    )
+);
+
 $fieldsSearch['ipp'] = array (
     'type' => 'text',
     'trans' => 'View',

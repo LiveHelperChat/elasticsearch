@@ -20,9 +20,12 @@
             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter_mail.tpl.php')); ?>
 
                 <?php if (isset($pages) && $pages->items_total > 0): ?>
+                    <form action="<?php echo $pages->serverURL?>" method="post">
+
                     <table class="table table-sm mt-1 list-links">
                         <thead>
                         <tr>
+                            <th><input class="mb-0" type="checkbox" id="check-all-items" /></th>
                             <th width="40%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Conversation ID')?></th>
                             <th width="20%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Sender')?></th>
                             <th width="20%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
@@ -37,6 +40,7 @@
                         </thead>
                         <?php $previousConversationId = 0; foreach ($items as $item) : ?>
                             <tr <?php if ($previousConversationId != $item->conversation_id) : ?>data-chat-id="<?php echo $item->conversation_id?>" id="chat-row-tr-<?php echo $item->conversation_id?>"<?php endif;?> class="<?php if ($previousConversationId == $item->conversation_id) : ?>ignore-row<?php endif;?> chat-row-tr <?php if ($previousConversationId == $item->conversation_id) : ?>bg-light conversation-id-<?php echo $item->conversation_id?><?php endif;?>" <?php if ($previousConversationId == $item->conversation_id) : ?>style="display: none" <?php endif;?>>
+                                <td><input class="mb-0" title="<?php echo $item->id?>" type="checkbox" name="ConversationID[]" value="<?php echo $item->conversation_id?>" /></td>
                                 <td ng-non-bindable title="<?php echo $item->id?>" class="<?php if ($previousConversationId == $item->conversation_id) : ?>pl-4<?php endif;?>">
 
                                     <?php if ($item->opened_at > 0) : ?>
@@ -134,9 +138,9 @@
                                 <td nowrap="nowrap" title="<?php echo erLhcoreClassChat::formatSeconds(time() - $item->time/1000);?> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','ago');?>">
                                     <?php echo date(erLhcoreClassModule::$dateFormat, $item->time/1000)?>
                                 </td>
-                                <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
+                                <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','delete')) : ?>
                                     <td title="<?php echo htmlspecialchars($item->meta_data['index'])?>">
-                                        <a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/deletemail')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a>
+                                        <a class="text-danger csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('mailconv/deleteconversation')?>/<?php echo $item->conversation_id?>" ><i class="material-icons me-0">&#xE872;</i></a>
                                     </td>
                                 <?php endif; ?>
                             </tr>
@@ -147,11 +151,65 @@
 
                     <?php include(erLhcoreClassDesign::designtpl('lhkernel/paginator.tpl.php')); ?>
 
-                <?php else: ?>
+                    <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','delete')) : ?>
 
+                        <?php include(erLhcoreClassDesign::designtpl('lhkernel/csfr_token.tpl.php'));?>
+
+                        <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                            <button type="submit" name="doDelete" disabled id="delete-selected-btn" class="btn btn-danger" onclick="return confirm(confLH.transLation.delete_confirm)" value=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete selected');?> (<span id="delete-selected">0</span>)</button>
+                            <?php if ($pages->items_total > 0) : ?>
+                                <button type="button" onclick="return lhc.revealModal({'title' : 'Delete all', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/4'})" class="btn btn-danger btn-sm"><span class="material-icons">delete_sweep</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete all items')?> (<?php echo $pages->items_total?>)</button>
+                            <?php endif; ?>
+                            <?php if ($pages->items_total > 0) : ?>
+                                <button type="button" class="btn btn-danger" id="delete-archive-btn" disabled onclick="return lhc.revealModal({'title' : 'Delete and archive selected', 'height':350, backdrop:true, 'url': '<?php echo $pages->serverURL?>/(export)/5'+getCheckedElements()})" ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Delete and archive selected');?> (<span id="delete-archive">0</span>)</button>
+                                <button type="button" class="btn btn-danger" onclick="return lhc.revealModal({'title' : 'Delete all archive', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/5'})" ><span class="material-icons">delete_sweep</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete and archive all')?> (<?php echo $pages->items_total?>)</button>
+                                <script>
+                                    function getCheckedElements(){
+                                        var choices = [];
+                                        var els = document.getElementsByName('ConversationID[]');
+                                        for (var i=0;i<els.length;i++){
+                                            if ( els[i].checked ) {
+                                                choices.push(els[i].value);
+                                            }
+                                        }
+                                        return choices.length > 0 ? '/(ids)/'+choices.join('/') : '';
+                                    }
+                                    $(function() {
+                                        function updateDeleteArchiveUI(){
+                                            let lengthChecked = $('input[name="ConversationID[]"]:checked').length;
+                                            if (lengthChecked == 0){
+                                                $('#delete-archive-btn,#delete-selected-btn').prop('disabled',true);
+                                            } else {
+                                                $('#delete-archive-btn,#delete-selected-btn').prop('disabled',false);
+                                            }
+
+                                            $('#delete-archive').text(lengthChecked);
+                                            $('#delete-selected').text(lengthChecked);
+                                        }
+                                        $('#check-all-items').change(function(){
+                                            if ($(this).is(':checked')){
+                                                $('input[name="ConversationID[]"]').attr('checked','checked');
+                                            } else {
+                                                $('input[name="ConversationID[]"]').removeAttr('checked');
+                                            }
+                                            updateDeleteArchiveUI();
+                                        });
+                                        $('input[name="ConversationID[]"]').change(updateDeleteArchiveUI);
+                                    });
+                                </script>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php if (isset($delete_processed)) : ?>
+                            <div class="mt-2 alert alert-warning"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Your deleted records still can be present in this list until they are deleted permanently.')?></div>
+                        <?php endif; ?>
+
+                    <?php endif; ?>
+
+                </form>
+                <?php else: ?>
                     <br>
                     <div class="alert alert-info"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','No records were found or search was not executed yet!')?></div>
-
                 <?php endif; ?>
 
         </div>
