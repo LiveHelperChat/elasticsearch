@@ -19,7 +19,7 @@
         <div role="tabpanel" class="tab-pane active" id="chats">
             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter_mail.tpl.php')); ?>
 
-                <?php if (isset($pages) && $pages->items_total > 0): ?>
+                <?php if (isset($pages) && $pages->items_total > 0): $can_delete = erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','delete'); ?>
                     <form action="<?php echo $pages->serverURL?>" method="post">
 
                     <table class="table table-sm mt-1 list-links">
@@ -35,7 +35,9 @@
                             <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Department')?></th>
                             <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Status')?></th>
                             <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
+                            <?php if ($can_delete === true) : ?>
                             <th width="1%"></th>
+                            <?php endif; ?>
                         </tr>
                         </thead>
                         <?php $previousConversationId = 0; foreach ($items as $item) : ?>
@@ -138,7 +140,7 @@
                                 <td nowrap="nowrap" title="<?php echo erLhcoreClassChat::formatSeconds(time() - $item->time/1000);?> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','ago');?>">
                                     <?php echo date(erLhcoreClassModule::$dateFormat, $item->time/1000)?>
                                 </td>
-                                <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','delete')) : ?>
+                                <?php if ($can_delete === true) : ?>
                                     <td title="<?php echo htmlspecialchars($item->meta_data['index'])?>">
                                         <a class="text-danger csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('mailconv/deleteconversation')?>/<?php echo $item->conversation_id?>" ><i class="material-icons me-0">&#xE872;</i></a>
                                     </td>
