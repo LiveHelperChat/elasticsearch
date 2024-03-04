@@ -48,6 +48,13 @@ $appendPrintExportURL = '';
                     if (data.left_to_delete > 0 && $('body').hasClass('modal-open')) {
                         doDelete(url);
                     }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    if ($('body').hasClass('modal-open')) {
+                        $('#left-to-delete').text('Retrying in 5 seconds. There was an error processing your request: ' + '[' + jqXHR.status + '] [' + jqXHR.statusText + '] [' + jqXHR.responseText + '] ' + errorThrown);
+                        setTimeout(function () {
+                            doDelete(url);
+                        }, 5000);
+                    }
                 });
             }
 
