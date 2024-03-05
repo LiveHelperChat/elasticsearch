@@ -59,13 +59,16 @@ $appendPrintExportURL = '';
     <script>
         (function(){
 
+            var total_records = <?php echo (int)$update_records;?>;
+
             function doDelete(url){
                 $.postJSON(url, {'start': true}, function(data) {
-                    $('#left-to-delete').html(data.left_to_delete);
+                    total_records = total_records - data.left_to_delete;
+                    $('#left-to-delete').html(total_records);
                     if (data.left_to_delete > 0 && $('body').hasClass('modal-open')) {
                         if (data.waiting_elastic_search) {
                             // Need to wait untill elastic search catchup
-                            $('#left-to-delete').html(data.left_to_delete + ". Waiting for ElasticSearch.");
+                            $('#left-to-delete').html(total_records + ". Waiting for ElasticSearch.");
                             setTimeout(function(){
                                 doDelete(url);
                             },5000);

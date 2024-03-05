@@ -486,7 +486,8 @@ if ($filterParams['input_form']->ds == 1)
                         }
                     }
                     erLhcoreClassRestAPIHandler::setHeaders();
-                    echo json_encode(['left_to_delete' => erLhcoreClassModelESMail::getCount($sparams, array('date_index' => $dateFilter))]);
+
+                    echo json_encode(['left_to_delete' => count($chatsElastic)]);
                     exit;
                 } else {
                     // Delete elastic insantly
@@ -498,7 +499,7 @@ if ($filterParams['input_form']->ds == 1)
                         }
                     }
                     erLhcoreClassRestAPIHandler::setHeaders();
-                    echo json_encode(['left_to_delete' => 1, 'waiting_elastic_search' => true]);
+                    echo json_encode(['left_to_delete' => count($chatsElastic), 'waiting_elastic_search' => true]);
                     exit;
                 }
 
@@ -559,7 +560,7 @@ if ($filterParams['input_form']->ds == 1)
                 }
 
                 erLhcoreClassRestAPIHandler::setHeaders();
-                echo json_encode(['left_to_delete' => erLhcoreClassModelESMail::getCount($sparams, array('date_index' => $dateFilter))]);
+                echo json_encode(['left_to_delete' => count($chatsElastic)]);
                 exit;
 
             } else {
