@@ -454,53 +454,69 @@ if ($filterParams['input_form']->ds == 1)
 
             if (is_object($archive) && $archive->type == \LiveHelperChat\Models\mailConv\Archive\Range::ARCHIVE_TYPE_BACKUP) {
 
-                $chatsElastic = erLhcoreClassModelESMail::getList(array(
-                    'offset' => 0,
-                    'limit' => 20,
-                    'body' => array_merge(array(
-                        'sort' => $sort
-                    ), $sparams['body'])
-                ),array('date_index' => $dateFilter));
+                if (isset($_POST['schedule'])) {
+                    erLhcoreClassRestAPIHandler::setHeaders();
 
-                $chatsDatabaseIds = [];
-                foreach ($chatsElastic as $chatElastic) {
-                    $chatsDatabaseIds[] = $chatElastic->conversation_id;
-                }
+                    $deleteFilter = new \LiveHelperChatExtension\elasticsearch\providers\Delete\DeleteFilter();
+                    $deleteFilter->user_id = $currentUser->getUserID();
+                    $deleteFilter->filter = json_encode(['date_index' => $dateFilter, 'filter' => array_merge(array('sort' => $sort), $sparams['body'])]);
+                    $deleteFilter->filter_input = json_encode($filterParams['input_form']);
+                    $deleteFilter->archive_id = $archive->id;
+                    $deleteFilter->saveThis();
 
-                if (!empty($chatsElastic)) {
-                    $items = erLhcoreClassModelMailconvConversation::getList(['filterin' => ['id' => $chatsDatabaseIds]]);
+                    echo json_encode(['result' => erTranslationClassLhTranslation::getInstance()->getTranslation('chatarchive/list','Scheduled delete flow with ID') . ' - ' . $deleteFilter->id]);
+                    exit;
+
                 } else {
-                    erLhcoreClassRestAPIHandler::setHeaders();
-                    echo json_encode(['left_to_delete' => 0]);
-                    exit;
-                }
 
-                if (count($items) > 0) {
-                    $archive->process($items);
-                    // Delete elastic insantly
-                    foreach ($chatsElastic as $itemElastic) {
-                        try {
-                            $itemElastic->removeThis();
-                        } catch (Exception $e) {
+                    $chatsElastic = erLhcoreClassModelESMail::getList(array(
+                        'offset' => 0,
+                        'limit' => 20,
+                        'body' => array_merge(array(
+                            'sort' => $sort
+                        ), $sparams['body'])
+                    ), array('date_index' => $dateFilter));
 
-                        }
+                    $chatsDatabaseIds = [];
+                    foreach ($chatsElastic as $chatElastic) {
+                        $chatsDatabaseIds[] = $chatElastic->conversation_id;
                     }
-                    erLhcoreClassRestAPIHandler::setHeaders();
 
-                    echo json_encode(['left_to_delete' => count($chatsElastic)]);
-                    exit;
-                } else {
-                    // Delete elastic insantly
-                    foreach ($chatsElastic as $itemElastic) {
-                        try {
-                            $itemElastic->removeThis();
-                        } catch (Exception $e) {
-
-                        }
+                    if (!empty($chatsElastic)) {
+                        $items = erLhcoreClassModelMailconvConversation::getList(['filterin' => ['id' => $chatsDatabaseIds]]);
+                    } else {
+                        erLhcoreClassRestAPIHandler::setHeaders();
+                        echo json_encode(['left_to_delete' => 0]);
+                        exit;
                     }
-                    erLhcoreClassRestAPIHandler::setHeaders();
-                    echo json_encode(['left_to_delete' => count($chatsElastic), 'waiting_elastic_search' => true]);
-                    exit;
+
+                    if (count($items) > 0) {
+                        $archive->process($items);
+                        // Delete elastic insantly
+                        foreach ($chatsElastic as $itemElastic) {
+                            try {
+                                $itemElastic->removeThis();
+                            } catch (Exception $e) {
+
+                            }
+                        }
+                        erLhcoreClassRestAPIHandler::setHeaders();
+
+                        echo json_encode(['left_to_delete' => count($chatsElastic)]);
+                        exit;
+                    } else {
+                        // Delete elastic insantly
+                        foreach ($chatsElastic as $itemElastic) {
+                            try {
+                                $itemElastic->removeThis();
+                            } catch (Exception $e) {
+
+                            }
+                        }
+                        erLhcoreClassRestAPIHandler::setHeaders();
+                        echo json_encode(['left_to_delete' => count($chatsElastic), 'waiting_elastic_search' => true]);
+                        exit;
+                    }
                 }
 
             } else {
@@ -522,51 +538,63 @@ if ($filterParams['input_form']->ds == 1)
 
         if (ezcInputForm::hasPostData()) {
 
-            session_write_close();
+            if (isset($_POST['schedule'])) {
+                erLhcoreClassRestAPIHandler::setHeaders();
 
-            $chatsElastic = erLhcoreClassModelESMail::getList(array(
-                'offset' => 0,
-                'limit' => 20,
-                'body' => array_merge(array(
-                    'sort' => $sort
-                ), $sparams['body'])
-            ),array('date_index' => $dateFilter));
+                $deleteFilter = new \LiveHelperChatExtension\elasticsearch\providers\Delete\DeleteFilter();
+                $deleteFilter->user_id = $currentUser->getUserID();
+                $deleteFilter->filter = json_encode(['date_index' => $dateFilter, 'filter' => array_merge(array('sort' => $sort), $sparams['body'])]);
+                $deleteFilter->filter_input = json_encode($filterParams['input_form']);
+                $deleteFilter->saveThis();
+                echo json_encode(['result' => erTranslationClassLhTranslation::getInstance()->getTranslation('chatarchive/list','Scheduled delete flow with ID') . ' - ' . $deleteFilter->id]);
+                exit;
+            } else {
+                session_write_close();
 
-            $chatsDatabaseIds = [];
-            foreach ($chatsElastic as $chatElastic) {
-                $chatsDatabaseIds[] = $chatElastic->conversation_id;
-            }
+                $chatsElastic = erLhcoreClassModelESMail::getList(array(
+                    'offset' => 0,
+                    'limit' => 20,
+                    'body' => array_merge(array(
+                        'sort' => $sort
+                    ), $sparams['body'])
+                ),array('date_index' => $dateFilter));
 
-            if (!empty($chatsDatabaseIds)) {
-                $mails = erLhcoreClassModelMailconvConversation::getList(array('filterin' => array('id' => $chatsDatabaseIds)));
-                foreach ($chatsDatabaseIds as $conversationId) {
-                    if (isset($mails[$conversationId])) {
-                        $mails[$conversationId]->removeThis();
-                    } else {
-                        $mailData = \LiveHelperChat\mailConv\Archive\Archive::fetchMailById($conversationId);
-                        if (isset($mailData['mail'])) {
-                            $mailData['mail']->removeThis();
+                $chatsDatabaseIds = [];
+                foreach ($chatsElastic as $chatElastic) {
+                    $chatsDatabaseIds[] = $chatElastic->conversation_id;
+                }
+
+                if (!empty($chatsDatabaseIds)) {
+                    $mails = erLhcoreClassModelMailconvConversation::getList(array('filterin' => array('id' => $chatsDatabaseIds)));
+                    foreach ($chatsDatabaseIds as $conversationId) {
+                        if (isset($mails[$conversationId])) {
+                            $mails[$conversationId]->removeThis();
+                        } else {
+                            $mailData = \LiveHelperChat\mailConv\Archive\Archive::fetchMailById($conversationId);
+                            if (isset($mailData['mail'])) {
+                                $mailData['mail']->removeThis();
+                            }
                         }
                     }
-                }
 
-                // Remove Elastic records directly
-                foreach ($chatsElastic as $mailElastic) {
-                    try {
-                        $mailElastic->removeThis();
-                    } catch (Exception $e) {
-                        // Ignore
+                    // Remove Elastic records directly
+                    foreach ($chatsElastic as $mailElastic) {
+                        try {
+                            $mailElastic->removeThis();
+                        } catch (Exception $e) {
+                            // Ignore
+                        }
                     }
+
+                    erLhcoreClassRestAPIHandler::setHeaders();
+                    echo json_encode(['left_to_delete' => count($chatsElastic)]);
+                    exit;
+
+                } else {
+                    erLhcoreClassRestAPIHandler::setHeaders();
+                    echo json_encode(['left_to_delete' => 0]);
+                    exit;
                 }
-
-                erLhcoreClassRestAPIHandler::setHeaders();
-                echo json_encode(['left_to_delete' => count($chatsElastic)]);
-                exit;
-
-            } else {
-                erLhcoreClassRestAPIHandler::setHeaders();
-                echo json_encode(['left_to_delete' => 0]);
-                exit;
             }
         }
 

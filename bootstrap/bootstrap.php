@@ -151,6 +151,16 @@ class erLhcoreClassExtensionElasticsearch
                 break;
         }
     }
+
+    public static function getSession() {
+        if (! isset ( self::$persistentSession )) {
+            self::$persistentSession = new ezcPersistentSession ( ezcDbInstance::get (), new ezcPersistentCodeManager ( './extension/elasticsearch/pos' ) );
+        }
+        return self::$persistentSession;
+    }
+
+    private static $persistentSession;
+
 }
 
 

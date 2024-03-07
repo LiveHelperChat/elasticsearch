@@ -1,0 +1,1 @@
+<li role="presentation" class="nav-item"><a href="#elastic" class="nav-link" aria-controls="elastic" role="tab" data-bs-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Elastic');?></a></li>
