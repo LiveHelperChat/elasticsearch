@@ -144,6 +144,21 @@ class DeleteWorker
             $stmt = $db->prepare('DELETE FROM `lhc_mailconv_delete_item_elastic` WHERE `conversation_id` IN (' . implode(',', $chatsId) . ')');
             $stmt->execute();
 
+
+            // Update processed_records stats
+            $statUpdate = [];
+            foreach ($chatsIdFilter as $conversationId => $filterId) {
+                if (!isset($statUpdate[$filterId])) {
+                    $statUpdate[$filterId] = 0;
+                }
+                $statUpdate[$filterId]++;
+            }
+
+            foreach ($statUpdate as $filterId => $recordsProcessed) {
+                $stmt = $db->prepare('UPDATE `lhc_mailconv_delete_filter_elastic` SET processed_records = processed_records + '. (int)$recordsProcessed .' WHERE `id` = ' . $filterId);
+                $stmt->execute();
+            }
+
         } else {
             $db->rollback();
         }
