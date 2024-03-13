@@ -9,8 +9,9 @@ CREATE TABLE `lhc_lhesmail_index` (
                                       `status` tinyint(1) unsigned NOT NULL DEFAULT 0,
                                       `op` tinyint(1) unsigned NOT NULL DEFAULT 0,
                                       `udate` bigint(20) unsigned NOT NULL DEFAULT 0,
-                                      UNIQUE KEY `mail_id_op` (`mail_id`,`op`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+                                      UNIQUE KEY `mail_id_op` (`mail_id`,`op`),
+                                      KEY `status_op` (`status`,`op`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 CREATE TABLE `lhc_mailconv_delete_filter_elastic` (
                                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
