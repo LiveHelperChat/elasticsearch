@@ -26,6 +26,14 @@
                 "key": "PRI",
                 "default": null,
                 "extra": "auto_increment"
+            },
+            {
+              "field": "delete_policy",
+              "type": "tinyint(1) unsigned",
+              "null": "NO",
+              "key": "",
+              "default": "0",
+              "extra": ""
             }
         ],
         "lhc_mailconv_delete_item_elastic": [
@@ -79,7 +87,7 @@
     "tables_create": {
     	"lhc_lheschat_index" : "CREATE TABLE `lhc_lheschat_index` (  `chat_id` bigint(20) unsigned NOT NULL, `status` tinyint(1) unsigned NOT NULL DEFAULT 0, UNIQUE KEY `chat_id` (`chat_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8",
     	"lhc_lhesmail_index" : "CREATE TABLE `lhc_lhesmail_index` (\n  `mail_id` bigint(20) unsigned NOT NULL,\n  `status` tinyint(1) unsigned NOT NULL DEFAULT 0,\n  `op` tinyint(1) unsigned NOT NULL DEFAULT 0,\n  `udate` bigint(20) unsigned NOT NULL DEFAULT 0,\n  UNIQUE KEY `mail_id_op` (`mail_id`,`op`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-    	"lhc_mailconv_delete_filter_elastic" : "CREATE TABLE `lhc_mailconv_delete_filter_elastic` (`id` int(11) unsigned NOT NULL AUTO_INCREMENT,`updated_at` bigint(20) unsigned NOT NULL,`created_at` bigint(20) unsigned NOT NULL,`user_id` bigint(20) unsigned NOT NULL, `processed_records` bigint(20) unsigned NOT NULL DEFAULT 0,`archive_id` int(11) unsigned NOT NULL DEFAULT 0,`status` tinyint(1) unsigned NOT NULL DEFAULT 0,`last_id` bigint(20) unsigned NOT NULL DEFAULT 0,`started_at` bigint(20) unsigned NOT NULL DEFAULT 0,`finished_at` bigint(20) unsigned NOT NULL DEFAULT 0,`filter` longtext COLLATE utf8mb4_unicode_ci NOT NULL,`filter_input` longtext COLLATE utf8mb4_unicode_ci NOT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+    	"lhc_mailconv_delete_filter_elastic" : "CREATE TABLE `lhc_mailconv_delete_filter_elastic` (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, `delete_policy` tinyint(1) unsigned NOT NULL DEFAULT '0', `updated_at` bigint(20) unsigned NOT NULL,`created_at` bigint(20) unsigned NOT NULL,`user_id` bigint(20) unsigned NOT NULL, `processed_records` bigint(20) unsigned NOT NULL DEFAULT 0,`archive_id` int(11) unsigned NOT NULL DEFAULT 0,`status` tinyint(1) unsigned NOT NULL DEFAULT 0,`last_id` bigint(20) unsigned NOT NULL DEFAULT 0,`started_at` bigint(20) unsigned NOT NULL DEFAULT 0,`finished_at` bigint(20) unsigned NOT NULL DEFAULT 0,`filter` longtext COLLATE utf8mb4_unicode_ci NOT NULL,`filter_input` longtext COLLATE utf8mb4_unicode_ci NOT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
     	"lhc_mailconv_delete_item_elastic" : "CREATE TABLE `lhc_mailconv_delete_item_elastic` (`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,`conversation_id` bigint(20) unsigned NOT NULL,`filter_id` bigint(20) unsigned NOT NULL,`status` tinyint(1) unsigned NOT NULL DEFAULT 0,`index` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL, PRIMARY KEY (`id`), KEY `filter_id_status` (`filter_id`,`status`), KEY `status` (`status`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     }
 }

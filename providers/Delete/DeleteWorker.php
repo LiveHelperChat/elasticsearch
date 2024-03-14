@@ -66,8 +66,9 @@ class DeleteWorker
                 foreach ($conversations as $conversation) {
                     $key = array_search($conversation->id, $messageConversation);
                     if (isset($filters[$chatsIdFilter[$key]]) && isset($archives[$filters[$chatsIdFilter[$key]]->archive_id])) {
-                        $archives[$filters[$chatsIdFilter[array_search($conversation->id, $messageConversation)]]->archive_id]->process([$conversation]);
+                        $archives[$filters[$chatsIdFilter[array_search($conversation->id, $messageConversation)]]->archive_id]->process([$conversation], ['ignore_imap' => $filters[$chatsIdFilter[$key]]->delete_policy === 1]);
                     } else {
+                        $conversation->ignore_imap = $filters[$chatsIdFilter[$key]]->delete_policy === 1;
                         $conversation->removeThis();
                     }
                 }
@@ -79,6 +80,7 @@ class DeleteWorker
 
                     if ($messageDb instanceof \erLhcoreClassModelMailconvMessage) {
                         try {
+                            $messageDb->ignore_imap = $filters[$chatsIdFilter[$messageId]]->delete_policy === 1;
                             $messageDb->removeThis();
                         } catch (\Exception $e) {
                             try {
