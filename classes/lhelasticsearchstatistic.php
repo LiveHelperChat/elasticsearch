@@ -1755,23 +1755,26 @@ class erLhcoreClassElasticSearchStatistic
             $usersStats[$bucket['key']] = $statsValue;
         }
 
-        foreach ($params['user_list'] as $userToHave) {
-            if (!isset($usersStats[$userToHave->id])) {
-                $usersStats[$userToHave->id] = array(
-                    'total_chats' => 0,
-                    'total_chats_usaccept' => 0,
-                    'chat_duration_sum' => 0,
-                    'chat_duration_avg' => 0,
+        if (!isset($params['filter_params']->has_online_hours) || $params['filter_params']->has_online_hours != 1) {
+            foreach ($params['user_list'] as $userToHave) {
+                if (!isset($usersStats[$userToHave->id])) {
+                    $usersStats[$userToHave->id] = array(
+                        'total_chats' => 0,
+                        'total_chats_usaccept' => 0,
+                        'chat_duration_sum' => 0,
+                        'chat_duration_avg' => 0,
 
-                    'frt_avg' => 0,
-                    'aart_avg' => 0,
-                    'mart_avg' => 0,
+                        'frt_avg' => 0,
+                        'aart_avg' => 0,
+                        'mart_avg' => 0,
 
-                    'wait_time' => 0,
-                    'subject_stats' => []
-                );
+                        'wait_time' => 0,
+                        'subject_stats' => []
+                    );
+                }
             }
         }
+
 
         // Mails aggregation
         $sparams = array();
