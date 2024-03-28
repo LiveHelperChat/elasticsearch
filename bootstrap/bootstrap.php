@@ -46,8 +46,11 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('statistic.numberofmessagesbyuser', 'erLhcoreClassElasticSearchStatistic::statisticNumberofmessagesbyuser');
                 $dispatcher->listen('statistic.getnumberofchatsperday', 'erLhcoreClassElasticSearchStatistic::statisticGetnumberofchatsperday');
                 $dispatcher->listen('statistic.getnumberofchatsperweekday', 'erLhcoreClassElasticSearchStatistic::statisticGetnumberofchatsperweekday');
+                $dispatcher->listen('statistic.getnumberofchatsperweek', 'erLhcoreClassElasticSearchStatistic::statisticgetNumberOfChatsPerWeek');
                 $dispatcher->listen('statistic.getnumberofchatswaittimeperweekday', 'erLhcoreClassElasticSearchStatistic::getNumberOfChatsWaitTimePerWeekDay');
                 $dispatcher->listen('statistic.getnumberofchatswaittimeperday', 'erLhcoreClassElasticSearchStatistic::statisticGetnumberofchatswaittimeperday');
+                $dispatcher->listen('statistic.getnumberofchatswaittimeperweek', 'erLhcoreClassElasticSearchStatistic::statisticGetNumberOfChatsWaitTimePerWeek');
+
                 $dispatcher->listen('statistic.getlast24hstatistic', 'erLhcoreClassElasticSearchStatistic::statisticGetlast24hstatistic');
                 $dispatcher->listen('statistic.gettoptodaysoperators', 'erLhcoreClassElasticSearchStatistic::statisticGettoptodaysoperators');
                 $dispatcher->listen('statistic.getagentstatistic', 'erLhcoreClassElasticSearchStatistic::statisticGetagentstatistic');
@@ -61,12 +64,17 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('statistic.nickgroupingdatenick', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateNick');
                 $dispatcher->listen('statistic.nickgroupingdatenickday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateNickDay');
                 $dispatcher->listen('statistic.nickgroupingdatenickweekday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateNickWeekDay');
+                $dispatcher->listen('statistic.nickgroupingdatenickweek', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateNickWeek');
 
                 // Grouping charts by field
                 $dispatcher->listen('statistic.nickgroupingdate', 'erLhcoreClassElasticSearchStatistic::nickGroupingDate');
                 $dispatcher->listen('statistic.nickgroupingdateweekday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateWeekDay');
                 $dispatcher->listen('statistic.nickgroupingdateday', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateDay');
-                
+                $dispatcher->listen('statistic.nickgroupingdateweek', 'erLhcoreClassElasticSearchStatistic::nickGroupingDateWeek');
+
+                // Total chats by channel
+                $dispatcher->listen('statistic.getnumberofchatsperchannel', 'erLhcoreClassElasticSearchStatistic::byChannel');
+
                 // Views
                 $dispatcher->listen('views.loadview', 'erLhcoreClassElasticSearchView::loadView');
                 $dispatcher->listen('views.editview', 'erLhcoreClassElasticSearchView::editView');

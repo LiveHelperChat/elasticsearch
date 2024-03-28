@@ -1067,7 +1067,7 @@ class erLhcoreClassElasticSearchStatistic
 
         if ($aggr !== 'weekday') {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 'month';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         } else {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
@@ -1326,9 +1326,19 @@ class erLhcoreClassElasticSearchStatistic
         return self::statisticGetnumberofchatspermonth($params, 'weekday');
     }
 
+    public static function statisticgetNumberOfChatsPerWeek($params)
+    {
+        return self::statisticGetnumberofchatspermonth($params, 'week');
+    }
+
     public static function getNumberOfChatsWaitTimePerWeekDay($params)
     {
         return self::statisticGetnumberofchatswaittime($params, 'weekday');
+    }
+
+    public static function statisticGetNumberOfChatsWaitTimePerWeek($params)
+    {
+        return self::statisticGetnumberofchatswaittime($params, 'week');
     }
 
     /**
@@ -2167,6 +2177,10 @@ class erLhcoreClassElasticSearchStatistic
           return self::nickGroupingDateNick($params, 'weekday');
     }
 
+    public static function nickGroupingDateNickWeek($params) {
+          return self::nickGroupingDateNick($params, 'week');
+    }
+
     public static function nickGroupingDateNick($params, $aggr = 'month')
     {
         $numberOfChats = array();
@@ -2315,6 +2329,120 @@ class erLhcoreClassElasticSearchStatistic
     public static function nickGroupingDateWeekDay($params)
     {
         return self::nickGroupingDate($params, 'weekday');
+    }
+
+    public static function nickGroupingDateWeek($params)
+    {
+        return self::nickGroupingDate($params, 'week');
+    }
+
+    public static function byChannel($params)
+    {
+        $aggrOptions = [
+            0 => 'month',
+            1 => 'day',
+            2 => 'week',
+            3 => 'weekday',
+        ];
+
+        $aggr = $aggrOptions[$params['params_execution']['groupby']];
+
+        $elasticSearchHandler = erLhcoreClassElasticClient::getHandler();
+
+        $filterParams = $params['params_execution'];
+
+        $sparams = array();
+        $sparams['index'] = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . erLhcoreClassModelESChat::$elasticType;
+        $sparams['ignore_unavailable'] = true;
+        $sparams['body']['size'] = 0;
+        $sparams['body']['from'] = 0;
+
+        if ($aggr != 'weekday') {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        } else {
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+        }
+
+        if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
+            $params['filter']['filter']['abnd'] = 1;
+        }
+
+        if (isset($_GET['dropped_chat']) && $_GET['dropped_chat'] == 1) {
+            $params['filter']['filter']['drpd'] = 1;
+        }
+
+        if (isset($_GET['transfer_happened']) && $_GET['transfer_happened'] == 1) {
+            $sparams['body']['query']['bool']['must'][]['range']['transfer_uid']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
+            $sparams['body']['query']['bool']['filter']['script']['script'] = "doc['user_id'].value != doc['transfer_uid'].value";
+        }
+
+        $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = 'iwh_id';
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+
+        $paramsOrig = $paramsOrigIndex = $params;
+        if ($aggr == 'month') {
+            if (!isset($paramsOrig['filter']['filtergte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = time() - (24 * 366 * 3600); // Limit results to one year
+            }
+        } else {
+            if (! isset($paramsOrig['filter']['filtergte']['time']) && ! isset($paramsOrig['filter']['filterlte']['time'])) {
+                $paramsOrigIndex['filter']['filtergte']['time'] = $paramsOrig['filter']['filtergt']['time'] = mktime(0, 0, 0, date('m'), date('d') - 31, date('y'));
+            }
+        }
+
+        $indexSearch = self::getIndexByFilter($paramsOrigIndex['filter'], erLhcoreClassModelESChat::$elasticType);
+
+        if ($indexSearch != '') {
+            $sparams['index'] = $indexSearch;
+        }
+
+        self::formatFilter($paramsOrig['filter'], $sparams, array('subject_ids' => 'subject_id'));
+
+        erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.nickgroupingdate_filter', array('sparams' => & $sparams));
+
+        $response = $elasticSearchHandler->search($sparams);
+
+        $numberOfChats = array();
+
+        $defaultValue = [];
+        foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+            foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
+                $defaultValue[$bucketStatus['key']] = 0;
+            }
+        }
+
+        foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+
+            if ($bucket['key'] > 10) {
+                $keyDateUnix = $bucket['key'] / 1000;
+            } else {
+                $keyDateUnix = $bucket['key'];
+            }
+
+            $numberOfChats[$keyDateUnix] = $defaultValue;
+
+            foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
+                $numberOfChats[$keyDateUnix][$bucketStatus['key']] = $bucketStatus['doc_count'];
+            }
+        }
+
+        if ($aggr == 'weekday') {
+            $sundayData = $numberOfChats[7];
+            unset($numberOfChats[7]);
+            $numberOfChats[0] = $sundayData;
+        }
+
+        return array(
+            'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
+            'list' => $numberOfChats
+        );
     }
 
     public static function nickGroupingDate($params, $aggr = 'month')
