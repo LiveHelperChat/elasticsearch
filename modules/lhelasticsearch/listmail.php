@@ -35,12 +35,18 @@ if (trim($filterParams['input_form']->conversation_id) != '') {
 
     // Merged id's support
     // In the future once we have archiving this part has to support archives
-    $idsRelated = array_unique(erLhcoreClassModelMailconvMessage::getCount(['filter' => ['conversation_id_old' => $chat_ids]], '', false, 'conversation_id', false, true, true));
-    if (!empty($idsRelated)) {
-        $chat_ids = array_merge($chat_ids,$idsRelated);
+    $chat_ids = array_filter($chat_ids);
+
+    if (!empty($chat_ids)) {
+        $idsRelated = array_unique(erLhcoreClassModelMailconvMessage::getCount(['filter' => ['conversation_id_old' => $chat_ids]], '', false, 'conversation_id', false, true, true));
+        if (!empty($idsRelated)) {
+            $chat_ids = array_merge($chat_ids,$idsRelated);
+        }
     }
 
-    $sparams['body']['query']['bool']['must'][]['terms']['conversation_id'] = $chat_ids;
+    if (!empty($chat_ids)) {
+        $sparams['body']['query']['bool']['must'][]['terms']['conversation_id'] = $chat_ids;
+    }
 }
 
 if (is_numeric($filterParams['input_form']->has_attachment)) {
