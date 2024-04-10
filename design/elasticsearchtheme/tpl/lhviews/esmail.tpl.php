@@ -94,6 +94,15 @@
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
+
+                <?php if (is_array($item->subjects) && !empty($item->subjects)) : ?>
+                    <div>
+                        <?php foreach ($item->subjects as $subject) : ?>
+                            <span class="badge bg-info mx-1" ng-non-bindable <?php if ($subject->color != '') : ?>style="background-color:#<?php echo htmlspecialchars($subject->color)?>!important;" <?php endif;?>><?php echo htmlspecialchars($subject)?></span>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
             </td>
             <td ng-non-bindable>
                 <?php echo $item->priority?>
