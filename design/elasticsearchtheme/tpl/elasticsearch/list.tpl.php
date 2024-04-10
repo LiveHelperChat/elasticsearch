@@ -54,18 +54,18 @@
                             <?php $chatArchivePreview = false; if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : $chatArchivePreview = true;?>
                                 <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" id="preview-item-<?php echo $item->chat_id?>" data-list-navigate="true" onclick="lhc.previewChatArchive(<?php echo $itemsArchive[$item->chat_id]['archive_id']?>,<?php echo $item->chat_id?>,this)"><i class="material-icons">info_outline</i></a>
                                 <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
-                                <a href="<?php echo erLhcoreClassDesign::baseurl('chatarchive/viewarchivedchat')?>/<?php echo $itemsArchive[$item->chat_id]['archive_id']?>/<?php echo $item->chat_id;?>"><?php echo $item->chat_id?></a>
+                                <a <?php if ($chat->nc != '') : ?>style="color: <?php echo htmlspecialchars($chat->nc)?>"<?php endif;?> href="<?php echo erLhcoreClassDesign::baseurl('chatarchive/viewarchivedchat')?>/<?php echo $itemsArchive[$item->chat_id]['archive_id']?>/<?php echo $item->chat_id;?>"><?php echo $item->chat_id?></a>
                             <?php else : ?>
                                 <a data-keyword="<?php echo htmlspecialchars($input->keyword)?>" id="preview-item-<?php echo $item->chat_id?>" data-list-navigate="true" onclick="lhc.previewChat(<?php echo $item->chat_id?>,this)"><i class="material-icons">info_outline</i></a>
                                 <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->nick,ENT_QUOTES);?>" onclick="<?php if (isset($itemsArchive[$item->chat_id]) && $itemsArchive[$item->chat_id]['archive'] == true) : ?>lhinst.startChatNewWindowArchive('<?php echo $itemsArchive[$item->chat_id]['archive_id']?>','<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php else : ?>lhinst.startChatNewWindow('<?php echo $item->chat_id;?>',$(this).attr('data-title'))<?php endif;?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>">open_in_new</a>
-                                <a href="#!#Fchat-id-<?php echo $item->chat_id?>" onclick="ee.emitEvent('svelteOpenChat',[<?php echo $item->chat_id?>]);"><?php echo $item->chat_id?></a>
+                                <a <?php if ($chat->nc != '') : ?>style="color: <?php echo htmlspecialchars($chat->nc)?>"<?php endif;?> href="#!#Fchat-id-<?php echo $item->chat_id?>" onclick="ee.emitEvent('svelteOpenChat',[<?php echo $item->chat_id?>]);"><?php echo $item->chat_id?></a>
                             <?php endif; ?>
 
                             <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
                                 <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/raw')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
                             <?php endif; ?>
             		        </td>
-            		        <td nowrap="nowrap" ng-non-bindable>
+            		        <td nowrap="nowrap" ng-non-bindable <?php if ($chat->nc != '') : ?>style="color: <?php echo htmlspecialchars($chat->nc)?>"<?php endif;?> <?php if ($chat->nb == 1) : ?>class="fw-bold"<?php endif;?> >
                                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/nick.tpl.php')); ?>
                             </td>
                             <td ng-non-bindable>
@@ -88,7 +88,7 @@
                                 <?php if (is_array($item->subjects) && !empty($item->subjects)) : ?>
                                 <div>
                                     <?php foreach ($item->subjects as $subject) : ?>
-                                        <span class="badge bg-info mx-1" ng-non-bindable><?php echo htmlspecialchars($subject)?></span>
+                                        <span class="badge bg-info mx-1" ng-non-bindable <?php if ($subject->color != '') : ?>style="background-color:#<?php echo htmlspecialchars($subject->color)?>!important;" <?php endif;?>><?php echo htmlspecialchars($subject)?></span>
                                     <?php endforeach; ?>
                                 </div>
                                 <?php endif; ?>
