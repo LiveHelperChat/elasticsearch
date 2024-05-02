@@ -221,7 +221,7 @@ class erLhcoreClassElasticClient
 
         // Log bulk save errors
         if (isset($action['errors']) && $action['errors'] == true) {
-            erLhcoreClassLog::write(print_r(array('log' => json_encode($action), 'function' => 'bulk_save_error'), true));
+            erLhcoreClassLog::write(print_r(array('log' => json_encode($action,\JSON_INVALID_UTF8_IGNORE), 'function' => 'bulk_save_error'), true));
         }
 
         return $action;

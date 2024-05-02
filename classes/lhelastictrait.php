@@ -410,7 +410,7 @@ trait erLhcoreClassElasticTrait
                 if (isset($paramsExecution['ignore_id'])) {
                     unset($state['id']);
                 }
-                $operations[] = json_encode($state);
+                $operations[] = json_encode($state,\JSON_INVALID_UTF8_IGNORE);
             }
 
             if (! empty($operations)) {
@@ -439,7 +439,7 @@ trait erLhcoreClassElasticTrait
                     if (isset($paramsExecution['ignore_id'])) {
                         unset($state['id']);
                     }
-                    $operations[] = json_encode($state);
+                    $operations[] = json_encode($state,\JSON_INVALID_UTF8_IGNORE);
                 }
 
                 if (! empty($operations)) {
