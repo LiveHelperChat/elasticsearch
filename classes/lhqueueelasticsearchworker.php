@@ -23,7 +23,7 @@ class erLhcoreClassElasticSearchWorker {
         $db->beginTransaction();
         try {
             $stmt = $db->prepare('SELECT chat_id FROM lhc_lheschat_index WHERE status = 0 LIMIT :limit FOR UPDATE ');
-            $stmt->bindValue(':limit',100,PDO::PARAM_INT);
+            $stmt->bindValue(':limit',50,PDO::PARAM_INT);
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
@@ -127,7 +127,7 @@ class erLhcoreClassElasticSearchWorker {
         // So extensions can index their own things
         \erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.elastic_search.index_objects',array());
 
-        if ((count($chatsId) >= 100 || $maxRecords == 20) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+        if ((count($chatsId) >= 50 || $maxRecords == 10) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
             erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
         }
     }
@@ -198,7 +198,7 @@ class erLhcoreClassElasticSearchWorker {
         $db->beginTransaction();
         try {
             $stmt = $db->prepare('SELECT mail_id FROM lhc_lhesmail_index WHERE status = 0 AND op = 1 LIMIT :limit FOR UPDATE ');
-            $stmt->bindValue(':limit',20,PDO::PARAM_INT);
+            $stmt->bindValue(':limit',10,PDO::PARAM_INT);
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
@@ -213,32 +213,35 @@ class erLhcoreClassElasticSearchWorker {
             $db->commit();
 
             // This is conversation
-            $mails = erLhcoreClassModelMailconvMessage::getList(array('filterin' => array('conversation_id' => $chatsId)));
-
+            $mails = erLhcoreClassModelMailconvMessage::getList(array('limit' => 1000, 'filterin' => array('conversation_id' => $chatsId)));
             if (!empty($mails)) {
                 try {
-                    $response = erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mails));
-                    foreach ($response as $indexItem) {
-                        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
-                            foreach ($indexItem['items'] as $item) {
-                                if (isset($item['index']['error'])) {
-                                    erLhcoreClassLog::write( 'Mail conversation index error - ' . json_encode($item['index']['error']),
-                                        ezcLog::SUCCESS_AUDIT,
-                                        array(
-                                            'source' => 'lhc',
-                                            'category' => 'resque_fatal',
-                                            'line' => 0,
-                                            'file' => 0,
-                                            'object_id' => $item['index']['_id']
-                                        )
-                                    );
-                                    foreach ($mails as $mail) {
-                                        if ($mail->id == $item['index']['_id']) {
-                                            $indexResult = array_search($mail->conversation_id,$chatsId);
-                                            if ($indexResult !== false) {
-                                                unset($chatsId[$indexResult]); // This time we look for conversation
+                    $parts = ceil(count($mails) / 20); // We keep same limit as standard index
+                    for ($i = 0; $i < $parts; $i++) { // Some conversations can be abusively large
+                        $mailsIndex = array_slice($mails,$i * 20,20, true);
+                        $response = erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mailsIndex));
+                        foreach ($response as $indexItem) {
+                            if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+                                foreach ($indexItem['items'] as $item) {
+                                    if (isset($item['index']['error'])) {
+                                        erLhcoreClassLog::write( 'Mail conversation index error - ' . json_encode($item['index']['error']),
+                                            ezcLog::SUCCESS_AUDIT,
+                                            array(
+                                                'source' => 'lhc',
+                                                'category' => 'resque_fatal',
+                                                'line' => 0,
+                                                'file' => 0,
+                                                'object_id' => $item['index']['_id']
+                                            )
+                                        );
+                                        foreach ($mailsIndex as $mail) {
+                                            if ($mail->id == $item['index']['_id']) {
+                                                $indexResult = array_search($mail->conversation_id,$chatsId);
+                                                if ($indexResult !== false) {
+                                                    unset($chatsId[$indexResult]); // This time we look for conversation
+                                                }
+                                                break;
                                             }
-                                            break;
                                         }
                                     }
                                 }
