@@ -217,8 +217,8 @@ class erLhcoreClassElasticSearchWorker {
             }
 
             if (!empty($chatsId)) {
-                //$stmt = $db->prepare('DELETE FROM lhc_lhesou_index WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
-                //$stmt->execute();
+                $stmt = $db->prepare('DELETE FROM lhc_lhesou_index WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
+                $stmt->execute();
             }
 
         } else {
