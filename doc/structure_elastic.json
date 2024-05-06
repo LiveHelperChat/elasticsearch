@@ -122,7 +122,13 @@
             "index" : false
           },
           "online_attr_system_flat": {
-            "type": "flattened"
+            "type": "nested",
+            "dynamic": false,
+            "properties": {
+              "username" : {
+                "type" : "keyword"
+              }
+            }
           },
           "operation_chat": {
             "type": "text",

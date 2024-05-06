@@ -106,11 +106,18 @@ class OnlineVisitor
         \erLhcoreClassElasticSearchStatistic::formatFilter($params['filter'], $sparams);
 
         if (isset($params['attr_filter']) && !empty($params['attr_filter'])) {
-            foreach ($params['attr_filter'] as $field => $value) {
-                $sparams['body']['query']['bool']['must'][]['terms']['online_attr_system_flat.'.$field] = $value;
+            foreach ($params['attr_filter'] as $field => $values) {
+               $sparams['body']['query']['bool']['must'][] = ["nested"  => [
+                   "path" => "online_attr_system_flat",
+                   "query" => [
+                       "terms" => [
+                           "online_attr_system_flat." . $field => $values
+                        ]
+                   ]
+               ]];
             }
         }
-
+        
         return array(
             'status' => \erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
             'list' => self::getList(
