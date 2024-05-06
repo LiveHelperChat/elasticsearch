@@ -92,6 +92,16 @@ $ViewList['raw'] = array(
     'functions' => array('use')
 );
 
+$ViewList['listov'] = array(
+    'params' => array(),
+    'functions' => array('use')
+);
+
+$ViewList['rawov'] = array(
+    'params' => array('index','id'),
+    'functions' => array('use')
+);
+
 $ViewList['rawmail'] = array(
     'params' => array('index','id'),
     'functions' => array('use')
@@ -176,6 +186,12 @@ $ViewList['deletemail'] = array(
 );
 
 $ViewList['deleteop'] = array(
+    'params' => array('index','id'),
+    'uparams' => array('csfr'),
+    'functions' => array('configure')
+);
+
+$ViewList['deleteov'] = array(
     'params' => array('index','id'),
     'uparams' => array('csfr'),
     'functions' => array('configure')

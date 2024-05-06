@@ -16,10 +16,10 @@ class erLhcoreClassExtensionElasticsearch
 
     	$dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
 
-        $dispatcher->listen('chat.close', 'erLhcoreClassElasticSearchIndex::indexChatDelay');
-        $dispatcher->listen('chat.modified', 'erLhcoreClassElasticSearchIndex::indexChatModify');
-        $dispatcher->listen('chat.subject_remove', 'erLhcoreClassElasticSearchIndex::indexChatModify');
-        $dispatcher->listen('chat.subject_add', 'erLhcoreClassElasticSearchIndex::indexChatModify');
+        $dispatcher->listen('chat.close', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatDelay');
+        $dispatcher->listen('chat.modified', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatModify');
+        $dispatcher->listen('chat.subject_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatModify');
+        $dispatcher->listen('chat.subject_add', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatModify');
 
         if (!(isset($this->settings_personal['disable_es']) && $this->settings_personal['disable_es'] == 1)) {
 
@@ -93,15 +93,23 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('mail.statistic.attrbyperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
 
                 // Conversations
-                $dispatcher->listen('mail.conversation.after_save', 'erLhcoreClassElasticSearchIndex::conversationIndex');
-                $dispatcher->listen('mail.conversation.after_update', 'erLhcoreClassElasticSearchIndex::conversationIndex');
+                $dispatcher->listen('mail.conversation.after_save', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::conversationIndex');
+                $dispatcher->listen('mail.conversation.after_update', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::conversationIndex');
 
                 // Messages
-                $dispatcher->listen('mail.message.after_save', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
-                $dispatcher->listen('mail.message.after_update', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
-                $dispatcher->listen('mail.message.after_remove', 'erLhcoreClassElasticSearchIndex::mailMessageRemove');
-                $dispatcher->listen('mail.subject_remove', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
-                $dispatcher->listen('mail.subject_add', 'erLhcoreClassElasticSearchIndex::mailMessageIndex');
+                $dispatcher->listen('mail.message.after_save', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                $dispatcher->listen('mail.message.after_update', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                $dispatcher->listen('mail.message.after_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageRemove');
+                $dispatcher->listen('mail.subject_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                $dispatcher->listen('mail.subject_add', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+
+                // Online visitors
+                if (isset($this->settings_personal['use_es_ov']) && $this->settings_personal['use_es_ov'] == true) {
+                    $dispatcher->listen('chat.online_user.after_save', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::onlineVisitorIndex');
+                    $dispatcher->listen('chat.online_user.after_update', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::onlineVisitorIndex');
+                    $dispatcher->listen('chat.online_user.after_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::removeOnlineVisitor');
+                    $dispatcher->listen('chat.online_users_get_list', '\LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::getOnlineVisitors');
+                }
 
                 // Custom unordered parameters support
                 $dispatcher->listen('statistic.uparams_append', 'erLhcoreClassElasticSearchStatistic::uparamsAppend');

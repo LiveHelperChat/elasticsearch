@@ -38,6 +38,12 @@ if ( isset($_POST['StoreOptions']) ) {
         'check_if_exists' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
+        'days_ov' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 31,'max_range' => 365)
+        ),
+        'use_es_ov' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+        ),
         'indexType' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'string'
         ),
@@ -56,6 +62,18 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['use_es_statistic'] = 1;
     } else {
         $data['use_es_statistic'] = 0;
+    }
+
+    if ( $form->hasValidData( 'use_es_ov' ) && $form->use_es_ov == true ) {
+        $data['use_es_ov'] = 1;
+    } else {
+        $data['use_es_ov'] = 0;
+    }
+
+    if ($form->hasValidData( 'days_ov' )) {
+        $data['days_ov'] = $form->days_ov;
+    } else {
+        $data['days_ov'] = 31;
     }
 
     if ( $form->hasValidData( 'disable_es' ) && $form->disable_es == true ) {

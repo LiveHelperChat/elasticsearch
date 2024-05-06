@@ -21,6 +21,10 @@
     </div>
 
     <div class="form-group">
+        <label><input type="checkbox" value="on" name="use_es_ov" <?php isset($es_options['use_es_ov']) && ($es_options['use_es_ov'] == true) ? print 'checked="checked"' : ''?> /> Use Elastic Search for online visitors</label><br/>
+    </div>
+
+    <div class="form-group">
         <label><input type="checkbox" value="on" name="use_php_resque" <?php isset($es_options['use_php_resque']) && ($es_options['use_php_resque'] == true) ? print 'checked="checked"' : ''?> /> Use PHP Resque for chats indexing</label><br/>
     </div>
 
@@ -40,6 +44,11 @@
     <div class="form-group">
         <label>Last indexed participant Id</label>
         <input type="text" class="form-control" name="last_index_part_id" value="<?php isset($es_options['last_index_part_id']) ? print $es_options['last_index_part_id'] : ''?>" />
+    </div>
+
+    <div class="form-group">
+        <label>How many days keep record of online visitors in Elastic Search from last visit.</label>
+        <input type="number" min="31" max="365" class="form-control" name="days_ov" placeholder="Default is 31 day." value="<?php isset($es_options['days_ov']) ? print $es_options['days_ov'] : '31'?>" />
     </div>
 
     <div class="form-group">

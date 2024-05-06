@@ -54,7 +54,7 @@ foreach ($response['aggregations']['group_by_chat']['buckets'] as $bucket) {
         if ($allRemoved == true) {
             $chat = new erLhcoreClassModelChat();
             $chat->id = (int)trim($bucket['key']);
-            erLhcoreClassElasticSearchIndex::indexChatDelay(['chat' => $chat]);
+            \LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatDelay(['chat' => $chat]);
         }
     }
 }

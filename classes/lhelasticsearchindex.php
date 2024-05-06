@@ -262,6 +262,102 @@ class erLhcoreClassElasticSearchIndex
         return erLhcoreClassModelESChat::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
     }
 
+    public static function indexOnlineVisitors($params)
+    {
+
+        if (empty($params['items'])) {
+            return;
+        }
+
+        $sparams = array();
+        $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['items']);
+        $sparams['limit'] = 1000;
+        $documents = \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::getList($sparams);
+
+        $documentsReindexed = array();
+        foreach ($documents as $document) {
+            $documentsReindexed[$document->_id] = $document;
+        }
+
+        $objectsSave = array();
+
+        \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::getSession();
+
+        $indexSave = \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::$indexName . '-' . \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::$elasticType;
+
+        foreach ($params['items'] as $keyValue => $item) {
+            if (isset($documentsReindexed[$keyValue])) {
+                $onlineVisitor = $documentsReindexed[$keyValue];
+            } else {
+                $onlineVisitor = new \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor();
+            }
+
+            $onlineVisitor->id = $item->id;
+
+            if ($item->ip != '') {
+                $firstIp = explode(',',str_replace(' ','',$item->ip))[0];
+                if (filter_var($firstIp, FILTER_VALIDATE_IP)) { // chat ip was not anonymized
+                    $onlineVisitor->ip = $firstIp;
+                }
+            }
+
+            if (! empty($item->lon) && ! empty($item->lat)) {
+                $onlineVisitor->location = array(
+                    (float) $item->lon,
+                    (float) $item->lat
+                );
+            }
+
+            $onlineVisitor->vid = $item->vid;
+            $onlineVisitor->current_page = $item->current_page;
+            $onlineVisitor->invitation_seen_count = $item->invitation_seen_count;
+            $onlineVisitor->page_title = $item->page_title;
+            $onlineVisitor->chat_id = $item->chat_id;
+            $onlineVisitor->chat_time = $item->chat_time * 1000;
+            $onlineVisitor->last_visit_prev = $item->last_visit_prev * 1000;
+            $onlineVisitor->last_visit = $item->last_visit * 1000;
+            $onlineVisitor->first_visit = $item->first_visit * 1000;
+            $onlineVisitor->user_agent = $item->user_agent;
+            $onlineVisitor->user_country_name = $item->user_country_name;
+            $onlineVisitor->user_country_code = $item->user_country_code;
+            $onlineVisitor->operator_message = $item->operator_message;
+            $onlineVisitor->operator_user_id = $item->operator_user_id;
+            $onlineVisitor->operator_user_proactive = $item->operator_user_proactive;
+            $onlineVisitor->message_seen = $item->message_seen;
+            $onlineVisitor->message_seen_ts = $item->message_seen_ts * 1000;
+            $onlineVisitor->pages_count = $item->pages_count;
+            $onlineVisitor->tt_pages_count = $item->tt_pages_count;
+            $onlineVisitor->city = $item->city;
+            $onlineVisitor->identifier = $item->identifier;
+            $onlineVisitor->time_on_site = $item->time_on_site;
+            $onlineVisitor->tt_time_on_site = $item->tt_time_on_site;
+            $onlineVisitor->referrer = $item->referrer;
+            $onlineVisitor->invitation_id = $item->invitation_id;
+            $onlineVisitor->total_visits = $item->total_visits;
+            $onlineVisitor->invitation_count = $item->invitation_count;
+            $onlineVisitor->requires_email = $item->requires_email;
+            $onlineVisitor->requires_username = $item->requires_username;
+            $onlineVisitor->requires_phone = $item->requires_phone;
+            $onlineVisitor->dep_id = $item->dep_id;
+            $onlineVisitor->conversion_id = $item->conversion_id;
+            $onlineVisitor->reopen_chat = $item->reopen_chat;
+            $onlineVisitor->operation = $item->operation;
+            $onlineVisitor->operation_chat = $item->operation_chat;
+            $onlineVisitor->screenshot_id = $item->screenshot_id;
+            $onlineVisitor->online_attr = $item->online_attr;
+            $onlineVisitor->online_attr_system = $item->online_attr_system;
+            $onlineVisitor->online_attr_system_flat = $item->online_attr_system_array;
+            $onlineVisitor->visitor_tz = $item->visitor_tz;
+            $onlineVisitor->last_check_time = $item->last_check_time * 1000;
+            $onlineVisitor->user_active = $item->user_active;
+            $onlineVisitor->notes = $item->notes;
+            $onlineVisitor->device_type = $item->device_type;
+            $objectsSave[$indexSave][] = $onlineVisitor;
+        }
+
+        return \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
+    }
+
     public static function indexOs($params)
     {
         if (empty($params['items'])) {
@@ -324,29 +420,6 @@ class erLhcoreClassElasticSearchIndex
         }
 
         erLhcoreClassModelESOnlineSession::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
-    }
-
-    public static function indexChatDelay($params)
-    {
-        $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
-        $dataOptions = (array)$esOptions->data;
-
-        $db = ezcDbInstance::get();
-        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lheschat_index (`chat_id`) VALUES (:chat_id)');
-        $stmt->bindValue(':chat_id', $params['chat']->id, PDO::PARAM_STR);
-        $stmt->execute();
-
-        // Schedule background worker for instant indexing
-        if (isset($dataOptions['use_php_resque']) && $dataOptions['use_php_resque'] == 1) {
-            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
-        }
-    }
-
-    public static function indexChatModify($params)
-    {
-        if ($params['chat']->status == erLhcoreClassModelChat::STATUS_CLOSED_CHAT) {
-            self::indexChatDelay($params);
-        }
     }
 
     public static function indexChatDelete($params)
@@ -805,56 +878,6 @@ class erLhcoreClassElasticSearchIndex
         }
 
         return $response;
-    }
-
-    public static function mailMessageRemove($params) {
-        $db = ezcDbInstance::get();
-        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`,`op`,`udate`) VALUES (:mail_id,3,:udate)');
-        $stmt->bindValue(':mail_id', $params['message']->id, PDO::PARAM_STR);
-        $stmt->bindValue(':udate', $params['message']->udate, PDO::PARAM_STR);
-        $stmt->execute();
-
-        // Schedule background worker for instant indexing
-        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
-            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
-        }
-    }
-
-    public static function mailMessageIndex($params) {
-        $db = ezcDbInstance::get();
-
-        try {
-            $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`) VALUES (:mail_id)');
-            $stmt->bindValue(':mail_id', $params['message']->id, PDO::PARAM_INT);
-            $stmt->execute();
-        } catch (Exception $e) {
-            // Ignore an error if deadlock is found
-            // Perhaps we should handle it different way, but usually it happens rarely
-            // and mails re re-indexed multiple times during their lifespan
-        }
-
-        // Schedule background worker for instant indexing
-        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
-            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
-        }
-    }
-
-    public static function conversationIndex($params) {
-        $db = ezcDbInstance::get();
-        try {
-            $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesmail_index (`mail_id`,`op`) VALUES (:mail_id,1)');
-            $stmt->bindValue(':mail_id', $params['conversation']->id, PDO::PARAM_INT);
-            $stmt->execute();
-        } catch (Exception $e) {
-            // Ignore an error if deadlock is found
-            // Perhaps we should handle it different way, but usually it happens rarely
-            // and mails re re-indexed multiple times during their lifespan
-        }
-
-        // Schedule background worker for instant indexing
-        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
-            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
-        }
     }
 
     public static function indexMails($params) {
