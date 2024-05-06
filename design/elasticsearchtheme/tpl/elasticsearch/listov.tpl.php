@@ -23,13 +23,13 @@
                 <td>
                     <a href="#" onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'chat/getonlineuserinfo/<?php echo $item->id?>'})"><?php echo $item->nick?></a>
                     <?php if ($item->user_country_code) : ?>
-                        <span><img src="<?php echo erLhcoreClassDesign::design('images/flags')?>/<?php echo $item->user_country_code?>.png" alt="<?php echo htmlspecialchars($item->user_country_name)?>" title="<?php echo $item->user_country_name . ' (' . $item->city . ' ' . $item->visitor_tz . ' ' .$item->visitor_tz_time?>)" /></span>
+                        <span><img src="<?php echo erLhcoreClassDesign::design('images/flags')?>/<?php echo htmlspecialchars($item->user_country_code)?>.png" alt="<?php echo htmlspecialchars($item->user_country_name)?>" title="<?php echo htmlspecialchars($item->user_country_name . ' (' . $item->city . ' ' . $item->visitor_tz . ' ' .$item->visitor_tz_time)?>)" /></span>
                     <?php endif; ?>
                     <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
                         <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/rawov')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
                     <?php endif; ?>
                 </td>
-                <td><?php echo $item->current_page?></td>
+                <td><?php echo htmlspecialchars($item->current_page)?></td>
                 <td><?php echo $item->dep_id?></td>
                 <td nowrap="nowrap"><?php echo htmlspecialchars($item->meta_data['index'])?></td>
                 <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
