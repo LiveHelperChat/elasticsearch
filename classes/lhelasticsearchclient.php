@@ -144,7 +144,11 @@ class erLhcoreClassElasticClient
 
         foreach ($contentData[$index]['types'] as $type => $mapping) {
 
-            $indexCurrent = $index . '-' . $type . ($indexPrepend != null ? '-' . $indexPrepend : '');
+            if ($type != 'lh_online_visitor') {
+                $indexCurrent = $index . '-' . $type . ($indexPrepend != null ? '-' . $indexPrepend : '');
+            } else {
+                $indexCurrent = $index . '-' . $type;
+            }
 
             if (in_array($indexCurrent, $indexChecked)) {
                 continue;

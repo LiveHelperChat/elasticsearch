@@ -1,5 +1,149 @@
 {
 	"types": {
+		"lh_online_visitor": {
+          "vid": {
+            "type": "keyword"
+          },
+          "ip": {
+            "type": "ip"
+          },
+          "current_page": {
+            "type": "text"
+          },
+          "chat_id": {
+            "type": "long"
+          },
+          "last_visit": {
+            "type": "date"
+          },
+          "first_visit": {
+            "type": "date"
+          },
+          "pages_count": {
+            "type": "integer"
+          },
+          "user_agent": {
+            "type": "text"
+          },
+          "user_country_code": {
+            "type": "keyword"
+          },
+          "user_country_name": {
+            "type": "text"
+          },
+          "operator_message": {
+            "type": "text"
+          },
+          "operator_user_id": {
+            "type": "integer"
+          },
+          "message_seen": {
+            "type": "short"
+          },
+          "location": {
+            "type": "geo_point"
+          },
+          "city": {
+            "type": "text"
+          },
+          "time_on_site": {
+            "type": "integer"
+          },
+          "tt_time_on_site": {
+            "type": "integer"
+          },
+          "identifier": {
+            "type": "keyword"
+          },
+          "referrer": {
+            "type": "text"
+          },
+          "operator_user_proactive": {
+            "type": "text"
+          },
+          "invitation_id": {
+            "type": "integer"
+          },
+          "total_visits": {
+            "type": "integer"
+          },
+          "message_seen_ts": {
+            "type": "date"
+          },
+          "tt_pages_count": {
+            "type": "integer"
+          },
+          "invitation_count": {
+            "type": "integer"
+          },
+          "requires_email": {
+            "type": "short"
+          },
+          "page_title": {
+            "type": "text"
+          },
+          "dep_id": {
+            "type": "integer"
+          },
+          "invitation_seen_count": {
+            "type": "integer"
+          },
+          "reopen_chat": {
+            "type": "short"
+          },
+          "operation": {
+            "type": "text",
+            "index" : false
+          },
+          "screenshot_id": {
+            "type": "integer"
+          },
+          "requires_username": {
+            "type": "short"
+          },
+          "online_attr": {
+            "type": "text",
+            "index" : false
+          },
+          "visitor_tz": {
+            "type": "keyword"
+          },
+          "requires_phone": {
+            "type": "short"
+          },
+          "last_check_time": {
+            "type": "date"
+          },
+          "notes": {
+            "type": "text"
+          },
+          "online_attr_system": {
+            "type": "text",
+            "index" : false
+          },
+          "online_attr_system_flat": {
+            "type": "flattened"
+          },
+          "operation_chat": {
+            "type": "text",
+            "index" : false
+          },
+          "user_active": {
+            "type": "short"
+          },
+          "conversion_id": {
+            "type": "integer"
+          },
+          "device_type": {
+            "type": "short"
+          },
+          "chat_time": {
+            "type": "date"
+          },
+          "last_visit_prev": {
+            "type": "date"
+          }
+        },
 		"lh_mail": {
           "conversation_id": {
             "type": "long"

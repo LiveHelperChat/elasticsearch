@@ -50,7 +50,11 @@ if (in_array($action, array(
 
     foreach ($contentData['types'] as $type => $mapping) {
 
-        $elasticIndex = $indexSave . '-' . $type . ($indexPrepend != '' ? '-' . $indexPrepend : '');
+        if ($type != 'lh_online_visitor') {
+            $elasticIndex = $indexSave . '-' . $type . ($indexPrepend != '' ? '-' . $indexPrepend : '');
+        } else {
+            $elasticIndex = $indexSave . '-' . $type;
+        }
 
         if (!erLhcoreClassElasticClient::getHandler()->indices()->exists(array(
             'index' => $elasticIndex

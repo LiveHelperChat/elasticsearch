@@ -111,6 +111,7 @@ trait erLhcoreClassElasticTrait
         try {
             $GLOBALS[__CLASS__ . $id] = erLhcoreClassElasticClient::load(self::getSession(), __CLASS__, $id, ($indexName === null ? self::$indexName : $indexName), self::$elasticType);
         } catch (Exception $e) {
+            print_r($e);
             $GLOBALS[__CLASS__ . $id] = false;
         }
 

@@ -2564,8 +2564,9 @@ class erLhcoreClassElasticSearchStatistic
                 $field = str_replace('lhc_mailconv_msg.', '', $field);
                 $field = str_replace('lh_chat_participant.', '', $field);
                 $field = str_replace('`lhc_mailconv_msg_subject`.`subject_id`', 'subject_id', $field);
+                $field = str_replace('`lh_chat_online_user`.`dep_id`', 'dep_id', $field);
 
-                if ($field == 'time' || $field == 'itime') {
+                if (in_array($field,['time','itime','chat_time','last_visit_prev','last_visit','first_visit','message_seen_ts','last_check_time'])) {
                     $value = $value * 1000;
                 }
                 

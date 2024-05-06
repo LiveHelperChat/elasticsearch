@@ -102,6 +102,10 @@ class erLhcoreClassElasticSearchWorker {
             $db->rollback();
         }
 
+        if (isset($data['use_es_ov']) && $data['use_es_ov'] == 1) {
+            $this->indexOnlineVisitors();
+        }
+
         $mailsIndexed = $mailsIndexedConversations = 0;
 
         if (!isset($data['disable_es_mail']) || $data['disable_es_mail'] == 0) {
@@ -130,6 +134,97 @@ class erLhcoreClassElasticSearchWorker {
         if ((count($chatsId) >= 50 || $maxRecords == 10) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
             erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
         }
+    }
+
+    public function indexOnlineVisitors()
+    {
+        $db = ezcDbInstance::get();
+        $db->reconnect();
+
+        $db->beginTransaction();
+
+        try {
+            $stmt = $db->prepare('SELECT online_user_id FROM lhc_lhesou_index WHERE status = 0 LIMIT :limit FOR UPDATE ');
+            $stmt->bindValue(':limit',50,PDO::PARAM_INT);
+            $stmt->execute();
+            $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (Exception $e) {
+            // Someone is already processing. So we just ignore and retry later
+            return 0;
+        }
+
+        if (!empty($chatsId)) {
+            // Delete indexed chat's records
+            $stmt = $db->prepare('UPDATE lhc_lhesou_index SET status = 1 WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
+            $stmt->execute();
+            $db->commit();
+
+
+            $onlineVisitors = erLhcoreClassModelChatOnlineUser::getList(array('filterin' => array('id' => $chatsId)));
+
+            if (!empty($onlineVisitors)) {
+                try {
+                    $response = erLhcoreClassElasticSearchIndex::indexOnlineVisitors(array('items' => $onlineVisitors));
+                    foreach ($response as $indexItem) {
+                        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+                            foreach ($indexItem['items'] as $item) {
+                                if (isset($item['index']['error'])) {
+                                    erLhcoreClassLog::write( 'Online visitor index error - ' . json_encode($item['index']['error']),
+                                        ezcLog::SUCCESS_AUDIT,
+                                        array(
+                                            'source' => 'lhc',
+                                            'category' => 'resque_fatal',
+                                            'line' => 0,
+                                            'file' => 0,
+                                            'object_id' => $item['index']['_id']
+                                        )
+                                    );
+                                    $indexRemove = array_search($item['index']['_id'],$chatsId);
+                                    if ($indexRemove !== false) {
+                                        unset($chatsId[$indexRemove]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception $e) {
+                    // Try to log error to DB
+                    try {
+                        erLhcoreClassLog::write( implode(',',$chatsId) . "\n" . $e->getTraceAsString() . "\n" . $e->getMessage(),
+                            ezcLog::SUCCESS_AUDIT,
+                            array(
+                                'source' => 'lhc',
+                                'category' => 'resque_fatal',
+                                'line' => 0,
+                                'file' => 0,
+                                'object_id' => 0
+                            )
+                        );
+                    } catch (Exception $e) {
+
+                    }
+                    error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+                    return 0;
+                }
+            }
+
+            $esOptions = erLhcoreClassChat::getSession()->load( 'erLhcoreClassModelChatConfig', 'elasticsearch_options' );
+            $data = (array)$esOptions->data;
+
+            if (isset($data['disable_es']) && $data['disable_es'] == 1) {
+                error_log('Elastic search disabled in erLhcoreClassElasticSearchWorker');
+                return 0;
+            }
+
+            if (!empty($chatsId)) {
+                //$stmt = $db->prepare('DELETE FROM lhc_lhesou_index WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
+                //$stmt->execute();
+            }
+
+        } else {
+            $db->rollback();
+        }
+
     }
 
     public function indexDeleteMail()
