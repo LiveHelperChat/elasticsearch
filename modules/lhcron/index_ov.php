@@ -14,13 +14,13 @@ echo "Indexing online visitors\n";
 
 $pageLimit = 500;
 
-$parts = ceil(erLhcoreClassModelChatOnlineUser::getCount(['filtergt' => ['last_visit' => time() - $dataOptions['days_ov'] * 24 * 3600] ])/$pageLimit);
+$parts = ceil(erLhcoreClassModelChatOnlineUser::getCount(['filtergt' => ['last_visit' => time() - (isset($dataOptions['days_ov']) && (int)$dataOptions['days_ov'] >= 31 ? (int)$dataOptions['days_ov'] : 31) * 24 * 3600] ])/$pageLimit);
 
 for ($i = 0; $i < $parts; $i++) {
 
     echo "Saving online visitor page - ",($i + 1),"\n";
 
-    $items = erLhcoreClassModelChatOnlineUser::getList(array('filtergt' => ['last_visit' => time() - $dataOptions['days_ov'] * 24 * 3600], 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
+    $items = erLhcoreClassModelChatOnlineUser::getList(array('filtergt' => ['last_visit' => time() - (isset($dataOptions['days_ov']) && (int)$dataOptions['days_ov'] >= 31 ? (int)$dataOptions['days_ov'] : 31) * 24 * 3600], 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
 
     erLhcoreClassElasticSearchIndex::indexOnlineVisitors(array('items' => $items));
 }

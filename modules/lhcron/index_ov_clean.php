@@ -16,7 +16,7 @@ $sparams = array(
     'body' => array()
 );
 
-$sparams['body']['query']['bool']['must'][]['range']['last_visit']['lte'] = (time() - $dataOptions['days_ov'] * 24 * 3600) * 1000;
+$sparams['body']['query']['bool']['must'][]['range']['last_visit']['lte'] = (time() - (isset($dataOptions['days_ov']) && (int)$dataOptions['days_ov'] >= 31 ? (int)$dataOptions['days_ov'] : 31) * 24 * 3600) * 1000;
 
 foreach (\LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::getList(array('body' => $sparams['body'], 'offset' => 0, 'limit' => 1000)) as $item) {
     echo "Removing - ",$item->id,"\n";

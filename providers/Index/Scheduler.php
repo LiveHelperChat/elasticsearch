@@ -12,8 +12,10 @@ class Scheduler
         $stmt->bindValue(':online_user_id', $params['online_user']->id, \PDO::PARAM_STR);
         $stmt->execute();
 
+        $randomPropability = isset(\erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings_personal['random_ov']) ? \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings_personal['random_ov'] : 1;
+
         // Schedule background worker for instant indexing
-        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
+        if (rand(1,$randomPropability) == 1 && class_exists('erLhcoreClassExtensionLhcphpresque')) {
             \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
         }
     }

@@ -41,6 +41,9 @@ if ( isset($_POST['StoreOptions']) ) {
         'days_ov' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 31,'max_range' => 365)
         ),
+        'random_ov' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1,'max_range' => 1000)
+        ),
         'use_es_ov' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
@@ -74,6 +77,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['days_ov'] = $form->days_ov;
     } else {
         $data['days_ov'] = 31;
+    }
+
+    if ($form->hasValidData( 'random_ov' )) {
+        $data['random_ov'] = $form->random_ov;
+    } else {
+        $data['random_ov'] = 1;
     }
 
     if ( $form->hasValidData( 'disable_es' ) && $form->disable_es == true ) {

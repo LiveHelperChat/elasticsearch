@@ -102,8 +102,9 @@ class erLhcoreClassElasticSearchWorker {
             $db->rollback();
         }
 
+        $indexedOnlineVisitors = 0;
         if (isset($data['use_es_ov']) && $data['use_es_ov'] == 1) {
-            $this->indexOnlineVisitors();
+            $indexedOnlineVisitors = $this->indexOnlineVisitors();
         }
 
         $mailsIndexed = $mailsIndexedConversations = 0;
@@ -131,7 +132,7 @@ class erLhcoreClassElasticSearchWorker {
         // So extensions can index their own things
         \erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.elastic_search.index_objects',array());
 
-        if ((count($chatsId) >= 50 || $maxRecords == 10) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+        if ((count($chatsId) >= 50 || $maxRecords == 10 || $indexedOnlineVisitors == 50) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
             erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
         }
     }
@@ -158,7 +159,6 @@ class erLhcoreClassElasticSearchWorker {
             $stmt = $db->prepare('UPDATE lhc_lhesou_index SET status = 1 WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
             $stmt->execute();
             $db->commit();
-
 
             $onlineVisitors = erLhcoreClassModelChatOnlineUser::getList(array('filterin' => array('id' => $chatsId)));
 
@@ -225,6 +225,7 @@ class erLhcoreClassElasticSearchWorker {
             $db->rollback();
         }
 
+        return count($chatsId);
     }
 
     public function indexDeleteMail()

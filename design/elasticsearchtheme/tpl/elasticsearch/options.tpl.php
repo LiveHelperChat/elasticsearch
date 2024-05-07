@@ -46,10 +46,21 @@
         <input type="text" class="form-control" name="last_index_part_id" value="<?php isset($es_options['last_index_part_id']) ? print $es_options['last_index_part_id'] : ''?>" />
     </div>
 
-    <div class="form-group">
-        <label>How many days keep record of online visitors in Elastic Search from last visit.</label>
-        <input type="number" min="31" max="365" class="form-control" name="days_ov" placeholder="Default is 31 day." value="<?php isset($es_options['days_ov']) ? print $es_options['days_ov'] : '31'?>" />
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group">
+                <label>How many days keep record of online visitors in Elastic Search from last visit.</label>
+                <input type="number" min="31" max="365" class="form-control" name="days_ov" placeholder="Default is 31 day." value="<?php isset($es_options['days_ov']) ? print $es_options['days_ov'] : '31'?>" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                <label>Randomness factor for online visitor index. Default is 1. Means schedule php-resque every time new page request is logged.</label>
+                <input type="number" min="1" max="1000" class="form-control" name="random_ov" placeholder="1" value="<?php isset($es_options['random_ov']) ? print $es_options['random_ov'] : '1'?>" />
+            </div>
+        </div>
     </div>
+
 
     <div class="form-group">
         <label>Index</label>
