@@ -13,7 +13,7 @@
         <div class="col-md-2">
             <label><a href="#" class="material-icons" onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'genericbot/help/elasticsearchkeywordmail'});">help</a><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Keyword messages');?></label>
             <div class="input-group input-group-sm">
-                <input type="text" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Search in Subject or Body or selected fields');?>" class="form-control form-control-sm" name="keyword" value="<?php echo htmlspecialchars($input->keyword)?>" />
+                <input type="text" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Search in Subject or Body or selected fields');?>" id="keyword-field" class="form-control form-control-sm" name="keyword" value="<?php echo htmlspecialchars($input->keyword)?>" />
                 
                     <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
                     <div class="dropdown-menu">
@@ -40,6 +40,8 @@
                         <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->fuzzy_prefix == 4) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="4" /> Length of the keyword minus 4 character's</label>
                         <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->fuzzy_prefix == 5) : ?>checked="checked"<?php endif;?> name="fuzzy_prefix" value="5" /> Length of the keyword minus 5 character's</label>
                     </div>
+
+                    <button onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'elasticsearch/expressiongenerator/mail'});" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Expression generator');?>" class="btn btn-outline-secondary border-secondary-control" type="button"><span class="material-icons me-0">regular_expression</span></button>
 
             </div>
         </div>

@@ -49,6 +49,11 @@ $ViewList['list'] = array(
     'functions' => array('use')
 );
 
+$ViewList['expressiongenerator'] = array(
+    'params' => array('scope'),
+    'functions' => array('use')
+);
+
 $ViewList['listmail'] = array(
     'params' => array(),
     'uparams' => array(
