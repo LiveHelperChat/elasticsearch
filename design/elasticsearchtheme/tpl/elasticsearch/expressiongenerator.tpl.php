@@ -32,6 +32,14 @@
                 <textarea name="values" id="field-values" class="form-control form-control-sm" rows="3"></textarea>
             </div>
 
+            <div class="form-group">
+                <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/expression','Logical operator');?></label>
+                <select class="form-control form-control-sm" id="field-logical">
+                    <option value="OR">OR</option>
+                    <option value="AND">AND</option>
+                </select>
+            </div>
+
             <div class="btn-group">
                 <button type="button" id="generate-button" class="btn btn-sm btn-primary"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/expression','Generate and append');?></button>
                 <button type="button" id="generate-button-replace" class="btn btn-sm btn-secondary"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/expression','Generate and replace');?></button>
@@ -43,7 +51,7 @@
                     $('#field-values').val().split("\n").forEach(function(item){
                         appendItems.push(JSON.stringify(item.trim()));
                     });
-                    $('#keyword-field').val(($('#keyword-field').val() != '' ? $('#keyword-field').val() + ' AND ' : '') + $('#field-search').val()+':(' + appendItems.join(' OR ')+')');
+                    $('#keyword-field').val(($('#keyword-field').val() != '' ? $('#keyword-field').val() + ' AND ' : '') + $('#field-search').val()+':(' + appendItems.join(' ' + $('#field-logical').val() + ' ')+')');
                     $('#alert-field-success').show();
                 });
                 $('#generate-button-replace').click(function(){
@@ -51,7 +59,7 @@
                     $('#field-values').val().split("\n").forEach(function(item){
                         appendItems.push(JSON.stringify(item.trim()));
                     });
-                    $('#keyword-field').val($('#field-search').val()+':(' + appendItems.join(' OR ')+')');
+                    $('#keyword-field').val($('#field-search').val()+':(' + appendItems.join(' ' + $('#field-logical').val() + ' ')+')');
                     $('#alert-field-success').show();
                 })
             </script>

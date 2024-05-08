@@ -17,7 +17,7 @@
                 
                     <button class="btn dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">settings</span></button>
                     <div class="dropdown-menu">
-                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if ($input->expression == true) : ?>checked="checked"<?php endif;?> name="expression" value="on" /> Expression. Bellow options becomes irrelevant</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if ($input->expression == true) : ?>checked="checked"<?php endif;?> name="expression" value="on" /> Expression. Below options becomes irrelevant</label>
                         <div role="separator" class="dropdown-divider"></div>
                         <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(1,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="1" /> Subject</label>
                         <label class="dropdown-item mb-0 ps-2"><input type="checkbox" <?php if (is_array($input->search_in) && in_array(2,$input->search_in)) : ?>checked="checked"<?php endif;?> name="search_in[]" value="2" /> Body</label>
