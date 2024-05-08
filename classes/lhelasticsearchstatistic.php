@@ -2558,6 +2558,11 @@ class erLhcoreClassElasticSearchStatistic
         $returnFilter = array();
         
         foreach ($params as $type => $params) {
+
+            if (!is_object($params) && !is_array($params)) {
+                continue;
+            }
+
             foreach ($params as $field => $value) {
                 
                 $field = str_replace('lh_chat.', '', $field);

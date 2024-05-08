@@ -118,7 +118,7 @@ class OnlineVisitor
                ]];
             }
         }
-        
+
         return array(
             'status' => \erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
             'list' => self::getList(
