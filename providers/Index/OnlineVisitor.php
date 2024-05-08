@@ -99,7 +99,8 @@ class OnlineVisitor
         self::getSession();
 
         $sparams = array();
-        $sparams['index'] = \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['index_search'] . '-' . self::$elasticType;
+        $sparams['index'] = self::$indexName . '-' . self::$elasticType;
+
         $sparams['ignore_unavailable'] = true;
         $sparams['body'] = [];
 
