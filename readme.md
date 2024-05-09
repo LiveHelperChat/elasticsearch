@@ -67,6 +67,26 @@ Sometimes elastic search might miss chat's in it's index especially if it just h
 
 `36 */8 * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/reindex_recent > log_reindex_recent.txt /dev/null 2>&1`
 
+### Online Visitors list using ElasticSearch
+
+Sometimes operators run very heavy-duty filters on those lists, so it makes sense to delegate that payload to ElasticSearch
+
+Requirements
+
+* https://github.com/LiveHelperChat/lhc-php-resque
+
+#### Reindex recent online visitors
+
+This will reindex all online visitors which time condition matches a configuration section. `How many days keep record of online visitors in Elastic Search from last visit.`
+
+`php cron.php -s site_admin -e elasticsearch -c cron/index_ov`
+
+#### Cleanup expired online visitors record
+
+Delete every 7 hours expired online visitor records
+
+`1 */6 * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/index_ov_clean > /dev/null 2>&1`
+
 #### Using daily/monthly/yearly index
 
 I recommend if you are planning to have thousands of chats per day to use monthly or early index.
