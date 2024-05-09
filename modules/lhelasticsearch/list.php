@@ -67,7 +67,12 @@ if ($tab == 'chats') {
     if (trim($filterParams['input_form']->chat_id) != '') {
         $chat_ids = explode(',',trim($filterParams['input_form']->chat_id));
         erLhcoreClassChat::validateFilterIn($chat_ids);
-        $sparams['body']['query']['bool']['must'][]['terms']['chat_id'] = $chat_ids;
+
+        $chat_ids = array_filter($chat_ids);
+
+        if (!empty($chat_ids)) {
+            $sparams['body']['query']['bool']['must'][]['terms']['chat_id'] = $chat_ids;
+        }
     }
     
     if ($filterParams['input_form']->nick != '') {
