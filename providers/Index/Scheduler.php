@@ -8,9 +8,13 @@ class Scheduler
     {
 
         $db = \ezcDbInstance::get();
-        $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesou_index (`online_user_id`) VALUES (:online_user_id)');
-        $stmt->bindValue(':online_user_id', $params['online_user']->id, \PDO::PARAM_STR);
-        $stmt->execute();
+        try {
+            $stmt = $db->prepare('INSERT IGNORE INTO lhc_lhesou_index (`online_user_id`) VALUES (:online_user_id)');
+            $stmt->bindValue(':online_user_id', $params['online_user']->id, \PDO::PARAM_STR);
+            $stmt->execute();
+        } catch (\Exception $e) { // Sometimes deadlock is found. We can ignore those
+
+        }
 
         $randomPropability = isset(\erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings_personal['random_ov']) ? \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings_personal['random_ov'] : 1;
 
