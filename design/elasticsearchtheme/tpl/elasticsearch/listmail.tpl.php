@@ -20,7 +20,7 @@
             <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/filter_mail.tpl.php')); ?>
 
                 <?php if (isset($pages) && $pages->items_total > 0): $can_delete = erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','delete'); ?>
-                    <form action="<?php echo $pages->serverURL?>" method="post">
+                    <form action="<?php echo $pages->serverURL?>?<?php echo $pages->querystring?>" method="post">
 
                     <table class="table table-sm mt-1 list-links">
                         <thead>
@@ -160,11 +160,11 @@
                         <div class="btn-group btn-group-sm" role="group" aria-label="...">
                             <button type="submit" name="doDelete" disabled id="delete-selected-btn" class="btn btn-danger" onclick="return confirm(confLH.transLation.delete_confirm)" value=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete selected');?> (<span id="delete-selected">0</span>)</button>
                             <?php if ($pages->items_total > 0) : ?>
-                                <button type="button" onclick="return lhc.revealModal({'title' : 'Delete all', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/4'})" class="btn btn-danger btn-sm"><span class="material-icons">delete_sweep</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete all items')?> (<?php echo $pages->items_total?>)</button>
+                                <button type="button" onclick="return lhc.revealModal({'title' : 'Delete all', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/4?<?php echo $pages->querystring?>'})" class="btn btn-danger btn-sm"><span class="material-icons">delete_sweep</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete all items')?> (<?php echo $pages->items_total?>)</button>
                             <?php endif; ?>
                             <?php if ($pages->items_total > 0) : ?>
-                                <button type="button" class="btn btn-danger" id="delete-archive-btn" disabled onclick="return lhc.revealModal({'title' : 'Delete and archive selected', 'height':350, backdrop:true, 'url': '<?php echo $pages->serverURL?>/(export)/5'+getCheckedElements()})" ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Delete and archive selected');?> (<span id="delete-archive">0</span>)</button>
-                                <button type="button" class="btn btn-danger" onclick="return lhc.revealModal({'title' : 'Delete all archive', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/5'})" ><span class="material-icons">delete_sweep</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete and archive all')?> (<?php echo $pages->items_total?>)</button>
+                                <button type="button" class="btn btn-danger" id="delete-archive-btn" disabled onclick="return lhc.revealModal({'title' : 'Delete and archive selected', 'height':350, backdrop:true, 'url': '<?php echo $pages->serverURL?>/(export)/5'+getCheckedElements()+'?<?php echo $pages->querystring?>'})" ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Delete and archive selected');?> (<span id="delete-archive">0</span>)</button>
+                                <button type="button" class="btn btn-danger" onclick="return lhc.revealModal({'title' : 'Delete all archive', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/5?<?php echo $pages->querystring?>'})" ><span class="material-icons">delete_sweep</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Delete and archive all')?> (<?php echo $pages->items_total?>)</button>
                                 <script>
                                     function getCheckedElements(){
                                         var choices = [];

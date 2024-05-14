@@ -3,25 +3,20 @@
 $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/listmail.tpl.php');
 
 // Chats filter
+$filterParams = erLhcoreClassSearchHandler::getParams(array(
+    'customfilterfile' => 'extension/elasticsearch/classes/filter/mail_list.php',
+    'format_filter' => true,
+    'use_override' => true,
+    'uparams' => $Params['user_parameters_unordered']
+));
+
 if (isset($_GET['ds'])) {
-    $filterParams = erLhcoreClassSearchHandler::getParams(array(
-        'customfilterfile' => 'extension/elasticsearch/classes/filter/mail_list.php',
-        'format_filter' => true,
-        'use_override' => true,
-        'uparams' => $Params['user_parameters_unordered']
-    ));
     $filterParams['is_search'] = true;
 } else {
-    $filterParams = erLhcoreClassSearchHandler::getParams(array(
-        'customfilterfile' => 'extension/elasticsearch/classes/filter/mail_list.php',
-        'format_filter' => true,
-        'uparams' => $Params['user_parameters_unordered']
-    ));
     $filterParams['is_search'] = false;
 }
 
 $tpl->set('input', $filterParams['input_form']);
-
 
 $sparams = array(
     'body' => array()
@@ -376,7 +371,7 @@ if ($filterParams['input_form']->sort_chat == 'asc') {
     $sort = array('conversation_id' => array('order' => 'desc'));
 }
 
-$append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
+$append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
 
 if ($filterParams['input_form']->ds == 1)
 {
@@ -392,7 +387,10 @@ if ($filterParams['input_form']->ds == 1)
         }
 
         $tpl = erLhcoreClassTemplate::getInstance('lhviews/save_chat_view.tpl.php');
-        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+        $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
+        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append['append']);
+        $tpl->set('query_url', $append['query']);
+
         if (ezcInputForm::hasPostData()) {
             $Errors = erLhcoreClassAdminChatValidatorHelper::validateSavedSearch($savedSearch, array(
                 'sort' => $sort,
@@ -442,7 +440,9 @@ if ($filterParams['input_form']->ds == 1)
             exit;
         } else {
             $tpl = erLhcoreClassTemplate::getInstance('lhmailconv/export_config.tpl.php');
-            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append['append']);
+            $tpl->set('query_url', $append['query']);
             echo $tpl->fetch();
             exit;
         }
@@ -451,8 +451,9 @@ if ($filterParams['input_form']->ds == 1)
     // Archive actions
     if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 5) {
         $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/lhmailconv/delete_conversations_archive.tpl.php');
-        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
-
+        $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
+        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append['append']);
+        $tpl->set('query_url', $append['query']);
         if (ezcInputForm::hasPostData() && isset($_GET['archive_id'])) {
             session_write_close();
 
@@ -541,8 +542,9 @@ if ($filterParams['input_form']->ds == 1)
 
     if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 4) {
         $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/lhmailconv/delete_conversations.tpl.php');
-        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
-
+        $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
+        $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append['append']);
+        $tpl->set('query_url', $append['query']);
         if (ezcInputForm::hasPostData()) {
 
             erLhcoreClassRestAPIHandler::setHeaders();
@@ -673,7 +675,8 @@ if ($filterParams['input_form']->ds == 1)
     $tpl->set('total_literal',$total);
 
     $pages = new lhPaginator();
-    $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append;
+    $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append['append'];
+    $pages->querystring = $append['query'];
     $pages->items_total = $total > 9000 ? 9000 : $total;
     if ($filterParams['input']->ipp > 0) {
         $pages->setItemsPerPage($filterParams['input']->ipp);

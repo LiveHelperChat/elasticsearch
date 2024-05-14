@@ -488,7 +488,7 @@
             <?php include(erLhcoreClassDesign::designtpl('lhmailconv/lists/search_panel_append_print_multiinclude.tpl.php'));?>
 
             <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhmailconv','export_mails')) : ?>
-                <button type="button" onclick="return lhc.revealModal({'title' : 'Export', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/1?<?php echo $appendPrintExportURL?>'})" class="btn btn-outline-secondary btn-sm"><span class="material-icons">file_download</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Export')?> (<?php echo $pages->items_total?>)</button>
+                <button type="button" onclick="return lhc.revealModal({'title' : 'Export', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/1?<?php echo $pages->querystring?>&amp;<?php echo ltrim($appendPrintExportURL,'?')?>'})" class="btn btn-outline-secondary btn-sm"><span class="material-icons">file_download</span><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Export')?> (<?php echo $pages->items_total?>)</button>
             <?php endif; ?>
 
         <?php endif; ?>
@@ -497,7 +497,7 @@
             <?php if ($input->view > 0) : ?>
                 <input type="hidden" name="view" value="<?php echo $input->view?>" />
             <?php endif; ?>
-            <button type="button" onclick="return lhc.revealModal({'title' : 'Export', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/2'})" class="btn btn-outline-secondary btn-sm">
+            <button type="button" onclick="return lhc.revealModal({'title' : 'Export', 'height':350, backdrop:true, 'url':'<?php echo $pages->serverURL?>/(export)/2?<?php echo $pages->querystring?>'})" class="btn btn-outline-secondary btn-sm">
                 <span class="material-icons">saved_search</span>
                 <?php if ($input->view > 0) : ?>
                     <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Update view')?>

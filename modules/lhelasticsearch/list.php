@@ -17,40 +17,32 @@ if (isset(erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElast
 }
 
 // Chats filter
+$filterParams = erLhcoreClassSearchHandler::getParams(array(
+    'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_list.php',
+    'format_filter' => true,
+    'use_override' => true,
+    'uparams' => $Params['user_parameters_unordered']
+));
+
 if (isset($_GET['ds'])) {
-    $filterParams = erLhcoreClassSearchHandler::getParams(array(
-        'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_list.php',
-        'format_filter' => true,
-        'use_override' => true,
-        'uparams' => $Params['user_parameters_unordered']
-    ));
     $filterParams['is_search'] = true;
 } else {
-    $filterParams = erLhcoreClassSearchHandler::getParams(array(
-        'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_list.php',
-        'format_filter' => true,
-        'uparams' => $Params['user_parameters_unordered']
-    ));
     $filterParams['is_search'] = false;
 }
 
 $tpl->set('input', $filterParams['input_form']);
 
 // Messages filter
+$filterParamsMsg = erLhcoreClassSearchHandler::getParams(array(
+    'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_msg.php',
+    'format_filter' => true,
+    'use_override' => true,
+    'uparams' => $Params['user_parameters_unordered']
+));
+
 if (isset($_GET['ds'])) {
-    $filterParamsMsg = erLhcoreClassSearchHandler::getParams(array(
-        'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_msg.php',
-        'format_filter' => true,
-        'use_override' => true,
-        'uparams' => $Params['user_parameters_unordered']
-    ));
     $filterParamsMsg['is_search'] = true;
 } else {
-    $filterParamsMsg = erLhcoreClassSearchHandler::getParams(array(
-        'customfilterfile' => 'extension/elasticsearch/classes/filter/chat_msg.php',
-        'format_filter' => true,
-        'uparams' => $Params['user_parameters_unordered']
-    ));
     $filterParamsMsg['is_search'] = false;
 }
 
@@ -424,7 +416,7 @@ if ($tab == 'chats') {
         $sort = array('time' => array('order' => 'desc'));
     }
 
-    $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']);
+    $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
 
     if ($filterParams['input_form']->ds == 1)
     {
@@ -487,12 +479,13 @@ if ($tab == 'chats') {
                 }
 
                 // @todo add archived chats support as not all elastic chats are in live tables
-
                 erLhcoreClassChatExport::chatListExportXLS(erLhcoreClassModelChat::getList(array_merge($filterSQL, array('limit' => 100000, 'offset' => 0, 'ignore_fields' => $ignoreFields))), array('csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
                 exit;
             } else {
                 $tpl = erLhcoreClassTemplate::getInstance('lhchat/export_config.tpl.php');
-                $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+                $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
+                $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . $append['append']);
+                $tpl->set('query_url', $append['query']);
                 echo $tpl->fetch();
                 exit;
             }
@@ -511,7 +504,9 @@ if ($tab == 'chats') {
             }
 
             $tpl = erLhcoreClassTemplate::getInstance('lhviews/save_chat_view.tpl.php');
-            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']));
+            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . $append['append']);
+            $tpl->set('query_url', $append['query']);
             if (ezcInputForm::hasPostData()) {
                 $Errors = erLhcoreClassAdminChatValidatorHelper::validateSavedSearch($savedSearch, array(
                     'sort' => $sort,
@@ -537,7 +532,8 @@ if ($tab == 'chats') {
         $tpl->set('total_literal',$total);
 
         $pages = new lhPaginator();
-        $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') . $append;
+        $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') . $append['append'];
+        $pages->querystring = $append['query'];
         $pages->items_total = $total > 9000 ? 9000 : $total;
         if ($filterParams['input']->ipp > 0) {
             $pages->setItemsPerPage($filterParams['input']->ipp);
@@ -588,13 +584,14 @@ if ($tab == 'chats') {
 
     if ($filterParamsMsg['input_form']->ds == 1)
     {
-        $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParamsMsg['input_form']);
+        $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParamsMsg['input_form'],false,[],['keyword']);
 
         $total = erLhcoreClassModelESMsg::getCount($sparams);
         $tpl->set('total_literal',$total);
 
         $pages = new lhPaginator();
-        $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') .'/(tab)/messages' . $append;
+        $pages->serverURL = erLhcoreClassDesign::baseurl('elasticsearch/list') .'/(tab)/messages' . $append['append'];
+        $pages->querystring = $append['query'];
         $pages->items_total = $total > 9000 ? 9000 : $total;
         $pages->setItemsPerPage(30);
         $pages->paginate();
@@ -632,5 +629,3 @@ $tpl->set('Result',['path' => array(
 )]);
 $Result['body_class'] = 'h-100 dashboard-height';
 $Result['content'] = $tpl->fetch();
-
-/*$Result['path'] = ;*/

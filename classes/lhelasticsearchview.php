@@ -5,12 +5,12 @@ class erLhcoreClassElasticSearchView
     // View edit handler
     public static function editView($params) {
         if ($params['search']->scope == 'eschat') {
-            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($params['search']->params_array['input_form']);
-            erLhcoreClassModule::redirect('elasticsearch/list', '/(view)/' . $params['search']->id . $append);
+            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($params['search']->params_array['input_form'],false,[],['keyword']);
+            erLhcoreClassModule::redirect('elasticsearch/list', '/(view)/' . $params['search']->id . $append['append'] . (!empty($append['query']) ? '?' .  $append['query'] : ''));
             exit;
         } elseif ($params['search']->scope == 'esmail') {
-            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($params['search']->params_array['input_form']);
-            erLhcoreClassModule::redirect('elasticsearch/listmail', '/(view)/' . $params['search']->id . $append);
+            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($params['search']->params_array['input_form'],false,[],['keyword']);
+            erLhcoreClassModule::redirect('elasticsearch/listmail', '/(view)/' . $params['search']->id . $append['append'] . (!empty($append['query']) ? '?' .  $append['query'] : ''));
             exit;
         }
     }
@@ -20,12 +20,16 @@ class erLhcoreClassElasticSearchView
         if ($params['search']->scope == 'eschat')
         {
             $tpl = erLhcoreClassTemplate::getInstance('lhchat/export_config.tpl.php');
-            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . $params['append']);
+            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($params['search']->params_array['input_form'],false,[],['keyword']);
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . $append['append']);
+            $tpl->set('query_url', $append['query']);
             echo $tpl->fetch();
             exit;
         } else if ($params['search']->scope == 'esmail') {
             $tpl = erLhcoreClassTemplate::getInstance('lhmailconv/export_config.tpl.php');
-            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $params['append']);
+            $append = erLhcoreClassSearchHandler::getURLAppendFromInput($params['search']->params_array['input_form'],false,[],['keyword']);
+            $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append['append']);
+            $tpl->set('query_url', $append['query']);
             echo $tpl->fetch();
             exit;
         }

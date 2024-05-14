@@ -9,7 +9,7 @@ $appendPrintExportURL = '';
 
 <?php include(erLhcoreClassDesign::designtpl('lhchat/lists/search_panel_append_print_multiinclude.tpl.php'));?>
 
-    <form action="<?php echo htmlspecialchars($action_url)?>/(export)/5?<?php echo $appendPrintExportURL?>" method="post" target="_blank" id="start-deletion-action" onsubmit="return false">
+    <form action="<?php echo htmlspecialchars($action_url)?>/(export)/5?<?php echo htmlspecialchars(isset($query_url) ? $query_url : '')?><?php echo !empty($appendPrintExportURL) ? '&amp;' . $appendPrintExportURL : ''?>" method="post" target="_blank" id="start-deletion-action" onsubmit="return false">
 
         <?php if (isset($errors)) : ?>
             <?php include(erLhcoreClassDesign::designtpl('lhkernel/validation_error.tpl.php'));?>
