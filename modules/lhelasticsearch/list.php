@@ -457,29 +457,50 @@ if ($tab == 'chats') {
 
         if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 1) {
             if (ezcInputForm::hasPostData()) {
+                @ini_set('max_execution_time', '300');
                 session_write_close();
                 $ignoreFields = (new erLhcoreClassModelChat)->getState();
                 unset($ignoreFields['id']);
                 $ignoreFields = array_keys($ignoreFields);
 
-                $filterSQL = [];
+                $chatIds = [];
+                $continue = true;
+                $gte = 0;
+                $sparamsOriginal = $sparams['body'];
 
-                $chats = erLhcoreClassModelESChat::getList(array(
-                    'offset' => 0,
-                    'limit' => 9000,
-                    'body' => array_merge(array(
-                        'sort' => $sort
-                    ), $sparams['body'])
-                ),
-                    array('date_index' => $dateFilter));
+                while ($continue) {
+                    $sparamsOriginalBatch = $sparamsOriginal;
+                    if ($gte > 0) {
+                        if ($sort['time']['order'] == 'desc'){
+                            $sparamsOriginalBatch['query']['bool']['must'][]['range']['time']['lte'] = $gte;
+                        } else {
+                            $sort = array('time' => array('order' => 'asc'));
+                            $sparamsOriginalBatch['query']['bool']['must'][]['range']['time']['gte'] = $gte;
+                        }
+                    }
+                    $chats = erLhcoreClassModelESChat::getList(array(
+                        'offset' => 0,
+                        'limit' => 1000,
+                        'body' => array_merge(array(
+                            'sort' => $sort
+                        ), $sparamsOriginalBatch)
+                    ),
+                   array('date_index' => $dateFilter));
 
-                $chatIDs = [];
-                foreach ($chats as $chatID) {
-                    $filterSQL['filterin']['id'][] = $chatID->chat_id;
+                  foreach ($chats as $chatID) {
+                      $chatIds[] = $chatID->chat_id;
+                        $gte = $chatID->time;
+                   }
+
+                    if (count($chats) == 0 || count($chats) < 1000) {
+                        $continue = false;
+                    }
                 }
 
+                $chatIds = array_unique($chatIds);
+
                 // @todo add archived chats support as not all elastic chats are in live tables
-                erLhcoreClassChatExport::chatListExportXLS(erLhcoreClassModelChat::getList(array_merge($filterSQL, array('limit' => 100000, 'offset' => 0, 'ignore_fields' => $ignoreFields))), array('csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
+                erLhcoreClassChatExport::chatListExportXLS($chatIds, array('csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
                 exit;
             } else {
                 $tpl = erLhcoreClassTemplate::getInstance('lhchat/export_config.tpl.php');
