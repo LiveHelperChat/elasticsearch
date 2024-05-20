@@ -415,28 +415,67 @@ if ($filterParams['input_form']->ds == 1)
     if (in_array($Params['user_parameters_unordered']['export'], array(1))) {
         if (ezcInputForm::hasPostData()) {
             session_write_close();
+            @ini_set('max_execution_time', '300');
 
-            $filterSQL = [];
+            $chatIds = [];
+            $continue = true;
+            $gte = 0;
+            $sparamsOriginal = $sparams['body'];
 
-            $chats = erLhcoreClassModelESMail::getList(array(
-                'offset' => 0,
-                'limit' => 9000,
-                'body' => array_merge(array(
-                    'sort' => $sort
-                ), $sparams['body'])
-            ),
-                array('date_index' => $dateFilter));
+            while ($continue) {
+                $sparamsOriginalBatch = $sparamsOriginal;
 
-            $chatIDs = [];
-            foreach ($chats as $chatID) {
-                $filterSQL['filterin']['id'][] = $chatID->conversation_id;
+                    if ($sort['conversation_id']['order'] == 'desc') {
+                        $sortAttribute = 'conversation_id';
+                        if ($gte > 0) {
+                            $sparamsOriginalBatch['query']['bool']['must'][]['range']['conversation_id']['lte'] = $gte;
+                        }
+                    } elseif ($sort['conversation_id']['order'] == 'asc') {
+                        $sortAttribute = 'conversation_id';
+                        if ($gte > 0) {
+                            $sparamsOriginalBatch['query']['bool']['must'][]['range']['conversation_id']['gte'] = $gte;
+                        }
+                    } elseif ($sort['time']['order'] == 'desc') {
+                        $sortAttribute = 'time';
+                        if ($gte > 0) {
+                            $sparamsOriginalBatch['query']['bool']['must'][]['range']['time']['lte'] = $gte;
+                        }
+                    } elseif ($sort['time']['order'] == 'asc') {
+                        if ($gte > 0) {
+                            $sparamsOriginalBatch['query']['bool']['must'][]['range']['time']['gte'] = $gte;
+                        }
+                        $sortAttribute = 'time';
+                    } else {
+                        $sort = ['conversation_id' => ['order' => 'desc']];
+                        if ($gte > 0) {
+                            $sparamsOriginalBatch['query']['bool']['must'][]['range']['conversation_id']['lte'] = $gte;
+                        }
+                        $sortAttribute = 'conversation_id';
+                    }
+
+                $chats = erLhcoreClassModelESMail::getList(array(
+                    'offset' => 0,
+                    'limit' => 1000,
+                    'body' => array_merge(array(
+                        'sort' => $sort
+                    ), $sparamsOriginalBatch)
+                ),
+                    array('date_index' => $dateFilter));
+
+                foreach ($chats as $chatID) {
+                    $chatIds[] = $chatID->conversation_id;
+                    $gte = $chatID->{$sortAttribute};
+                }
+
+                if (count($chats) == 0 || count($chats) < 1000) {
+                    $continue = false;
+                }
             }
 
-            $filterSQL['filterin']['id'] = array_unique($filterSQL['filterin']['id']);
+            $chatIds = array_unique($chatIds);
 
-            // @todo add archived mails support as not all elastic chats are in live tables
+            erLhcoreClassMailconvExport::export(null, array('conversation_id' => $chatIds, 'csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
 
-            erLhcoreClassMailconvExport::export(array_merge($filterSQL, array('limit' => 100000, 'offset' => 0)), array('csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
             exit;
         } else {
             $tpl = erLhcoreClassTemplate::getInstance('lhmailconv/export_config.tpl.php');

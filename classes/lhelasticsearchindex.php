@@ -999,8 +999,15 @@ class erLhcoreClassElasticSearchIndex
 
             $esChat->subject_id = [];
 
+            // If it's archive record use archive subject
+            if ($item instanceof \LiveHelperChat\Models\mailConv\Archive\Message) {
+                $dbTable = '`' . \LiveHelperChat\Models\mailConv\Archive\MessageSubject::$dbTable . '`';
+            } else {
+                $dbTable = `lhc_mailconv_msg_subject`;
+            }
+
             $db = ezcDbInstance::get();
-            $stmt = $db->prepare("SELECT `subject_id` FROM `lhc_mailconv_msg_subject` WHERE `message_id` = :message_id");
+            $stmt = $db->prepare("SELECT `subject_id` FROM {$dbTable} WHERE `message_id` = :message_id");
             $stmt->bindValue(':message_id', $item->id,PDO::PARAM_INT);
             $stmt->execute();
             $subjectIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
