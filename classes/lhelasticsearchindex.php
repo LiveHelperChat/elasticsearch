@@ -1003,7 +1003,7 @@ class erLhcoreClassElasticSearchIndex
             if ($item instanceof \LiveHelperChat\Models\mailConv\Archive\Message) {
                 $dbTable = '`' . \LiveHelperChat\Models\mailConv\Archive\MessageSubject::$dbTable . '`';
             } else {
-                $dbTable = `lhc_mailconv_msg_subject`;
+                $dbTable = '`lhc_mailconv_msg_subject`';
             }
 
             $db = ezcDbInstance::get();
