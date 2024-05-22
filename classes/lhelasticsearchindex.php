@@ -168,7 +168,13 @@ class erLhcoreClassElasticSearchIndex
             $esChat->subject_id = [];
 
             $db = ezcDbInstance::get();
-            $stmt = $db->prepare("SELECT `subject_id` FROM `lh_abstract_subject_chat` WHERE `chat_id` = :chat_id");
+
+            $dbTable = '`lh_abstract_subject_chat`';
+            if (isset($params['archive']) && $params['archive'] == true) {
+                $dbTable = '`' . \erLhAbstractModelChatArchiveSubject::$dbTable . '`';
+            }
+
+            $stmt = $db->prepare("SELECT `subject_id` FROM {$dbTable} WHERE `chat_id` = :chat_id");
             $stmt->bindValue(':chat_id', $item->id,PDO::PARAM_INT);
             $stmt->execute();
             $subjectIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
