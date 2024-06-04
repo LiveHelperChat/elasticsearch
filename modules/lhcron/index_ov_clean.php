@@ -10,6 +10,13 @@ if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
     exit;
 }
 
+try {
+    $db = ezcDbInstance::get();
+    $db->query("UPDATE lhc_lhesou_index SET status = 0");
+} catch (Exception $e) {
+    echo "Updating online visitors records failed\n";
+}
+
 echo "Removing old online visitors\n";
 
 $sparams = array(
