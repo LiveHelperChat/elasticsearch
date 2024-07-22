@@ -189,15 +189,30 @@ class erLhcoreClassElasticSearchView
             if (isset($search->params_array['sparams']['body']['query']['bool']['must'])) {
                 $mustPresent = $search->params_array['sparams']['body']['query']['bool']['must'];
                 foreach ($mustPresent as $indexMust => $mustItem) {
-                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['user_id'])) {
+                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['user_id']) || isset($mustItem['range']['time'])) {
                         unset($mustPresent[$indexMust]);
                     }
                 }
                 self::applyDynamicFilter($mustPresent, (object)$search->params_array['input_form'], ['user_attr' => 'user_id']);
             }
 
+            // Re-format date filter on relative date
+            $filterSearch = $search->params_array['filter'];
+            $search->getDateRangeFilter($filterSearch);
+
+            if (isset($filterSearch['filtergte']['time'])) {
+                $mustPresent[] = ['range' => ['time' => ['gte' => $filterSearch['filtergte']['time']]]];
+            }
+
+            if (isset($filterSearch['filterlte']['time'])) {
+                $mustPresent[] = ['range' => ['time' => ['lte' => $filterSearch['filterlte']['time']]]];
+            }
+
+            // Make sure it's not empty
             if (isset($mustPresent) && !empty($mustPresent)) {
                 $search->params_array['sparams']['body']['query']['bool']['must'] = array_values($mustPresent);
+            } else {
+                $search->params_array['sparams']['body']['query']['bool']['must'] = [];
             }
 
             $total = erLhcoreClassModelESChat::getCount($search->params_array['sparams'], array('date_index' => $dateFilter));
@@ -242,6 +257,7 @@ class erLhcoreClassElasticSearchView
             $tpl->set('itemsArchive', $chatIds);
             $tpl->set('items', $items);
             $tpl->set('list_mode', $params['uparams']['mode'] == 'list');
+            $tpl->set('filter_search', $filterSearch);
 
             // Update view data, so background worker do nothing
             $search->total_records = (int)$params['total_records'];
@@ -266,7 +282,7 @@ class erLhcoreClassElasticSearchView
             if (isset($search->params_array['sparams']['body']['query']['bool']['must'])) {
                 $mustPresent = $search->params_array['sparams']['body']['query']['bool']['must'];
                 foreach ($mustPresent as $indexMust => $mustItem) {
-                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['conv_user_id'])) {
+                    if (isset($mustItem['terms']['dep_id']) || isset($mustItem['terms']['conv_user_id']) || isset($mustItem['range']['time'])) {
                         unset($mustPresent[$indexMust]);
                     }
                 }
@@ -274,8 +290,22 @@ class erLhcoreClassElasticSearchView
                 self::applyDynamicFilter($mustPresent, (object)$search->params_array['input_form'], ['user_attr' => 'conv_user_id']);
             }
 
+            // Re-format date filter on relative date
+            $filterSearch = $search->params_array['filter'];
+            $search->getDateRangeFilter($filterSearch);
+
+            if (isset($filterSearch['filtergte']['time'])) {
+                $mustPresent[] = ['range' => ['time' => ['gte' => $filterSearch['filtergte']['time']]]];
+            }
+
+            if (isset($filterSearch['filterlte']['time'])) {
+                $mustPresent[] = ['range' => ['time' => ['lte' => $filterSearch['filterlte']['time']]]];
+            }
+
             if (isset($mustPresent) && !empty($mustPresent)) {
                 $search->params_array['sparams']['body']['query']['bool']['must'] = array_values($mustPresent);
+            } else {
+                $search->params_array['sparams']['body']['query']['bool']['must'] = [];
             }
 
             $total = erLhcoreClassModelESMail::getCount($search->params_array['sparams'], array('date_index' => $dateFilter));
@@ -316,6 +346,7 @@ class erLhcoreClassElasticSearchView
 
             $tpl->set('items', $items);
             $tpl->set('list_mode', $params['uparams']['mode'] == 'list');
+            $tpl->set('filter_search', $filterSearch);
 
             // Update view data, so background worker do nothing
             $search->total_records = (int)$params['total_records'];

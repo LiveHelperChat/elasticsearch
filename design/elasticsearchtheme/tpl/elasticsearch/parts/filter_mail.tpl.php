@@ -163,7 +163,9 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range from');?></label>
+                        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Date range from');?>
+                            <?php include(erLhcoreClassDesign::designtpl('lhchat/lists/parts/date_picker_range.tpl.php')); ?>
+                        </label>
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="text" class="form-control form-control-sm" name="timefrom" id="id_timefrom" placeholder="E.g <?php echo date('Y-m-d',time()-3*31*24*3600)?>" value="<?php echo $input->ds === null ? date('Y-m-d',time()-(3*31*24*3600)) : htmlspecialchars($input->timefrom)?>" />

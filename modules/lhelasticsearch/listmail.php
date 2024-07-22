@@ -390,7 +390,8 @@ if ($filterParams['input_form']->ds == 1)
         $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
         $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/listmail') . $append['append']);
         $tpl->set('query_url', $append['query']);
-
+        $tpl->set('input', $filterParams['input_form']);
+        
         if (ezcInputForm::hasPostData()) {
             $Errors = erLhcoreClassAdminChatValidatorHelper::validateSavedSearch($savedSearch, array(
                 'sort' => $sort,

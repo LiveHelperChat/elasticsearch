@@ -528,6 +528,8 @@ if ($tab == 'chats') {
             $append = erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form'],false,[],['keyword']);
             $tpl->set('action_url', erLhcoreClassDesign::baseurl('elasticsearch/list') . $append['append']);
             $tpl->set('query_url', $append['query']);
+            $tpl->set('input', $filterParams['input_form']);
+
             if (ezcInputForm::hasPostData()) {
                 $Errors = erLhcoreClassAdminChatValidatorHelper::validateSavedSearch($savedSearch, array(
                     'sort' => $sort,
