@@ -62,6 +62,8 @@
                     <div class="dropdown-menu">
                         <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if (empty($input->search_email_in) || $input->search_email_in == 1) : ?>checked="checked"<?php endif;?> name="search_email_in" value="1" /> Customer e-mail</label>
                         <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->search_email_in == 2) : ?>checked="checked"<?php endif;?> name="search_email_in" value="2" /> Sender e-mail</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->search_email_in == 3) : ?>checked="checked"<?php endif;?> name="search_email_in" value="3" /> Sender e-mail with dots</label>
+                        <label class="dropdown-item mb-0 ps-2"><input type="radio" <?php if ($input->search_email_in == 4) : ?>checked="checked"<?php endif;?> name="search_email_in" value="4" /> Customer e-mail with dots</label>
                     </div>
 
             </div>

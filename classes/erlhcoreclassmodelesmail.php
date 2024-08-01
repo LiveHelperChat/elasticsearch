@@ -27,6 +27,7 @@ class erLhcoreClassModelESMail
             'from_host' => $this->from_host,
             'from_name' => $this->from_name,
             'from_address' => $this->from_address,
+            'from_address_clean' => $this->from_address_clean,
             'sender_host' => $this->sender_host,
             'sender_name' => $this->sender_name,
             'sender_address' => $this->sender_address,
@@ -64,6 +65,7 @@ class erLhcoreClassModelESMail
             'opened_at' => $this->opened_at,
             'phone' => $this->phone,
             'customer_address' => $this->customer_address,
+            'customer_address_clean' => $this->customer_address_clean,
             'customer_name' => $this->customer_name,
         );
 
@@ -183,6 +185,7 @@ class erLhcoreClassModelESMail
     public $from_host = null;
     public $from_name = null;
     public $from_address = null;
+    public $from_address_clean = null;
     public $sender_host = null;
     public $sender_name = null;
     public $sender_address = null;
@@ -216,6 +219,7 @@ class erLhcoreClassModelESMail
     public $lang = null;
     public $phone = null;
     public $customer_address = null;
+    public $customer_address_clean = null;
     public $customer_name = null;
     public $conversation_id_old = null;
     public $has_attachment_conv = null;

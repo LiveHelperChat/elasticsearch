@@ -90,9 +90,13 @@ if ($filterParams['input_form']->phone != '') {
 
 if ($filterParams['input_form']->email != '') {
     if (empty($filterParams['input_form']->search_email_in) || $filterParams['input_form']->search_email_in == 1) {
-        $sparams['body']['query']['bool']['must'][]['term']['customer_address'] = trim($filterParams['input_form']->email);
-    } else {
+        $sparams['body']['query']['bool']['must'][]['term']['customer_address_clean'] = erLhcoreClassElasticSearchIndex::cleanEmail(trim($filterParams['input_form']->email));
+    } elseif ($filterParams['input_form']->search_email_in == 2) {
+        $sparams['body']['query']['bool']['must'][]['term']['from_address_clean'] = erLhcoreClassElasticSearchIndex::cleanEmail(trim($filterParams['input_form']->email));
+    } elseif ($filterParams['input_form']->search_email_in == 3) {
         $sparams['body']['query']['bool']['must'][]['term']['from_address'] = trim($filterParams['input_form']->email);
+    } elseif ($filterParams['input_form']->search_email_in == 4) {
+        $sparams['body']['query']['bool']['must'][]['term']['customer_address'] = trim($filterParams['input_form']->email);
     }
 }
 

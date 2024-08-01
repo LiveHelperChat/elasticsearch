@@ -241,10 +241,16 @@
           "customer_address": {
             "type": "keyword"
           },
+          "customer_address_clean": {
+            "type": "keyword"
+          },
           "customer_name": {
             "type": "text"
           },
           "from_address": {
+            "type": "keyword"
+          },
+          "from_address_clean": {
             "type": "keyword"
           },
           "from_host": {

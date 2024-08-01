@@ -886,6 +886,14 @@ class erLhcoreClassElasticSearchIndex
         return $response;
     }
 
+    public static function cleanEmail($email)
+    {
+        $atPos = strrpos($email, "@");
+        $name =  str_replace('.','',substr($email, 0, $atPos));
+        $domain = substr($email, $atPos);
+        return strtolower($name . $domain);
+    }
+
     public static function indexMails($params) {
         $sparams = array();
         $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['mails']);
@@ -962,6 +970,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->from_host = $item->from_host;
             $esChat->from_name = $item->from_name;
             $esChat->from_address = $item->from_address;
+            $esChat->from_address_clean = self::cleanEmail($item->from_address);
 
             $esChat->sender_host = $item->sender_host;
             $esChat->sender_name = $item->sender_name;
@@ -1000,6 +1009,7 @@ class erLhcoreClassElasticSearchIndex
                 $esChat->phone = $item->conversation->phone;
                 $esChat->customer_name = $item->conversation->from_name;
                 $esChat->customer_address = $item->conversation->from_address;
+                $esChat->customer_address_clean = self::cleanEmail($item->conversation->from_address);
                 $esChat->has_attachment_conv = $item->conversation->has_attachment;
             }
 
