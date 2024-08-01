@@ -24,6 +24,9 @@ class erLhcoreClassElasticClient
             if ($obj->id !== null) {
                 $updateParams['id'] = $obj->id;
                 $updateParams['body']['doc'] = $obj->getState();
+                if (isset($updateParams['body']['doc']['id'])) {
+                    unset($updateParams['body']['doc']['id']);
+                }
                 $handler->update($updateParams);
             } else {
                 $updateParams['body'] = $obj->getState();
