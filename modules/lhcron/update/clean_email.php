@@ -35,7 +35,7 @@ while (true) {
     foreach ($chats as $msg) {
 
         if ($msg->from_address == '' && $msg->customer_address == '') {
-            return;
+            continue;
         }
 
         if ($msg->from_address != '') {
