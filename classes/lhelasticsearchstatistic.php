@@ -845,6 +845,10 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['aggs']['chats_over_time']['aggs']['chat_initiator_proact_man']['filter']['bool']['must'][]['term']['invitation_id'] = 0;
         }
 
+        if (is_array($params['params_execution']['charttypes']) && in_array('devicetype', $params['params_execution']['charttypes'])) {
+            $sparams['body']['aggs']['chats_over_time']['aggs']['device_aggr']['terms']['field'] = 'device_type';
+        }
+
         if (is_array($params['params_execution']['charttypes']) && in_array('unanswered',$params['params_execution']['charttypes'])){
             $sparams['body']['aggs']['chats_over_time']['aggs']['unanswered_aggr']['filter']['term']['unanswered_chat'] = 1;
         }
@@ -889,13 +893,16 @@ class erLhcoreClassElasticSearchStatistic
             erLhcoreClassModelChat::STATUS_ACTIVE_CHAT => 'active',
             erLhcoreClassModelChat::STATUS_OPERATORS_CHAT => 'operators',
             erLhcoreClassModelChat::STATUS_PENDING_CHAT => 'pending',
-            erLhcoreClassModelChat::STATUS_BOT_CHAT => 'bot'
+            erLhcoreClassModelChat::STATUS_BOT_CHAT => 'bot',
         );
         
         $keyStatusInit = array(
             'chatinitdefault',
             'chatinitproact',
-            'chatinitmanualinv'
+            'chatinitmanualinv',
+            'mobileinit',
+            'tabletinit',
+            'desktopinit',
         );
 
         foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
@@ -926,7 +933,19 @@ class erLhcoreClassElasticSearchStatistic
                 $numberOfChats[$keyDateUnix]['chatinitproact'] = $bucket['chat_initiator_proact_aggr']['doc_count'];
                 $numberOfChats[$keyDateUnix]['chatinitmanualinv'] = $bucket['chat_initiator_proact_man']['doc_count'];
             }
-            
+
+            if (is_array($params['params_execution']['charttypes']) && in_array('devicetype', $params['params_execution']['charttypes'])) {
+                foreach ($bucket['device_aggr']['buckets'] as $deviceValue) {
+                    if ($deviceValue['key'] === 1) {
+                        $numberOfChats[$keyDateUnix]['mobileinit'] = $deviceValue['doc_count'];
+                    } elseif ($deviceValue['key'] === 2) {
+                        $numberOfChats[$keyDateUnix]['tabletinit'] = $deviceValue['doc_count'];
+                    } elseif ($deviceValue['key'] === 0) {
+                        $numberOfChats[$keyDateUnix]['desktopinit'] = $deviceValue['doc_count'];
+                    }
+                }
+            }
+
             foreach ($keyStatus as $mustHave) {
                 if (! isset($numberOfChats[$keyDateUnix][$mustHave])) {
                     $numberOfChats[$keyDateUnix][$mustHave] = 0;
