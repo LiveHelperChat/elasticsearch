@@ -12,8 +12,6 @@ class erLhcoreClassExtensionElasticsearch
     
     public function registerAutoload()
     {
-    	include 'extension/elasticsearch/vendor/autoload.php';
-
     	$dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
 
         $dispatcher->listen('chat.close', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatDelay');
@@ -139,7 +137,7 @@ class erLhcoreClassExtensionElasticsearch
             'erLhcoreClassElasticSearchWorker'   => 'extension/elasticsearch/classes/lhqueueelasticsearchworker.php',
             'erLhcoreClassElasticSearchView'     => 'extension/elasticsearch/classes/lhelasticsearchview.php',
             'erLhcoreClassModelESMail'           => 'extension/elasticsearch/classes/erlhcoreclassmodelesmail.php',
-	    'erLhcoreClassModelESMsgAgg'         => 'extension/elasticsearch/classes/erlhcoreclassmodelesmsgagg.php'
+            'erLhcoreClassModelESMsgAgg'         => 'extension/elasticsearch/classes/erlhcoreclassmodelesmsgagg.php'
         );
 
         if (key_exists($className, $classesArray)) {

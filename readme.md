@@ -31,11 +31,10 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
         'elasticsearch'
       ),
 ```
-3. Install dependencies `composer install` from extension folder
-3. Go to back office and clear cache.
-4. Go to Modules -> Elastic Search
-5. Click create index and later update structure
-6. Execute doc/install.sql
+4. Go to back office and clear cache.
+5. Go to Modules -> Elastic Search
+6. Click create index and later update structure
+7. Execute doc/install.sql
 
 #### Indexing existing chats
 `php cron.php -s site_admin -e elasticsearch -c cron/index_chats`
