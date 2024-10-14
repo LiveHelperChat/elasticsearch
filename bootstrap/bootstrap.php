@@ -18,6 +18,7 @@ class erLhcoreClassExtensionElasticsearch
         $dispatcher->listen('chat.modified', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatModify');
         $dispatcher->listen('chat.subject_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatModify');
         $dispatcher->listen('chat.subject_add', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatModify');
+        $dispatcher->listen('chat.msg_removed', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatModify');
 
         if (!(isset($this->settings_personal['disable_es']) && $this->settings_personal['disable_es'] == 1)) {
 
