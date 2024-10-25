@@ -35,7 +35,6 @@ This plugin enables statistic generation using only Elastic Search. MySQL is not
 5. Go to Modules -> Elastic Search
 6. Click create index and later update structure
 7. Execute doc/install.sql
-8. Webhooks has to be enabled - https://github.com/LiveHelperChat/livehelperchat/blob/master/lhc_web/settings/settings.ini.default.php#L86
 
 #### Indexing existing chats
 `php cron.php -s site_admin -e elasticsearch -c cron/index_chats`
