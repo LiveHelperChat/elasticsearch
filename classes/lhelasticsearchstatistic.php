@@ -1856,11 +1856,15 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['field'] = 'response_type';
         $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['size'] = 1000;
 
+        if (isset($params['filter_params']->mail_conv_user) && $params['filter_params']->mail_conv_user == 1) {
+            $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['aggs']['conversation']['cardinality']['field'] = 'conversation_id';
+        }
+
         $result = $elasticSearchHandler->search($sparams);
 
         foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
             foreach ($bucket['response_type']['buckets'] as $bucketStat) {
-                $usersStats[$bucket['key']]['mail_statistic_'.$bucketStat['key']] = $bucketStat['doc_count'];
+                $usersStats[$bucket['key']]['mail_statistic_'.$bucketStat['key']] = (isset($params['filter_params']->mail_conv_user) && $params['filter_params']->mail_conv_user == 1 ? $bucketStat['conversation']['value'] : $bucketStat['doc_count']);
             }
         }
 
