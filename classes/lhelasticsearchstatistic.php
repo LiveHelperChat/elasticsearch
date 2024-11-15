@@ -1812,7 +1812,14 @@ class erLhcoreClassElasticSearchStatistic
 
         $userIdFilter = array_keys($usersStats);
         if (!empty($userIdFilter)) {
-            $params['filter']['filterin']['user_id'] = $userIdFilter;
+            if (isset($params['filter_params']->mail_conv_user) && $params['filter_params']->mail_conv_user == 1) {
+                $params['filter']['filterin']['conv_user_id'] = $userIdFilter;
+                if (isset($params['filter']['filterin']['user_id'])) {
+                    unset($params['filter']['filterin']['user_id']);
+                }
+            } else {
+                $params['filter']['filterin']['user_id'] = $userIdFilter;
+            }
         } else {
             return array(
                 'status' => erLhcoreClassChatEventDispatcher::STOP_WORKFLOW,
@@ -1838,7 +1845,13 @@ class erLhcoreClassElasticSearchStatistic
 
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
-        $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
+
+        if (isset($params['filter_params']->mail_conv_user) && $params['filter_params']->mail_conv_user == 1) {
+            $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'conv_user_id';
+        } else {
+            $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
+        }
+
         $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
         $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['field'] = 'response_type';
         $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['size'] = 1000;
