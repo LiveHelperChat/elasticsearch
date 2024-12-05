@@ -210,6 +210,9 @@ class erLhcoreClassElasticSearchIndex
                 } elseif ($messageChat->user_id > 0) {
                     $esChat->msg_operator .= $messageChat->msg . "\n";
                 } else {
+                    if ($messageChat->meta_msg != '' && str_contains($messageChat->meta_msg, '"debug":true')) { // Ignore debug messages
+                        continue;
+                    }
                     $esChat->msg_system .= $messageChat->msg . "\n";
                 }
             }
@@ -542,7 +545,11 @@ class erLhcoreClassElasticSearchIndex
 
         $chatsIds = array();
         $dateRange = array();
-        foreach ($items as $item) {
+        foreach ($items as $keyItem => $item) {
+            if ($item->meta_msg != '' && str_contains($item->meta_msg, '"debug":true')) { // Ignore debug messages
+                unset($items[$keyItem]);
+                continue;
+            }
             $chatsIds[] = $item->chat_id;
             if ($item->time > 0) {
                 $dateRange[] = $item->time;
