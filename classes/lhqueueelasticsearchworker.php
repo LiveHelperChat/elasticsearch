@@ -133,7 +133,7 @@ class erLhcoreClassElasticSearchWorker {
         \erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.elastic_search.index_objects',array());
 
         if ((count($chatsId) >= 50 || $maxRecords == 10 || $indexedOnlineVisitors == 50) && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
-            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+            erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array('debug' => __CLASS__ . '::' . __FUNCTION__));
         }
     }
 

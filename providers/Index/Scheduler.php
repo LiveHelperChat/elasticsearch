@@ -20,7 +20,7 @@ class Scheduler
 
         // Schedule background worker for instant indexing
         if (rand(1,$randomPropability) == 1 && class_exists('erLhcoreClassExtensionLhcphpresque')) {
-            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array('online_user_id' => $params['online_user']->id, 'debug' => __CLASS__ . '::' . __FUNCTION__));
         }
     }
 
@@ -32,8 +32,8 @@ class Scheduler
         $stmt->execute();
 
         // Schedule background worker for instant indexing
-        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
-            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        if (class_exists('erLhcoreClassExtensionLhcphpresque') && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array('message_id' => $params['message']->id, 'debug' => __CLASS__ . '::' . __FUNCTION__));
         }
     }
 
@@ -51,8 +51,8 @@ class Scheduler
         }
 
         // Schedule background worker for instant indexing
-        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
-            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        if (class_exists('erLhcoreClassExtensionLhcphpresque') && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array('message_id' => $params['message']->id, 'debug' => __CLASS__ . '::' . __FUNCTION__));
         }
     }
 
@@ -69,8 +69,8 @@ class Scheduler
         }
 
         // Schedule background worker for instant indexing
-        if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
-            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        if (class_exists('erLhcoreClassExtensionLhcphpresque') && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array('conversation_id' => $params['conversation']->id, 'debug' => __CLASS__ . '::' . __FUNCTION__));
         }
     }
 
@@ -85,8 +85,8 @@ class Scheduler
         $stmt->execute();
 
         // Schedule background worker for instant indexing
-        if (isset($dataOptions['use_php_resque']) && $dataOptions['use_php_resque'] == 1) {
-            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array());
+        if (isset($dataOptions['use_php_resque']) && $dataOptions['use_php_resque'] == 1 && erLhcoreClassRedis::instance()->llen('resque:queue:lhc_elastic_queue') <= 4) {
+            \erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_elastic_queue', 'erLhcoreClassElasticSearchWorker', array('chat_id' => $params['chat']->id, 'debug' => __CLASS__ . '::' . __FUNCTION__));
         }
     }
 
