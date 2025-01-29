@@ -11,7 +11,7 @@ $stmt->execute();
 $min_id = $stmt->fetch(PDO::FETCH_COLUMN);
 
 if (is_numeric($min_id)) {
-    $stmt = $db->prepare('INSERT IGNORE INTO `lhc_lheschat_index` (`chat_id`) SELECT `lh_chat`.`id` FROM `lh_chat` WHERE `lh_chat`.`id` >= :id');
+    $stmt = $db->prepare('INSERT IGNORE INTO `lhc_lheschat_index` (`chat_id`) SELECT `lh_chat`.`id` FROM `lh_chat` WHERE `lh_chat`.`id` >= :id AND `lh_chat`.`status` = 2');
     $stmt->bindValue(':id', $min_id,PDO::PARAM_INT);
     $stmt->execute();
 }
