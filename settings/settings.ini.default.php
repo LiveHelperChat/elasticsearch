@@ -1,7 +1,7 @@
 <?php 
 
 return array (
-		'host' 			=> getenv('ES_HOST') ?: 'localhost',//'localhost',		
+		'host' 			=> getenv('ES_HOST') ?: 'localhost',//'localhost' or http://login:pass@localhost
 		'port' 			=> getenv('ES_PORT') ?: '9200',
 		'verify_ssl' 	=> true,
 		'index' 		=> 'chat-',
