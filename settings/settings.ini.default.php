@@ -3,6 +3,7 @@
 return array (
 		'host' 			=> getenv('ES_HOST') ?: 'localhost',//'localhost',		
 		'port' 			=> getenv('ES_PORT') ?: '9200',
+		'verify_ssl' 	=> true,
 		'index' 		=> 'chat-',
         'index_search' 	=> 'chat-*',
 	    'additional_indexes' => array(

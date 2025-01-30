@@ -345,6 +345,7 @@ class erLhcoreClassElasticClient
                 'client' => [
                     RequestOptions::TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 15 : 10),
                     RequestOptions::CONNECT_TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 10 : 2),
+                    RequestOptions::VERIFY => ((isset($settings['verify_ssl']) && $settings['verify_ssl'] == true || !isset($settings['verify_ssl'])) ? true : false)
                 ],
             ])->build();
         }
