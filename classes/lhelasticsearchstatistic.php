@@ -301,11 +301,17 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['size'] = 0;
             $sparams['body']['from'] = 0;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'itime';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $groupByData['interval'];
+
+            if (is_numeric($groupByData['interval'])) {
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['fixed_interval'] = $groupByData['interval'] . 'ms';
+            } else {
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $groupByData['interval'];
+            }
 
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
             
             $sparams['body']['aggs']['chats_over_time']['aggs']['chat_status']['terms']['field'] = 'status';
+
             $response = $elasticSearchHandler->search($sparams);
 
 
@@ -387,7 +393,13 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['size'] = 0;
             $sparams['body']['from'] = 0;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'itime';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $groupByData['interval'];
+
+            if (is_numeric($groupByData['interval'])) {
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['fixed_interval'] = $groupByData['interval'] . 'ms';
+            } else {
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $groupByData['interval'];
+            }
+
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
 
             $response = $elasticSearchHandler->search($sparams);
@@ -823,16 +835,25 @@ class erLhcoreClassElasticSearchStatistic
 
         if ($aggr != 'weekday') {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $aggr;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         } else {
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+            /*$sparams['body']['aggs']['chats_over_time']['terms']['script'] = [
+                    "source" => "doc['time'].value.getDayOfWeek().getValue()",
+                    "lang" => "painless"
+            ];*/
+            $sparams['body']['aggs']['chats_over_time']['terms']['script'] = [
+                    "source" => "def zone = ZoneId.of('".self::getTimeZone()."'); 
+                            def instant = doc['time'].value.toInstant();
+                            def offset = zone.getRules().getOffset(instant);
+                            return instant.atOffset(offset).dayOfWeek.value;",
+                    "lang" => "painless" // Important: Painless is the default scripting language
+            ];
+            $sparams['body']['aggs']['chats_over_time']['terms']["order"]["_key"] = "asc";
+
         }
 
+        
         if (is_array($params['params_execution']['charttypes']) && (in_array('active',$params['params_execution']['charttypes']) || in_array('total_chats',$params['params_execution']['charttypes'])) ) {
             $sparams['body']['aggs']['chats_over_time']['aggs']['status_aggr']['terms']['field'] = 'status';
         }
@@ -979,14 +1000,23 @@ class erLhcoreClassElasticSearchStatistic
 
             if ($aggr != 'weekday') {
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-                $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $aggr;
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
             } else {
-                $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+               /* $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
                 $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
-                $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+                $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();*/
+
+                $sparams['body']['aggs']['chats_over_time']['terms']['script'] = [
+                    "source" => "def zone = ZoneId.of('".self::getTimeZone()."'); 
+                            def instant = doc['time'].value.toInstant();
+                            def offset = zone.getRules().getOffset(instant);
+                            return instant.atOffset(offset).dayOfWeek.value;",
+                    "lang" => "painless" // Important: Painless is the default scripting language
+                ];
+
             }
 
             $sparams['body']['aggs']['chats_over_time']['aggs']['msg_user']['filter']['term']['user_id'] = 0;
@@ -1056,8 +1086,10 @@ class erLhcoreClassElasticSearchStatistic
         }
 
         if ($aggr == 'weekday') {
-            $sundayData = $numberOfChats[7];
-            unset($numberOfChats[7]);
+            $sundayData = isset($numberOfChats[7]) ? $numberOfChats[7] : ['closed' => 0, 'total_chats' => 0, 'active' => 0, 'operators' => 0, 'pending' => 0, 'bot' => 0, 'chatinitdefault' => 0, 'chatinitproact' => 0, 'chatinitmanualinv' => 0, 'mobileinit' => 0, 'tabletinit' => 0, 'desktopinit' => 0, 'msg_user' => 0, 'msg_operator' => 0, 'msg_system' => 0, 'msg_bot' => 0];
+            if (isset($numberOfChats[7])) {
+                unset($numberOfChats[7]);
+            }
             $numberOfChats[0] = $sundayData;
         }
 
@@ -1086,14 +1118,22 @@ class erLhcoreClassElasticSearchStatistic
 
         if ($aggr !== 'weekday') {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $aggr;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         } else {
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            /*$sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();*/
+
+            $sparams['body']['aggs']['chats_over_time']['terms']['script'] = [
+                "source" => "def zone = ZoneId.of('".self::getTimeZone()."'); 
+                            def instant = doc['time'].value.toInstant();
+                            def offset = zone.getRules().getOffset(instant);
+                            return instant.atOffset(offset).dayOfWeek.value;",
+                "lang" => "painless" // Important: Painless is the default scripting language
+            ];
         }
 
         $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['avg']['field'] = 'wait_time';
@@ -1480,7 +1520,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 'day';
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = 'day';
         $sparams['body']['aggs']['chats_over_time']['aggs']['avg_wait_time']['avg']['field'] = 'wait_time';
 
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
@@ -2247,14 +2287,22 @@ class erLhcoreClassElasticSearchStatistic
 
         if ($aggr != 'weekday') {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $aggr;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         } else {
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            /*$sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();*/
+
+            $sparams['body']['aggs']['chats_over_time']['terms']['script'] = [
+                "source" => "def zone = ZoneId.of('".self::getTimeZone()."'); 
+                            def instant = doc['time'].value.toInstant();
+                            def offset = zone.getRules().getOffset(instant);
+                            return instant.atOffset(offset).dayOfWeek.value;",
+                "lang" => "painless" // Important: Painless is the default scripting language
+            ];
         }
 
         $validGroupFields = array(
@@ -2395,14 +2443,22 @@ class erLhcoreClassElasticSearchStatistic
 
         if ($aggr != 'weekday') {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $aggr;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         } else {
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
+            /*$sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['fixed_interval'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();*/
+
+            $sparams['body']['aggs']['chats_over_time']['terms']['script'] = [
+                "source" => "def zone = ZoneId.of('".self::getTimeZone()."'); 
+                            def instant = doc['time'].value.toInstant();
+                            def offset = zone.getRules().getOffset(instant);
+                            return instant.atOffset(offset).dayOfWeek.value;",
+                "lang" => "painless" // Important: Painless is the default scripting language
+            ];
         }
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
@@ -2495,14 +2551,22 @@ class erLhcoreClassElasticSearchStatistic
 
         if ($aggr != 'weekday') {
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr;
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $aggr;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
         } else {
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
+            /*$sparams['body']['aggs']['chats_over_time']['date_histogram']['script'] = "doc['time'].value.dayOfWeek;";
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['min'] = 1;
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['extended_bounds']['max'] = 7;
-            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
+            $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();*/
+
+            $sparams['body']['aggs']['chats_over_time']['terms']['script'] = [
+                "source" => "def zone = ZoneId.of('".self::getTimeZone()."'); 
+                            def instant = doc['time'].value.toInstant();
+                            def offset = zone.getRules().getOffset(instant);
+                            return instant.atOffset(offset).dayOfWeek.value;",
+                "lang" => "painless" // Important: Painless is the default scripting language
+            ];
         }
 
         if (isset($_GET['abandoned_chat']) && $_GET['abandoned_chat'] == 1) {
@@ -2746,7 +2810,7 @@ class erLhcoreClassElasticSearchStatistic
         $aggr = [1 => 'day', 0 => 'month'];
 
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['field'] = 'time';
-        $sparams['body']['aggs']['chats_over_time']['date_histogram']['interval'] = $aggr[$params['params_execution']['group_by']];
+        $sparams['body']['aggs']['chats_over_time']['date_histogram']['calendar_interval'] = $aggr[$params['params_execution']['group_by']];
         $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
 
         if (is_array($params['params_execution']['chart_type']) && (in_array('mmsgperinterval',$params['params_execution']['chart_type'])) ) {
