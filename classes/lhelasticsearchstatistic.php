@@ -1447,7 +1447,19 @@ class erLhcoreClassElasticSearchStatistic
         $paramsOrig['filter']['filter']['unanswered_chat'] = 1;
         self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
         $numberOfChats['total_unanswered_chat'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
-        
+
+        $sparamsItem = $sparams;
+        $paramsOrig = $params;
+        $paramsOrig['filter']['filter']['abnd'] = 1;
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
+        $numberOfChats['abandoned_chats'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
+
+        $sparamsItem = $sparams;
+        $paramsOrig = $params;
+        $paramsOrig['filter']['filter']['drpd'] = 1;
+        self::formatFilter($paramsOrig['filter'], $sparamsItem, array('subject_ids' => 'subject_id'));
+        $numberOfChats['dropped_chats'] = erLhcoreClassModelESChat::getCount($sparamsItem, $dateIndexFilter);
+
         $sparamsItem = $sparams;
         $paramsOrig = $params;
         $paramsOrig['filter']['filter']['status'] = erLhcoreClassModelChat::STATUS_CHATBOX_CHAT;
