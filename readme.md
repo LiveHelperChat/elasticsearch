@@ -2,7 +2,7 @@
 Remigijus Kiminas, Live Helper Chat
 
 ### ElasticSearch versions support
- - For ElasticSearch 7 use master branch
+ - For ElasticSearch 7.x-8.x use master branch. If for 7.x you encounter some issues just use master-7.x branch.
  - For ElasticSearch 5-6 use master-5.x-6.x branch
 
 ## Description
