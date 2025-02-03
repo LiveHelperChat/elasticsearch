@@ -958,8 +958,11 @@ class erLhcoreClassElasticSearchIndex
             $esChat->conversation_id_old = $item->conversation_id_old;
             $esChat->mailbox_id = $item->mailbox_id;
             $esChat->subject = $item->subject;
-            $esChat->body = strip_tags($item->body);
-            $esChat->alt_body = $item->alt_body;
+
+            // We store maximum 200 kb per indexed mail.
+            $esChat->body = mb_substr(strip_tags($item->body),0,209715);
+            $esChat->alt_body = mb_substr($item->alt_body,0,209715);
+
             $esChat->message_id = $item->message_id;
             $esChat->in_reply_to = $item->in_reply_to;
             $esChat->subject = $item->subject;
