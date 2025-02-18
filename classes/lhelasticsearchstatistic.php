@@ -1748,7 +1748,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
-        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
+        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 10000;
         
         // $filterOnline['filter']['usaccept'] = 0; erLhcoreClassChatStatistic::numberOfChatsDialogsByUser(30,$filterOnline);
         $sparams['body']['aggs']['group_by_user']['aggs']['us_accept']['filter']['term']['usaccept'] = 0;
@@ -1904,9 +1904,9 @@ class erLhcoreClassElasticSearchStatistic
             $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
         }
 
-        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
+        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 10000;
         $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['field'] = 'response_type';
-        $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['size'] = 1000;
+        $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['terms']['size'] = 10000;
 
         if (isset($params['filter_params']->group_conv) && $params['filter_params']->group_conv == 1) {
             $sparams['body']['aggs']['group_by_user']['aggs']['response_type']['aggs']['conversation']['cardinality']['field'] = 'conversation_id';
@@ -1964,7 +1964,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
-        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
+        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 10000;
         $sparams['body']['aggs']['group_by_user']['aggs']['duration_sum']['sum']['field'] = 'duration';
 
         $result = $elasticSearchHandler->search($sparams);
@@ -2010,7 +2010,7 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
-        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 1000;
+        $sparams['body']['aggs']['group_by_user']['terms']['size'] = 10000;
         $sparams['body']['aggs']['group_by_user']['aggs']['duration_sum']['sum']['field'] = 'duration';
 
         $sparams['body']['aggs']['group_by_user']['aggs']['frt_avg_part']['filter']['range']['frt']['gt'] = 0;
@@ -2036,7 +2036,7 @@ class erLhcoreClassElasticSearchStatistic
         $list = array();
 
         // Set again user List
-        $params['user_list'] = erLhcoreClassModelUser::getUserList(array('filterin' => array('id' => $userIdFilter)));
+        $params['user_list'] = erLhcoreClassModelUser::getUserList(array('limit' => 10000, 'filterin' => array('id' => $userIdFilter)));
 
         foreach ($params['user_list'] as $user) {
             $agentName = trim($user->name .' '. $user->surname);
