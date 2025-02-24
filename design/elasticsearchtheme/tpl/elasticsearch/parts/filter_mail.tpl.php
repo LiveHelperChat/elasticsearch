@@ -54,7 +54,7 @@
         </div>
 
         <div class="col-md-1">
-            <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','E-mail');?></label>
+            <label><?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/email_title.tpl.php')); ?></label>
             <div class="input-group input-group-sm">
                 <input type="text" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','E-mail');?>" class="form-control form-control-sm" name="email" value="<?php echo htmlspecialchars($input->email)?>" />
 
