@@ -662,6 +662,21 @@
             "dep_ids": {
 				"type": "long"
 			},
+            "max_chats": {
+              "type": "integer"
+            },
+            "pending_chats": {
+              "type": "integer"
+            },
+            "inactive_chats": {
+              "type": "integer"
+            },
+            "active_chats": {
+              "type": "integer"
+            },
+            "free_slots": {
+              "type": "integer"
+            },
 			"itime": {
 				"type": "date"
 			}			

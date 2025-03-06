@@ -472,11 +472,11 @@ class erLhcoreClassElasticSearchIndex
 
             if (isset($dataOptions['index_type'])) {
                 if ($dataOptions['index_type'] == 'daily') {
-                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' . date('Y.m.d',$item->time);
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' . date('Y.m.d',$esChat->itime/1000);
                 } elseif ($dataOptions['index_type'] == 'yearly') {
-                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' .  date('Y',$item->time);
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' .  date('Y',$esChat->itime/1000);
                 } elseif ($dataOptions['index_type'] == 'monthly') {
-                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' .  date('Y.m',$item->time);
+                    $indexSave = erLhcoreClassModelESPendingChat::$indexName . '-' . erLhcoreClassModelESPendingChat::$elasticType . '-' .  date('Y.m',$esChat->itime/1000);
                 }
             }
 
@@ -494,7 +494,7 @@ class erLhcoreClassElasticSearchIndex
 
         $ts = erLhcoreClassElasticSearchIndex::$ts !== null ? erLhcoreClassElasticSearchIndex::$ts-60 : time()-60;
 
-        $stmt = $db->prepare("SELECT user_id, dep_id FROM `lh_userdep` WHERE `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id");
+        $stmt = $db->prepare("SELECT user_id, dep_id, max_chats, pending_chats, inactive_chats, active_chats FROM `lh_userdep` WHERE `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id, max_chats, pending_chats, inactive_chats, active_chats");
         $stmt->bindValue(':time', $ts, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -507,6 +507,11 @@ class erLhcoreClassElasticSearchIndex
         $saveObjects = array();
         foreach ($rows as $row) {
             $saveObjects[$row['user_id']]['dep_ids'][] = (int)$row['dep_id'];
+            $saveObjects[$row['user_id']]['max_chats'] = (int)$row['max_chats'];
+            $saveObjects[$row['user_id']]['pending_chats'] = (int)$row['pending_chats'];
+            $saveObjects[$row['user_id']]['inactive_chats'] = (int)$row['inactive_chats'];
+            $saveObjects[$row['user_id']]['active_chats'] = (int)$row['active_chats'];
+            $saveObjects[$row['user_id']]['free_slots'] = $row['max_chats'] > 0 ? ((int)$row['max_chats'] + (int)$row['inactive_chats'] - ((int)$row['pending_chats'] + (int)$row['active_chats'])) : 0;
         }
 
         $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
@@ -519,6 +524,11 @@ class erLhcoreClassElasticSearchIndex
             $opEs = new erLhcoreClassModelESOnlineOperator();
             $opEs->dep_ids = $data['dep_ids'];
             $opEs->user_id = $userId;
+            $opEs->max_chats = $data['max_chats'];
+            $opEs->pending_chats = $data['pending_chats'];
+            $opEs->inactive_chats = $data['inactive_chats'];
+            $opEs->active_chats = $data['active_chats'];
+            $opEs->free_slots = $data['free_slots'];
             $opEs->itime = $ts;
 
             $indexSave = erLhcoreClassModelESOnlineOperator::$indexName . '-' . erLhcoreClassModelESOnlineOperator::$elasticType;

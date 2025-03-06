@@ -314,7 +314,6 @@ class erLhcoreClassElasticSearchStatistic
 
             $response = $elasticSearchHandler->search($sparams);
 
-
             $numberOfChats = array();
            
             $keyStatus = array(
@@ -402,13 +401,28 @@ class erLhcoreClassElasticSearchStatistic
 
             $sparams['body']['aggs']['chats_over_time']['date_histogram']['time_zone'] = self::getTimeZone();
 
+            $sparams['body']['aggs']['chats_over_time']['aggs']['active_chats']['sum']['field'] = 'active_chats';
+            $sparams['body']['aggs']['chats_over_time']['aggs']['free_slots']['sum']['field'] = 'free_slots';
+            $sparams['body']['aggs']['chats_over_time']['aggs']['max_chats']['sum']['field'] = 'max_chats';
+            $sparams['body']['aggs']['chats_over_time']['aggs']['inactive_chats']['sum']['field'] = 'inactive_chats';
+            $sparams['body']['aggs']['chats_over_time']['aggs']['pending_chats']['sum']['field'] = 'pending_chats';
+
             $response = $elasticSearchHandler->search($sparams);
+
 
             if (isset($response['aggregations']['chats_over_time']['buckets']))
             {
                 foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
                     $indexBucket = $bucket['key']/1000;
                     $numberOfChats[$indexBucket]['op_count'] = $bucket['doc_count'] / $groupByData['divide'];
+
+                    // Various chats stats
+                    $numberOfChats[$indexBucket]['free_slots'] = $bucket['free_slots']['value'];
+                    $numberOfChats[$indexBucket]['active_chats'] = $bucket['active_chats']['value'];
+                    $numberOfChats[$indexBucket]['max_chats'] = $bucket['max_chats']['value'];
+                    $numberOfChats[$indexBucket]['inactive_chats'] = $bucket['inactive_chats']['value'];
+                    $numberOfChats[$indexBucket]['pending_chats'] = $bucket['pending_chats']['value'];
+                    $numberOfChats[$indexBucket]['live_chats'] = $bucket['pending_chats']['value'] + $bucket['active_chats']['value'] - $bucket['inactive_chats']['value'];
 
                     foreach ($keyStatus as $mustHave) {
                         if (! isset($numberOfChats[$indexBucket][$mustHave])) {
@@ -447,6 +461,12 @@ class erLhcoreClassElasticSearchStatistic
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(1, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Online Operators'));
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(2, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Pending Chats'));
         $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(3, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Active Chats'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(4, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Free slots'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(5, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Total slots'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(6, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Live Chats (active chats + pending chats - inactive chats)'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(7, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Inactive chats'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(8, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Pending chats assigned to operators'));
+        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(9, 1, erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatexport','Active chats based on operators (Active + In-active)<'));
 
         $i = 2;
         foreach ($data as $time => $item) {
@@ -462,6 +482,24 @@ class erLhcoreClassElasticSearchStatistic
 
             $key++;
             $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['active']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['free_slots']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['max_chats']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['live_chats']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['inactive_chats']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['pending_chats']);
+
+            $key++;
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($key, $i, $item['active_chats']);
 
             $i++;
         }

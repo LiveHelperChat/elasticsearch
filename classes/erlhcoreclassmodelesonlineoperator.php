@@ -9,11 +9,17 @@ class erLhcoreClassModelESOnlineOperator
         $states = array(
             'user_id' => $this->user_id,
             'dep_ids' => $this->dep_ids,
-            'itime' => $this->itime
+            'itime' => $this->itime,
+            'max_chats' => $this->max_chats,
+            'pending_chats' => $this->pending_chats,
+            'inactive_chats' => $this->inactive_chats,
+            'active_chats' => $this->active_chats,
+            'free_slots' => $this->free_slots
         );
         
         return $states;
     }
+
 
     public function __get($var)
     {
@@ -37,4 +43,11 @@ class erLhcoreClassModelESOnlineOperator
     public $user_id = null;
 
     public $dep_ids = array();
+
+    public $max_chats = null;
+    public $pending_chats = null;
+    public $inactive_chats = null;
+    public $active_chats = null;
+    public $free_slots = null;
+
 }

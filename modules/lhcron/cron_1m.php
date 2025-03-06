@@ -51,7 +51,7 @@ $parts = ceil(erLhcoreClassModelChat::getCount(array('use_index' => 'status', 'f
 
 for ($i = 0; $i < $parts; $i++) {
 
-    echo "Pending chats records",($i + 1),"\n";
+    echo "Active chats records",($i + 1),"\n";
     $items = erLhcoreClassModelChat::getList(array('use_index' => 'status', 'filter' => array('status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
 
     erLhcoreClassElasticSearchIndex::indexPendingChats(array('items' => $items));

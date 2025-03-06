@@ -151,8 +151,16 @@
 
                     <ul class="dropdown-menu" role="menu">
                         <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="PendingChats"> Pending chats</label></li>
-                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('ActiveChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="ActiveChats"> Active chats</label></li>
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('ActiveChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="ActiveChats"> Active chats (Active + In-active)</label></li>
                         <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('OnlineOperators',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="OnlineOperators"> Online operators</label></li>
+
+                        <li class="border-top"><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('StrictlyActive',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="StrictlyActive"> Active chats based on operators (Active + In-active)</label></li>
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('PendingChatsOperator',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="PendingChatsOperator"> Pending chats assigned to operators</label></li>
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('LiveChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="LiveChats"> Live Chats (active chats + pending chats - inactive chats)</label></li>
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('InactiveChats',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="InactiveChats"> Inactive chats</label></li>
+
+                        <li class="border-top"><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('FreeSlots',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="FreeSlots"> Free slots</label></li>
+                        <li><label><input type="checkbox" <?php if (isset($_GET['displayChart']) && in_array('TotalSlots',$_GET['displayChart'])) : ?>checked="checked"<?php endif?> name="displayChart[]" value="TotalSlots"> Total slots</label></li>
                     </ul>
                 </li>
             </ul>
@@ -205,6 +213,30 @@ dataSets.push({
 });
 <?php endif ?>
 
+<?php if (isset($_GET['displayChart']) && is_array($_GET['displayChart']) && in_array('FreeSlots',$_GET['displayChart'])) : $showOperators = true;?>
+dataSets.push({
+    type: 'line',
+    label: 'Free slots',
+    borderColor: "rgb(235,54,69)",
+    borderWidth: 2,
+    fill: false,
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['free_slots'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-2"
+});
+<?php endif ?>
+
+<?php if (isset($_GET['displayChart']) && is_array($_GET['displayChart']) && in_array('TotalSlots',$_GET['displayChart'])) : $showOperators = true;?>
+dataSets.push({
+    type: 'line',
+    label: 'Total slots',
+    borderColor: "rgb(23,232,39)",
+    borderWidth: 2,
+    fill: false,
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['max_chats'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-2"
+});
+<?php endif ?>
+
 <?php if (!isset($_GET['displayChart']) || empty($_GET['displayChart']) || is_array($_GET['displayChart']) && in_array('PendingChats',$_GET['displayChart'])) : ?>
 dataSets.push({
     type: 'bar',
@@ -215,12 +247,53 @@ dataSets.push({
 });
 <?php endif ?>
 
+<?php if (isset($_GET['displayChart']) && is_array($_GET['displayChart']) && in_array('PendingChatsOperator',$_GET['displayChart'])) : ?>
+dataSets.push({
+    type: 'bar',
+    label: 'Pending chats assigned to operators',
+    backgroundColor: "rgb(235,87,154)",
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['pending_chats'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-1"
+});
+<?php endif ?>
+
 <?php if (!isset($_GET['displayChart']) || empty($_GET['displayChart']) || is_array($_GET['displayChart']) && in_array('ActiveChats',$_GET['displayChart'])) : ?>
 dataSets.push({
     type: 'bar',
-    label: 'Active Chats',
+    label: 'Active chats (Active + In-active)',
     backgroundColor: "rgb(93, 164, 35)",
     data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['active'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-1"
+});
+<?php endif; ?>
+
+<?php if (isset($_GET['displayChart']) && is_array($_GET['displayChart']) && in_array('StrictlyActive',$_GET['displayChart'])) : ?>
+dataSets.push({
+    type: 'bar',
+    label: 'Active chats based on operators (Active + In-Active)',
+    backgroundColor: "rgb(4,118,31)",
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['active_chats'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-1"
+});
+<?php endif; ?>
+
+
+<?php if (isset($_GET['displayChart']) && is_array($_GET['displayChart']) && in_array('LiveChats',$_GET['displayChart'])) : ?>
+dataSets.push({
+    type: 'bar',
+    label: 'Live Chats (Active chats + Pending chats - In-Active chats)',
+    backgroundColor: "rgb(164,123,35)",
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['live_chats'];?><?php $counter++;endforeach;?>],
+    yAxisID: "y-axis-1"
+});
+<?php endif; ?>
+
+<?php if (isset($_GET['displayChart']) && is_array($_GET['displayChart']) && in_array('InactiveChats',$_GET['displayChart'])) : ?>
+dataSets.push({
+    type: 'bar',
+    label: 'In-Active chats',
+    backgroundColor: "rgb(103,103,103)",
+    data: [<?php $counter = 0; foreach ($statistic as $key => $data) : ?><?php ($counter > 0 ? print ',' : '');echo $data['inactive_chats'];?><?php $counter++;endforeach;?>],
     yAxisID: "y-axis-1"
 });
 <?php endif; ?>
@@ -238,7 +311,7 @@ new Chart(ctx, {
     options: {
         responsive: true,
         title: {
-            display: true,
+            display: false,
             text: 'Pending/Active Chats VS Online Operators'
         },
         tooltips: {
@@ -251,12 +324,18 @@ new Chart(ctx, {
                 display: true,
                 position: "left",
                 id: "y-axis-1",
+                ticks: {
+                    beginAtZero: true // Start the scale at 0
+                }
             }<?php if ($showOperators == true) : ?>,
             {
                 type: "linear", // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
                 display: true,
                 position: "right",
                 id: "y-axis-2",
+                ticks: {
+                    beginAtZero: true // Start the scale at 0
+                },
                 gridLines: {
                     drawOnChartArea: false, // only want the grid lines for one axis to show up
                 },

@@ -7,6 +7,11 @@
 			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','User ID')?></th>
 			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
 			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Dep')?></th>
+			    <th width="30%" nowrap=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Free slots')?></th>
+			    <th width="30%" nowrap=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Total slots')?></th>
+			    <th width="30%" nowrap=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Active chats')?></th>
+			    <th width="30%" nowrap=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Pending chats')?></th>
+			    <th width="30%" nowrap=""><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Inactive chats')?></th>
 			    <th width="30%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Indice')?></th>
 			    <th></th>
 			</tr>  
@@ -16,6 +21,11 @@
 		        <td><?php echo $item->user_id?></a></td>
 		        <td><?php echo $item->itime_front?></td>
 		        <td><?php echo json_encode($item->dep_ids,true)?></td>
+		        <td><?php echo $item->free_slots?></td>
+		        <td><?php echo $item->max_chats?></td>
+		        <td><?php echo $item->active_chats?></td>
+		        <td><?php echo $item->pending_chats?></td>
+		        <td><?php echo $item->inactive_chats?></td>
                 <td><?php echo htmlspecialchars($item->meta_data['index'])?></td>
                 <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
 		        <td>
@@ -25,6 +35,8 @@
 		    </tr>
 		<?php endforeach; ?>
 	</table>
+
+
 
 	<?php include(erLhcoreClassDesign::designtpl('lhkernel/secure_links.tpl.php')); ?>
 
