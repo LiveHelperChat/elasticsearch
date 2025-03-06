@@ -109,6 +109,8 @@
                'selected_id'    => $input->department_ids,
                'css_class'      => 'form-control',
                'display_name'   => 'name',
+               'ajax'           => 'deps',
+               'list_function_params' => array_merge(['sort' => '`name` ASC','limit' => 50],erLhcoreClassUserDep::conditionalDepartmentFilter()),
                'list_function'  => 'erLhcoreClassModelDepartament::getList'
            )); ?>
         </div>
@@ -123,6 +125,7 @@
                'selected_id'    => $input->department_group_ids,
                'css_class'      => 'form-control',
                'display_name'   => 'name',
+               'list_function_params' => array_merge(['sort' => '`name` ASC'],erLhcoreClassUserDep::conditionalDepartmentGroupFilter()),
                'list_function'  => 'erLhcoreClassModelDepartamentGroup::getList'
            )); ?>
         </div>   
