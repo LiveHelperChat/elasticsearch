@@ -24,15 +24,33 @@ class erLhcoreClassModelESPendingChat
             case 'itime_front':
                 $this->itime_front = date('Ymd') == date('Ymd', $this->itime / 1000) ? date(erLhcoreClassModule::$dateHourFormat, $this->itime / 1000) : date(erLhcoreClassModule::$dateDateHourFormat, $this->itime / 1000);
                 return $this->itime_front;
-                ;
-                break;
 
             case 'time_front':
                 $this->time_front = date('Ymd') == date('Ymd', $this->time / 1000) ? date(erLhcoreClassModule::$dateHourFormat, $this->time / 1000) : date(erLhcoreClassModule::$dateDateHourFormat, $this->time / 1000);
                 return $this->time_front;
-                ;
-                break;
-                
+
+            case 'department':
+                $this->department = false;
+                if ($this->dep_id > 0) {
+                    try {
+                        $this->department = erLhcoreClassModelDepartament::fetch($this->dep_id,true);
+                    } catch (Exception $e) {
+
+                    }
+                }
+                return $this->department;
+
+            case 'chat':
+                $this->chat = false;
+                if ($this->chat_id > 0) {
+                    try {
+                        $this->chat = erLhcoreClassModelChat::fetch($this->chat_id,true);
+                    } catch (Exception $e) {
+
+                    }
+                }
+                return $this->chat;
+
             default:
                 break;
         }

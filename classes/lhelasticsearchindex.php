@@ -494,7 +494,7 @@ class erLhcoreClassElasticSearchIndex
 
         $ts = erLhcoreClassElasticSearchIndex::$ts !== null ? erLhcoreClassElasticSearchIndex::$ts-60 : time()-60;
 
-        $stmt = $db->prepare("SELECT user_id, dep_id, max_chats, pending_chats, inactive_chats, active_chats FROM `lh_userdep` WHERE `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id, max_chats, pending_chats, inactive_chats, active_chats");
+        $stmt = $db->prepare("SELECT user_id, dep_id, max_chats, pending_chats, inactive_chats, active_chats FROM `lh_userdep` WHERE `ro` = 0 AND `exclude_autoasign` = 0 AND `exc_indv_autoasign` = 0 AND `last_activity` > :time and hide_online = 0 GROUP BY user_id, dep_id, max_chats, pending_chats, inactive_chats, active_chats");
         $stmt->bindValue(':time', $ts, PDO::PARAM_INT);
         $stmt->execute();
 

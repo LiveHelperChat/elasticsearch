@@ -12,7 +12,7 @@
                         <td><?php echo $counter?>. </td>
                         <td><a class="material-icons" id="preview-item-<?php echo $chat->chat_id?>" data-list-navigate="true" onclick="lhc.previewChat(<?php echo $chat->chat_id?>,this)">info_outline</a><?php echo htmlspecialchars($chat->chat_id);?></td>
                         <td><?php echo date('Y-m-d H:i:s',$chat->itime/1000);?></td>
-                        <td><?php echo $chat->dep_id;?></td>
+                        <td><a class="live-help-tooltip" data-placement="top" data-bs-toggle="tooltip" data-bs-original-title="<?php echo htmlspecialchars($chat->department); ?>"><?php echo $chat->dep_id;?></a></td>
                     </tr>
                 <?php endif; endforeach; ?>
                 <tr class="text-success">
@@ -24,9 +24,11 @@
                 <?php $counter = 0; foreach ($chats as $chat) : if ($chat->status == 1) : $counter++;?>
                     <tr>
                         <td><?php echo $counter?>. </td>
-                        <td><a class="material-icons" id="preview-item-<?php echo $chat->chat_id?>" data-list-navigate="true" onclick="lhc.previewChat(<?php echo $chat->chat_id?>,this)">info_outline</a><?php echo htmlspecialchars($chat->chat_id);?></td>
+                        <td><a data-placement="top" data-bs-toggle="tooltip" data-bs-original-title="User ID - <?php echo htmlspecialchars(is_object($chat->chat) ? $chat->chat->user_id : 0); ?>" class="material-icons live-help-tooltip" id="preview-item-<?php echo $chat->chat_id?>" data-list-navigate="true" onclick="lhc.previewChat(<?php echo $chat->chat_id?>,this)">info_outline</a><?php echo htmlspecialchars($chat->chat_id);?></td>
                         <td><?php echo date('Y-m-d H:i:s',$chat->itime/1000);?></td>
-                        <td><?php echo $chat->dep_id;?></td>
+                        <td>
+                            <a class="live-help-tooltip" data-placement="top" data-bs-toggle="tooltip" data-bs-original-title="<?php echo htmlspecialchars($chat->department); ?>"><?php echo $chat->dep_id;?></a>
+                        </td>
                     </tr>
                 <?php endif; endforeach; ?>
             </table>
@@ -54,7 +56,7 @@
                         'live_chats' => 0
                 ]; foreach ($operators as $operator) : ?>
                 <tr>
-                    <td><a href="#" title="See operator statistic" onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'statistic/userstats/<?php echo $operator->user_id;?>?ts=<?php echo $operator->itime/1000?>'})"><span class="material-icons">bar_chart</span></a><?php echo $operator->user_id;?></td>
+                    <td><a href="#" title="See operator statistic" onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'statistic/userstats/<?php echo $operator->user_id;?>?ts=<?php echo $operator->itime/1000?>'})"><span class="material-icons">bar_chart</span></a><a class="live-help-tooltip" data-placement="top" data-bs-toggle="tooltip" data-bs-original-title="<?php echo htmlspecialchars($operator->plain_user_name); ?>"><?php echo $operator->user_id;?></a></td>
                     <td><?php echo date('Y-m-d H:i:s',$operator->itime/1000);?></td>
                     <td><?php echo $operator->max_chats; $totals['max_chats'] += $operator->max_chats; ?></td>
                     <td><?php echo $operator->pending_chats; $totals['pending_chats'] += $operator->pending_chats;?></td>
@@ -62,7 +64,9 @@
                     <td><?php echo $operator->inactive_chats; $totals['inactive_chats'] += $operator->inactive_chats;?></td>
                     <td><?php echo $operator->free_slots; $totals['free_slots'] += $operator->free_slots;?></td>
                     <td><?php echo $operator->active_chats + $operator->pending_chats - $operator->inactive_chats; $totals['live_chats'] += $operator->active_chats + $operator->pending_chats - $operator->inactive_chats;?></td>
-                    <td><span title="<?php echo json_encode($operator->dep_ids); ?>" class="material-icons">info_outline</span> </td>
+                    <td>
+                        <a class="live-help-tooltip" data-placement="top" data-bs-toggle="tooltip" data-bs-original-title="<?php echo json_encode($operator->dep_ids); ?>"><i class="material-icons">info_outline</i></a>
+                    </td>
                 </tr>
                 <?php endforeach;?>
                 <tr>
@@ -75,12 +79,15 @@
                     <th colspan="2"><?php echo $totals['live_chats']; ?> (<?php echo round($totals['live_chats'] / $divide, 2);?>)</th>
                 </tr>
             </table>
+            <ul>
+                <li>Some operators from active chats might not be listed as online.</li>
+            </ul>
         </div>
-
-
-
     </div>
-
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+</script>
 
 
 

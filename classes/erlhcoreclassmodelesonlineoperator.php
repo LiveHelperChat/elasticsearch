@@ -28,9 +28,25 @@ class erLhcoreClassModelESOnlineOperator
             case 'itime_front':
                 $this->itime_front = date('Ymd') == date('Ymd', $this->itime / 1000) ? date(erLhcoreClassModule::$dateHourFormat, $this->itime / 1000) : date(erLhcoreClassModule::$dateDateHourFormat, $this->itime / 1000);
                 return $this->itime_front;
-                ;
-                break;
-                        
+
+            case 'user':
+                $this->user = false;
+                if ($this->user_id > 0) {
+                    try {
+                        $this->user = erLhcoreClassModelUser::fetch($this->user_id,true);
+                    } catch (Exception $e) {
+                        $this->user = false;
+                    }
+                }
+                return $this->user;
+
+            case 'plain_user_name':
+                $this->plain_user_name = false;
+                if ($this->user !== false) {
+                    $this->plain_user_name = (string)$this->user->name_support;
+                }
+                return $this->plain_user_name;
+
             default:
                 break;
         }
