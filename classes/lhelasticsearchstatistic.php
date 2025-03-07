@@ -417,12 +417,12 @@ class erLhcoreClassElasticSearchStatistic
                     $numberOfChats[$indexBucket]['op_count'] = $bucket['doc_count'] / $groupByData['divide'];
 
                     // Various chats stats
-                    $numberOfChats[$indexBucket]['free_slots'] = $bucket['free_slots']['value'];
-                    $numberOfChats[$indexBucket]['active_chats'] = $bucket['active_chats']['value'];
-                    $numberOfChats[$indexBucket]['max_chats'] = $bucket['max_chats']['value'];
-                    $numberOfChats[$indexBucket]['inactive_chats'] = $bucket['inactive_chats']['value'];
-                    $numberOfChats[$indexBucket]['pending_chats'] = $bucket['pending_chats']['value'];
-                    $numberOfChats[$indexBucket]['live_chats'] = $bucket['pending_chats']['value'] + $bucket['active_chats']['value'] - $bucket['inactive_chats']['value'];
+                    $numberOfChats[$indexBucket]['free_slots'] = $bucket['free_slots']['value'] /  $groupByData['divide'];
+                    $numberOfChats[$indexBucket]['active_chats'] = $bucket['active_chats']['value'] / $groupByData['divide'];
+                    $numberOfChats[$indexBucket]['max_chats'] = $bucket['max_chats']['value'] / $groupByData['divide'];
+                    $numberOfChats[$indexBucket]['inactive_chats'] = $bucket['inactive_chats']['value'] / $groupByData['divide'];
+                    $numberOfChats[$indexBucket]['pending_chats'] = $bucket['pending_chats']['value'] / $groupByData['divide'];
+                    $numberOfChats[$indexBucket]['live_chats'] = ($bucket['pending_chats']['value'] + $bucket['active_chats']['value'] - $bucket['inactive_chats']['value']) / $groupByData['divide'];
 
                     foreach ($keyStatus as $mustHave) {
                         if (! isset($numberOfChats[$indexBucket][$mustHave])) {

@@ -312,6 +312,30 @@ new Chart(ctx, {
     type: 'bar',
     data: chartData,
     options: {
+        onClick: function(evt, elements) {
+            if (elements && elements.length > 0) {
+                // Get the clicked element
+                const element = elements[0];
+
+                // Get the dataset index and data index
+                const datasetIndex = element._datasetIndex;
+                const dataIndex = element._index;
+
+                // Get the value of the clicked bar
+                const value = this.data.datasets[datasetIndex].data[dataIndex];
+
+                // Get the label (might be useful for context)
+                const label = this.data.labels[dataIndex];
+
+
+
+                lhc.revealModal({'title' : <?php echo json_encode(erTranslationClassLhTranslation::getInstance()->getTranslation('chat/chatpreview','Momentary statistic at'))?> + ' - ' + label, 'iframe' : true,'height' : '600px','url':'<?php echo erLhcoreClassDesign::baseurl('elasticsearch/statisticpending')?><?php echo erLhcoreClassSearchHandler::getURLAppendFromInput($input)?>?date='+encodeURI(label)});
+
+
+                // You can call your custom function here with the value
+                /*handleBarClick(label, value, datasetIndex);*/
+            }
+        },
         responsive: true,
         title: {
             display: false,
