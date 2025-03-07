@@ -81,6 +81,7 @@
             </table>
             <ul>
                 <li>Some operators from active chats might not be listed as online.</li>
+                <li>The operators list excludes those who were offline, had read-only permissions, or were excluded from the auto-assignment flow.</li>
             </ul>
         </div>
     </div>
