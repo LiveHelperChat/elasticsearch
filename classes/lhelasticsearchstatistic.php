@@ -2362,11 +2362,13 @@ class erLhcoreClassElasticSearchStatistic
             'department' => 'dep_id',
             'user_id' => 'user_id',
             'transfer_uid' => 'transfer_uid',
+            'referrer' => 'referrer',
+            'session_referrer' => 'session_referrer'
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('statistic.validgroupfields', array('type' => 'elastic', 'fields' => & $validGroupFields));
 
-        if ($filterParams['group_field'] == 'device_type') {
+        if (in_array($filterParams['group_field'], ['referrer','session_referrer'])) {
             return;
         }
 
