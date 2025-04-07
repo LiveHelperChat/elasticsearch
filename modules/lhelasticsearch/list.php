@@ -48,7 +48,7 @@ if (isset($_GET['ds'])) {
 
 $tpl->set('input_msg', $filterParamsMsg['input_form']);
 
-if ($tab == 'chats') {    
+if ($tab == 'chats') {
             
     $sparams = array(
         'body' => array()
@@ -499,6 +499,20 @@ if ($tab == 'chats') {
 
                 $chatIds = array_unique($chatIds);
 
+                if (!$currentUser->hasAccessTo('lhaudit','ignore_view_actions')) {
+                    erLhcoreClassLog::write(erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']),
+                        ezcLog::SUCCESS_AUDIT,
+                        array(
+                            'source' => 'lhc',
+                            'category' => 'chat_export_elastic',
+                            'line' => __LINE__,
+                            'file' => __FILE__,
+                            'object_id' => 0,
+                            'user_id' => $currentUser->getUserID()
+                        )
+                    );
+                }
+
                 // @todo add archived chats support as not all elastic chats are in live tables
                 erLhcoreClassChatExport::chatListExportXLS($chatIds, array('csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
                 exit;
@@ -593,6 +607,20 @@ if ($tab == 'chats') {
         }
 
         $tpl->set('pages', $pages);
+
+        if (!$currentUser->hasAccessTo('lhaudit','ignore_view_actions')) {
+            erLhcoreClassLog::write(erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']),
+                ezcLog::SUCCESS_AUDIT,
+                array(
+                    'source' => 'lhc',
+                    'category' => 'chat_search_elastic',
+                    'line' => __LINE__,
+                    'file' => __FILE__,
+                    'object_id' => 0,
+                    'user_id' => $currentUser->getUserID()
+                )
+            );
+        }
     }
 
 } else {

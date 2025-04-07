@@ -479,6 +479,20 @@ if ($filterParams['input_form']->ds == 1)
 
             $chatIds = array_unique($chatIds);
 
+            if (!$currentUser->hasAccessTo('lhaudit','ignore_view_actions')) {
+                erLhcoreClassLog::write(erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']),
+                    ezcLog::SUCCESS_AUDIT,
+                    array(
+                        'source' => 'lhc',
+                        'category' => 'mail_export_elastic',
+                        'line' => __LINE__,
+                        'file' => __FILE__,
+                        'object_id' => 0,
+                        'user_id' => $currentUser->getUserID()
+                    )
+                );
+            }
+
             erLhcoreClassMailconvExport::export(null, array('conversation_id' => $chatIds, 'csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
 
             exit;
@@ -763,6 +777,21 @@ if ($filterParams['input_form']->ds == 1)
     }
 
     $tpl->set('pages', $pages);
+
+    if (!$currentUser->hasAccessTo('lhaudit','ignore_view_actions')) {
+        erLhcoreClassLog::write(erLhcoreClassSearchHandler::getURLAppendFromInput($filterParams['input_form']),
+            ezcLog::SUCCESS_AUDIT,
+            array(
+                'source' => 'lhc',
+                'category' => 'mail_search_elastic',
+                'line' => __LINE__,
+                'file' => __FILE__,
+                'object_id' => 0,
+                'user_id' => $currentUser->getUserID()
+            )
+        );
+    }
+
 }
 
 $tpl->set('Result',['path' => array(
