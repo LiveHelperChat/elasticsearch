@@ -325,12 +325,36 @@ $fieldsSearch['timefrom'] = array (
     )
 );
 
+$fieldsSearch['id_gt'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filtergt',
+    'filter_table_field' => '`lhc_mailconv_conversation`.`id`',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int'
+    )
+);
+
 $fieldsSearch['timefromts'] = array (
     'type' => 'text',
     'trans' => 'id',
     'required' => false,
     'valid_if_filled' => false,
     'filter_type' => 'filtergte',
+    'filter_table_field' => 'time',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int'
+    )
+);
+
+$fieldsSearch['timetots'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterlte',
     'filter_table_field' => 'time',
     'validation_definition' => new ezcInputFormDefinitionElement (
         ezcInputFormDefinitionElement::OPTIONAL, 'int'

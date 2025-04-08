@@ -30,6 +30,8 @@ class erLhcoreClassExtensionElasticsearch
             $dispatcher->listen('statistic.valid_tabs', 'erLhcoreClassElasticSearchStatistic::appendStatisticTab');
             $dispatcher->listen('statistic.process_tab', 'erLhcoreClassElasticSearchStatistic::processTab');
 
+            $dispatcher->listen('restapi.swagger', 'LiveHelperChatExtension\elasticsearch\providers\Swagger\Definition::setDefinition');
+
             if (isset($this->settings_personal['use_es_statistic']) && $this->settings_personal['use_es_statistic'] == true)
             {
                 $dispatcher->listen('statistic.gettopchatsbycountry', 'erLhcoreClassElasticSearchStatistic::statisticGettopchatsbycountry');
