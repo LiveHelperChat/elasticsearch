@@ -130,6 +130,8 @@ $indexSearch .=',' . erLhcoreClassElasticSearchStatistic::getIndexByFilter([
     'date_filter' => $dateFilter,
 ));
 
+erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.chatsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
+
 $sparamsCount = $sparams;
 $sparamsCount['index'] = $indexSearch;
 $sparamsCount['ignore_unavailable'] = true;
