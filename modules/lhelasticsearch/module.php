@@ -17,6 +17,7 @@ $ViewList['interactions'] = array(
     'multiple_arguments' => array(
         'search_in',
     ),
+    'functions' => array('use')
 );
 
 $ViewList['list'] = array(
