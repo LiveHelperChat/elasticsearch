@@ -51,6 +51,17 @@ class Definition
             "collectionFormat": "multi"
           },
           {
+            "name": "ids[]",
+            "in": "query",
+            "description": "Conversations IDs",
+            "required": false,
+            "type": "array",
+            "items":{
+              "type":"integer"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "mailbox_ids[]",
             "in": "query",
             "description": "Mailbox IDs",
@@ -240,6 +251,285 @@ class Definition
         "responses": {
           "200": {
             "description": "Fetch mail conversations list",
+            "schema": {
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+            }
+          }
+        },
+        "security": [
+          {
+            "login": []
+          }
+        ]
+      }
+    },"/restapi/elasticchats": {
+      "get": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Fetch chats. It searches for chats in ElasticSearch",
+        "description": "Required permissions - `lhmailconv`,`use_admin`. List content depends on assigned API user departments.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {{chats_parameters}}{
+            "name": "department_id",
+            "in": "query",
+            "description": "Department ID",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "department_ids[]",
+            "in": "query",
+            "description": "Department ID\'s",
+            "required": false,
+            "type": "array",
+            "items":{
+              "type":"integer"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "department_group_ids[]",
+            "in": "query",
+            "description": "Department group ID\'s",
+            "required": false,
+            "type": "array",
+            "items":{
+              "type":"integer"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "user_ids[]",
+            "in": "query",
+            "description": "User IDs",
+            "required": false,
+            "type": "array",
+            "items":{
+              "type":"integer"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Phone",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "nick",
+            "in": "query",
+            "description": "Nick",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "chat_status_ids[]",
+            "in": "query",
+            "description": "chat_status_ids. \nconst STATUS_PENDING_CHAT = 0;\n   const STATUS_ACTIVE_CHAT = 1;\n   const STATUS_CLOSED_CHAT = 2;\n   const STATUS_CHATBOX_CHAT = 3;\n   const STATUS_OPERATORS_CHAT = 4;\n   const STATUS_BOT_CHAT = 5;",
+            "required": false,
+            "type": "array",
+            "items":{
+              "type":"integer"
+            },
+             "collectionFormat": "multi"
+          },
+          {
+            "name": "has_operator",
+            "description": "Has operator",
+            "required": false,
+            "type": "boolean",
+            "default": "",
+            "in": "query"
+          },
+          {
+            "name": "with_bot",
+            "description": "Chats which had a bot",
+            "required": false,
+            "type": "boolean",
+            "default": "",
+            "in": "query"
+          },
+          {
+            "name": "without_bot",
+            "description": "Chats which did not had a bot",
+            "required": false,
+            "type": "boolean",
+            "default": "",
+            "in": "query"
+          },
+          {
+            "name": "bot_ids[]",
+            "description": "Bot ID\'s",
+            "required": false,
+            "default": "",
+            "in": "query",
+            "type": "array",
+            "items":{
+              "type":"integer"
+            },
+             "collectionFormat": "multi"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "count_records",
+            "description": "Count total records by filter",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "id_gt",
+            "in": "query",
+            "description": "ID greater than",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "include_messages",
+            "description": "Include messages within chat",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "include_survey",
+            "description": "Include survey",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "timefromts",
+            "in": "query",
+            "description": "Time greater than. Unix timestamp. time >=",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "timetots",
+            "in": "query",
+            "description": "Time less than. Unix timestamp. time <=",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "prefill_fields",
+            "description": "What fields to prefill E.g messages_statistic, subject, link, time_created_front, department_name, plain_user_name, product_name, n_official, n_off_full, wait_time_pending, wait_time_seconds, cls_time_front, status_sub_sub, can_edit_chat, unread_time, chat_actions",
+            "required": false,
+            "type": "string",
+            "in": "query"
+          },
+          {
+            "name": "ignore_fields",
+            "description": "What fields to skip E.g product_id, product, department, time, status, user, additional_data, additional_data_array, chat_variables, chat_variables_array",
+            "required": false,
+            "type": "string",
+            "in": "query"
+          },
+          {
+            "name": "keyword",
+            "description": "Keyword",
+            "required": false,
+            "type": "string",
+            "in": "query"
+          },
+          {
+            "name": "search_in[]",
+            "in": "query",
+            "description": "Search in. Search in. 2 - Visitor messages, 3 - Operator messages, 4 - System messages",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "exact_match",
+            "description": "Exact match phrase",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "expression",
+            "description": "Expression search",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "fuzzy",
+            "description": "Fuzzy search",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "fuzzy_prefix",
+            "in": "query",
+            "description": "Length of keyword minus n character",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          }
+          {{elastic_chat_search_parameters}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch chat list",
             "schema": {
             }
           },

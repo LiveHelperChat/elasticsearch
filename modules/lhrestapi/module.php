@@ -10,3 +10,9 @@ $ViewList['elasticconversations'] = array(
     'uparams' => array(),
     'functions' => array()
 );
+
+$ViewList['elasticchats'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array()
+);
