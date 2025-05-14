@@ -12,7 +12,7 @@ class Definition
           "mail"
         ],
         "summary": "Fetch mail messages list. It searches for mail messages.",
-        "description": "Required permissions - `lhmailconv`,`use_admin`. List content depends on assigned API user departments.",
+        "description": "Required permissions - `lhchat`,`use`. List content depends on assigned API user departments.",
         "produces": [
           "application/json"
         ],
