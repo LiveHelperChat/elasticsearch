@@ -22,7 +22,7 @@
                 <?php if (isset($pages) && $pages->items_total > 0): $can_delete = erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','delete'); ?>
                     <form action="<?php echo $pages->serverURL?>?<?php echo $pages->querystring?>" method="post">
 
-                    <table class="table table-sm mt-1 list-links">
+                    <table class="table table-sm mt-1 list-links" id="mail-list-table">
                         <thead>
                         <tr>
                             <th><input class="mb-0" type="checkbox" id="check-all-items" /></th>
@@ -83,11 +83,11 @@
 
                                     <a class="action-image material-icons" data-title="<?php echo htmlspecialchars($item->subject)?>" onclick="lhinst.startMailNewWindow(<?php echo $item->conversation_id?>,$(this).attr('data-title'))" >open_in_new</a>
 
-                                    <a class="me-2" onclick='lhinst.startMailChat(<?php echo $item->conversation_id?>,$("#tabs"),<?php echo json_encode($item->subject_front,JSON_HEX_APOS)?>)' href="#!#chat-id-mc<?php echo $item->conversation_id?>">
+                                    <a class="me-2 mail-link" title="<?php echo htmlspecialchars($item->subject_front)?>" href="#/chat-id-mc<?php echo $item->conversation_id?>">
                                     <?php echo $item->conversation_id?>
                                     </a>
 
-                                    <a class="user-select-none" onclick='lhinst.startMailChat(<?php echo $item->conversation_id?>,$("#tabs"),<?php echo json_encode($item->subject_front,JSON_HEX_APOS)?>)' href="#!#chat-id-mc<?php echo $item->conversation_id?>" ><?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->subject,50))?></a>
+                                    <a class="user-select-none mail-link" title="<?php echo htmlspecialchars($item->subject_front)?>" href="#/chat-id-mc<?php echo $item->conversation_id?>" ><?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->subject,50))?></a>
 
                                     <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
                                         <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/rawmail')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
@@ -197,6 +197,13 @@
                                             updateDeleteArchiveUI();
                                         });
                                         $('input[name="ConversationID[]"]').change(updateDeleteArchiveUI);
+
+                                        $('#mail-list-table a.mail-link').click(function(event){
+                                            window.location.href = event.currentTarget.href;
+                                            ee.emitEvent('svelteOpenMail',[window.location.hash.split('chat-id-mc')[1],event.currentTarget.title]);
+                                            event.preventDefault(); // Prevent the default behavior (opening a new tab)
+                                        })
+
                                     });
                                 </script>
                             <?php endif; ?>
