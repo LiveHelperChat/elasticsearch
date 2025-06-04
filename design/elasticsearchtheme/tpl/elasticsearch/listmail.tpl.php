@@ -197,13 +197,6 @@
                                             updateDeleteArchiveUI();
                                         });
                                         $('input[name="ConversationID[]"]').change(updateDeleteArchiveUI);
-
-                                        $('#mail-list-table a.mail-link').click(function(event){
-                                            window.location.href = event.currentTarget.href;
-                                            ee.emitEvent('svelteOpenMail',[window.location.hash.split('chat-id-mc')[1],event.currentTarget.title]);
-                                            event.preventDefault(); // Prevent the default behavior (opening a new tab)
-                                        })
-
                                     });
                                 </script>
                             <?php endif; ?>
@@ -214,6 +207,15 @@
                         <?php endif; ?>
 
                     <?php endif; ?>
+                    <script>
+                         $( document ).ready(function() {
+                            $('#mail-list-table a.mail-link').click(function(event){
+                                window.location.href = event.currentTarget.href;
+                                ee.emitEvent('svelteOpenMail',[window.location.hash.split('chat-id-mc')[1],event.currentTarget.title]);
+                                event.preventDefault(); // Prevent the default behavior (opening a new tab)
+                            });
+                        });
+                    </script>
 
                 </form>
                 <?php else: ?>
