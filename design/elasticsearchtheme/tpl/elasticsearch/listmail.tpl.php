@@ -94,7 +94,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td ng-non-bindable>
-                                    <?php echo htmlspecialchars(erLhcoreClassDesign::shrt($item->from_name.' <'.$item->from_address.'>',30))?>
+                                    <?php echo erLhcoreClassDesign::shrt(($item->from_name == $item->from_address && !erLhcoreClassUser::instance()->hasAccessTo('lhmailconv','mail_see_unhidden_email') ? \LiveHelperChat\Helpers\Anonymizer::maskEmail($item->from_name) : $item->from_name) . ' ✉︎ ' . (erLhcoreClassUser::instance()->hasAccessTo('lhmailconv','mail_see_unhidden_email') ? $item->from_address : \LiveHelperChat\Helpers\Anonymizer::maskEmail($item->from_address)),30); ?>
                                 </td>
                                 <td ng-non-bindable>
                                     <?php if (isset($item->meta_data['highlight'])) : ?>
