@@ -195,9 +195,9 @@ class erLhcoreClassElasticSearchIndex
             $esChat->hour = $date_utc->format("H");
 
             if (isset($params['archive']) && $params['archive'] == true) {
-                $messagesChat = erLhcoreClassModelChatArchiveMsg::getList(array('limit' => 5000, 'filter' => array('chat_id' => $item->id)));
+                $messagesChat = erLhcoreClassModelChatArchiveMsg::getList(array('filternotlikefields' => [['meta_msg' => '"debug":true']], 'limit' => 5000, 'filter' => array('chat_id' => $item->id)));
             } else {
-                $messagesChat = erLhcoreClassModelmsg::getList(array('limit' => 5000, 'filter' => array('chat_id' => $item->id)));
+                $messagesChat = erLhcoreClassModelmsg::getList(array('filternotlikefields' => [['meta_msg' => '"debug":true']], 'limit' => 5000, 'filter' => array('chat_id' => $item->id)));
             }
 
             $esChat->msg_visitor = null;
@@ -210,9 +210,6 @@ class erLhcoreClassElasticSearchIndex
                 } elseif ($messageChat->user_id > 0) {
                     $esChat->msg_operator .= $messageChat->msg . "\n";
                 } else {
-                    if ($messageChat->meta_msg != '' && str_contains($messageChat->meta_msg, '"debug":true')) { // Ignore debug messages
-                        continue;
-                    }
                     $esChat->msg_system .= $messageChat->msg . "\n";
                 }
             }
