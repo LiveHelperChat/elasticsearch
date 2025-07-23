@@ -136,24 +136,10 @@ if (trim((string)$filterParams['input_form']->status_conv) != '') {
     $sparams['body']['query']['bool']['must'][]['term']['status_conv'] = (int)trim($filterParams['input_form']->status_conv);
 }
 
-if (trim((string)$filterParams['input_form']->department_id) != '') {
-    $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = (int)trim($filterParams['input_form']->department_id);
-}
+
 
 if (is_numeric($filterParams['input_form']->is_external)) {
     $sparams['body']['query']['bool']['must'][]['term']['is_external'] = $filterParams['input_form']->is_external;
-}
-
-if (trim((string)$filterParams['input_form']->department_group_id) != '') {
-    $db = ezcDbInstance::get();
-    $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
-    $stmt->bindValue( ':group_id', $filterParams['input']->department_group_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $depIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-    if (!empty($depIds)) {
-        $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $depIds;
-    }
 }
 
 if (isset($filterParams['input']->group_id) && is_numeric($filterParams['input']->group_id) && $filterParams['input']->group_id > 0 ) {
@@ -182,23 +168,43 @@ if (isset($filterParams['input']->group_ids) && is_array($filterParams['input']-
     }
 }
 
+$depIdFilter = [];
+
+if (trim((string)$filterParams['input_form']->department_id) != '') {
+    $depIdFilter[] = (int)trim($filterParams['input_form']->department_id);
+}
+
+if (trim((string)$filterParams['input_form']->department_group_id) != '') {
+    $db = ezcDbInstance::get();
+    $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id = :group_id');
+    $stmt->bindValue( ':group_id', $filterParams['input']->department_group_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $depIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!empty($depIds)) {
+        $depIdFilter = array_merge($depIdFilter, $depIds);
+    }
+}
+
 if (isset($filterParams['input']->department_group_ids) && is_array($filterParams['input']->department_group_ids) && !empty($filterParams['input']->department_group_ids)) {
-
     erLhcoreClassChat::validateFilterIn($filterParams['input']->department_group_ids);
-
     $db = ezcDbInstance::get();
     $stmt = $db->prepare('SELECT dep_id FROM lh_departament_group_member WHERE dep_group_id IN (' . implode(',',$filterParams['input']->department_group_ids) . ')');
     $stmt->execute();
     $depIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
     if (!empty($depIds)) {
-        $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $depIds;
+        $depIdFilter = array_merge($depIdFilter, $depIds);
     }
 }
 
 if (isset($filterParams['input']->department_ids) && is_array($filterParams['input']->department_ids) && !empty($filterParams['input']->department_ids)) {
     erLhcoreClassChat::validateFilterIn($filterParams['input']->department_ids);
-    $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $filterParams['input']->department_ids;
+    $depIdFilter = array_merge($depIdFilter, $filterParams['input']->department_ids);
+}
+
+if (!empty($depIdFilter)) {
+    $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $depIdFilter;
 }
 
 if (isset($filterParams['input']->lang_ids) && is_array($filterParams['input']->lang_ids) && !empty($filterParams['input']->lang_ids)) {
