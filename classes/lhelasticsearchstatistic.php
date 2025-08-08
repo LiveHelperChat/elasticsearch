@@ -2803,7 +2803,17 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['size'] = 0;
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_country_count']['terms']['field'] = $field;
-        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 40;
+        $sparams['body']['aggs']['group_by_country_count']['terms']['size'] = 120;
+
+        // Limit grouping to only specified field values if provided
+        if (isset($params['filter']['filterin'][$field]) && !empty($params['filter']['filterin'][$field])) {
+            $sparams['body']['aggs']['group_by_country_count']['terms']['include'] = array_values($params['filter']['filterin'][$field]);
+        }
+
+        // Limit grouping to only specified field values if provided
+        if (isset($params['filter']['filterin_elastic']['subject_ids']) && !empty($params['filter']['filterin_elastic']['subject_ids'])) {
+            $sparams['body']['aggs']['group_by_country_count']['terms']['include'] = array_values($params['filter']['filterin_elastic']['subject_ids']);
+        }
 
         $response = $elasticSearchHandler->search($sparams);
 
