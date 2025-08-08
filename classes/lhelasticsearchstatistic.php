@@ -2794,7 +2794,7 @@ class erLhcoreClassElasticSearchStatistic
 
         $field = 'subject_id';
 
-        $statusWorkflow = erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getsubjectsstatistic_field', array('field' => $field));
+        $statusWorkflow = erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getsubjectsstatistic_field', array('sparams' => & $sparams, 'field' => $field));
 
         if ($statusWorkflow !== false) {
             $field = $statusWorkflow['field'];
