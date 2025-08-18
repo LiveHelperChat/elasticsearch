@@ -66,7 +66,7 @@ $ViewList['listmail'] = array(
         'from_name','sort_msg','email', 'user_id', 'department_id',
         'timefrom', 'timefrom_minutes','timefrom_hours','timefrom_seconds',
         'timeto','timeto_minutes', 'timeto_hours','timeto_seconds',
-        'department_group_id','group_id', 'user_ids',
+        'department_group_id','group_id', 'user_ids','no_user','has_operator',
         'export','view','subject_id', 'department_ids',
         'department_group_ids','group_ids','hvf','response_type','status','status_conv',
         'sender_host','from_host','sender_address','is_followup','undelivered','lang_ids',
