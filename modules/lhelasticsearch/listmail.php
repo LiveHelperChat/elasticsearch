@@ -499,7 +499,7 @@ if ($filterParams['input_form']->ds == 1)
                 );
             }
 
-            erLhcoreClassMailconvExport::export(null, array('conversation_id' => $chatIds, 'csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
+            erLhcoreClassMailconvExport::export([], array('conversation_id' => $chatIds, 'csv' => isset($_POST['CSV']), 'type' => (isset($_POST['exportOptions']) ? $_POST['exportOptions'] : [])));
 
             exit;
         } else {
