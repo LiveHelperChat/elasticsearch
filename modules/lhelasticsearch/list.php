@@ -412,6 +412,8 @@ if ($tab == 'chats') {
         $sparams['body']['highlight']['fields']['msg_system'] = new stdClass();
     }
 
+    erLhcoreClassElasticSearchView::getDepartmentLimitation(['sparams' => & $sparams, 'check_list_permissions' => true, 'check_list_scope' => 'chats']);
+
     erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.chatsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
 
     if ($filterParams['input_form']->sort_chat == 'asc') {

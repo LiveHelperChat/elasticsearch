@@ -367,6 +367,8 @@ if (trim($filterParams['input_form']->keyword) != '') {
     $sparams['body']['highlight']['fields']['alt_body'] = new stdClass();
 }
 
+erLhcoreClassElasticSearchView::getDepartmentLimitation(['sparams' => & $sparams, 'check_list_permissions' => true, 'check_list_scope' => 'mails']);
+
 erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.mailsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
 
 if ($filterParams['input_form']->sort_chat == 'asc') {

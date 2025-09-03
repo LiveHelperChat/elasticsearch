@@ -378,6 +378,8 @@ class RestAPIValidator
             $sparams['body']['query']['bool']['must'][]['range']['chat_id']['gt'] = $filterParams['input_form']->id_gt;
         }
 
+        \erLhcoreClassElasticSearchView::getDepartmentLimitation(['user' => \erLhcoreClassRestAPIHandler::getUser(), 'sparams' => & $sparams, 'check_list_permissions' => true, 'check_list_scope' => 'chats', 'rest_api' => true]);
+
         \erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.chatsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
 
         if ($filterParams['input_form']->sort_chat == 'asc') {
@@ -853,6 +855,8 @@ class RestAPIValidator
             $sparams['body']['highlight']['fields']['subject'] = new \stdClass();
             $sparams['body']['highlight']['fields']['alt_body'] = new \stdClass();
         }
+
+        \erLhcoreClassElasticSearchView::getDepartmentLimitation(['user' => \erLhcoreClassRestAPIHandler::getUser(), 'sparams' => & $sparams, 'check_list_permissions' => true, 'check_list_scope' => 'mails', 'rest_api' => true]);
 
         \erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.mailsearchexecute',array('sparams' => & $sparams, 'filter' => $filterParams));
 

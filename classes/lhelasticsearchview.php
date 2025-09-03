@@ -70,7 +70,12 @@ class erLhcoreClassElasticSearchView
             } else {
                 $params['search']->params_array['sparams']['body']['query']['bool']['must'] = [];
             }
-            
+
+            if ($params['search']->user_id > 0) {
+                $user = erLhcoreClassModelUser::fetch($params['search']->user_id);
+                self::getDepartmentLimitation(['user' => $user, 'sparams' => & $params['search']->params_array['sparams'], 'check_list_permissions' => true, 'check_list_scope' => 'chats']);
+            }
+
             $totalRecords = erLhcoreClassModelESChat::getCount($params['search']->params_array['sparams'], array('date_index' => $dateFilter));
 
             $params['search']->updated_at = time();
@@ -118,6 +123,11 @@ class erLhcoreClassElasticSearchView
                 $params['search']->params_array['sparams']['body']['query']['bool']['must'] = [];
             }
 
+            if ($params['search']->user_id > 0) {
+                $user = erLhcoreClassModelUser::fetch($params['search']->user_id);
+                self::getDepartmentLimitation(['user' => $user, 'sparams' => & $params['search']->params_array['sparams'], 'check_list_permissions' => true, 'check_list_scope' => 'chats']);
+            }
+
             $totalRecords = erLhcoreClassModelESMail::getCount($params['search']->params_array['sparams'], array('date_index' => $dateFilter));
 
             $params['search']->updated_at = time();
@@ -130,6 +140,107 @@ class erLhcoreClassElasticSearchView
             }
         }
 
+    }
+
+    public static function getDepartmentLimitation($params = array()) {
+        
+        if (!isset($params['sparams'])) {
+            throw new InvalidArgumentException('sparams parameter is required for Elasticsearch filtering');
+        }
+
+        $sparams = &$params['sparams'];
+        
+        // Ensure sparams has the proper structure for Elasticsearch queries
+        if (!isset($sparams['body'])) {
+            $sparams['body'] = array();
+        }
+        if (!isset($sparams['body']['query'])) {
+            $sparams['body']['query'] = array();
+        }
+        if (!isset($sparams['body']['query']['bool'])) {
+            $sparams['body']['query']['bool'] = array();
+        }
+        if (!isset($sparams['body']['query']['bool']['must'])) {
+            $sparams['body']['query']['bool']['must'] = array();
+        }
+
+        if (!isset($params['user'])) {
+            $currentUser = erLhcoreClassUser::instance();
+            $userData = $currentUser->getUserData(true);
+            $userId = $currentUser->getUserID();
+        } else {
+            $userData = $params['user'];
+            $userId = $userData->id;
+        }
+
+        $userIdField = 'user_id';
+        
+        // Determine the user field based on scope
+        if (isset($params['check_list_scope']) && $params['check_list_scope'] == 'mails') {
+            $userIdField = 'conv_user_id';
+        }
+
+        if (isset($params['check_list_permissions'])) {
+
+            $scope = 'chats';
+            $module = 'lhchat';
+
+            if (isset($params['check_list_scope']) && $params['check_list_scope'] == 'mails'){
+                $scope = 'mails';
+                $module = 'lhmailconv';
+            }
+
+            $currentUserId = isset($params['rest_api']) ? erLhcoreClassRestAPIHandler::getUserId() : $userId;
+
+            if ((isset($params['rest_api']) && !erLhcoreClassRestAPIHandler::hasAccessTo($module,'list_all_'.$scope)) || (!isset($params['rest_api']) && !erLhcoreClassRole::hasAccessTo($userId, $module, 'list_all_'.$scope))) {
+
+                if ((isset($params['rest_api']) && !erLhcoreClassRestAPIHandler::hasAccessTo($module,'list_my_'.$scope)) || (!isset($params['rest_api']) && erLhcoreClassRole::hasAccessTo($userId, $module, 'list_my_'.$scope))) {
+
+                    // User can only see their own records
+                    $sparams['body']['query']['bool']['must'][]['term'][$userIdField] = (int)$currentUserId;
+
+                    if ((isset($params['rest_api']) && !erLhcoreClassRestAPIHandler::hasAccessTo($module,'list_pending_'.$scope)) || (!isset($params['rest_api']) && erLhcoreClassRole::hasAccessTo($userId, $module, 'list_pending_'.$scope))) {
+                        // User can see their own records OR pending records (user_id = 0 AND status = 0)
+                        // Remove the previous term filter and add a bool should query
+                        array_pop($sparams['body']['query']['bool']['must']);
+                        
+                        $sparams['body']['query']['bool']['must'][]['bool']['should'] = [
+                            ['term' => [$userIdField => (int)$currentUserId]],
+                            ['bool' => [
+                                'must' => [
+                                    ['term' => [$userIdField => 0]],
+                                    ['term' => ['status' => 0]]
+                                ]
+                            ]]
+                        ];
+                        $sparams['body']['query']['bool']['must'][count($sparams['body']['query']['bool']['must'])-1]['bool']['minimum_should_match'] = 1;
+                    }
+                } else {
+                    // User has no access to any records
+                    $sparams['body']['query']['bool']['must'][]['term'][$userIdField] = -999; // Force no results
+                }
+            }
+        }
+
+        // Apply department limitations
+        if ( $userData->all_departments == 0 )
+        {
+            $userDepartaments = erLhcoreClassUserDep::getUserDepartaments($userId, $userData->cache_version);
+
+            if (isset($params['explicit']) && $params['explicit'] === true && in_array(-1,$userDepartaments)) {
+                unset($userDepartaments[array_search(-1, $userDepartaments)]);
+            }
+
+            if (count($userDepartaments) == 0) {
+                // User has no department access, force no results
+                $sparams['body']['query']['bool']['must'][]['term']['dep_id'] = -999;
+            } else {
+                // User has access to specific departments
+                $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = $userDepartaments;
+            }
+        }
+
+        return true;
     }
 
     public static function applyDynamicFilter( & $termsFilter, $input, $attrOptions)
@@ -242,6 +353,11 @@ class erLhcoreClassElasticSearchView
                 $search->params_array['sparams']['body']['query']['bool']['must'] = [];
             }
 
+            if ($search->user_id > 0) {
+                $user = erLhcoreClassModelUser::fetch($search->user_id);
+                self::getDepartmentLimitation(['user' => $user, 'sparams' => & $search->params_array['sparams'], 'check_list_permissions' => true, 'check_list_scope' => 'chats']);
+            }
+
             $total = erLhcoreClassModelESChat::getCount($search->params_array['sparams'], array('date_index' => $dateFilter));
 
             $pages = new lhPaginator();
@@ -333,6 +449,11 @@ class erLhcoreClassElasticSearchView
                 $search->params_array['sparams']['body']['query']['bool']['must'] = array_values($mustPresent);
             } else {
                 $search->params_array['sparams']['body']['query']['bool']['must'] = [];
+            }
+
+            if ($search->user_id > 0) {
+                $user = erLhcoreClassModelUser::fetch($search->user_id);
+                self::getDepartmentLimitation(['user' => $user, 'sparams' => & $search->params_array['sparams'], 'check_list_permissions' => true, 'check_list_scope' => 'mails']);
             }
 
             $total = erLhcoreClassModelESMail::getCount($search->params_array['sparams'], array('date_index' => $dateFilter));
