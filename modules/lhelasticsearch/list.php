@@ -463,7 +463,7 @@ if ($tab == 'chats') {
             }
         }
 
-        if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 1) {
+        if (isset($Params['user_parameters_unordered']['export']) && $Params['user_parameters_unordered']['export'] == 1 && erLhcoreClassUser::instance()->hasAccessTo('lhchat','export_chats')) {
             if (ezcInputForm::hasPostData()) {
                 @ini_set('max_execution_time', '300');
                 session_write_close();

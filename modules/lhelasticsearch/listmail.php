@@ -425,7 +425,7 @@ if ($filterParams['input_form']->ds == 1)
         exit;
     }
 
-    if (in_array($Params['user_parameters_unordered']['export'], array(1))) {
+    if (in_array($Params['user_parameters_unordered']['export'], array(1)) && erLhcoreClassUser::instance()->hasAccessTo('lhmailconv','export_mails')) {
         if (ezcInputForm::hasPostData()) {
             session_write_close();
             @ini_set('max_execution_time', '300');
