@@ -27,16 +27,22 @@ class erLhcoreClassElasticSearchWorker {
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
+            $db->rollback();
             // Someone is already processing. So we just ignore and retry later
             return;
         }
 
         if (!empty($chatsId)) {
-            // Delete indexed chat's records
-            $stmt = $db->prepare('UPDATE lhc_lheschat_index SET status = 1 WHERE chat_id IN (' . implode(',', $chatsId) . ')');
-            $stmt->execute();
-            $db->commit();
-
+            try {
+                $stmt = $db->prepare('UPDATE lhc_lheschat_index SET status = 1 WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+                $stmt->execute();
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollback();
+                // Someone is already processing. So we just ignore and retry later
+                return;
+            }
+            
             $chats = erLhcoreClassModelChat::getList(array('filterin' => array('id' => $chatsId)));
 
             if (!empty($chats)) {
@@ -94,8 +100,15 @@ class erLhcoreClassElasticSearchWorker {
             }
 
             if (!empty($chatsId)) {
-                $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
-                $stmt->execute();
+                try {
+                    $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+                    $stmt->execute();
+                } catch (Exception $e) {
+                    sleep(1);
+                    $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+                    $stmt->execute();
+                }
+
             }
 
         } else {
@@ -150,15 +163,22 @@ class erLhcoreClassElasticSearchWorker {
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
+            $db->rollback();
             // Someone is already processing. So we just ignore and retry later
             return 0;
         }
 
         if (!empty($chatsId)) {
             // Delete indexed chat's records
-            $stmt = $db->prepare('UPDATE lhc_lhesou_index SET status = 1 WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
-            $stmt->execute();
-            $db->commit();
+            try {
+                $stmt = $db->prepare('UPDATE lhc_lhesou_index SET status = 1 WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
+                $stmt->execute();
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollback();
+                // Someone is already processing. So we just ignore and retry later
+                return 0;
+            }
 
             $onlineVisitors = erLhcoreClassModelChatOnlineUser::getList(array('filterin' => array('id' => $chatsId)));
 
@@ -217,8 +237,14 @@ class erLhcoreClassElasticSearchWorker {
             }
 
             if (!empty($chatsId)) {
-                $stmt = $db->prepare('DELETE FROM lhc_lhesou_index WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
-                $stmt->execute();
+                try {
+                    $stmt = $db->prepare('DELETE FROM lhc_lhesou_index WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
+                    $stmt->execute();
+                } catch (Exception $e) {
+                    sleep(1);
+                    $stmt = $db->prepare('DELETE FROM lhc_lhesou_index WHERE online_user_id IN (' . implode(',', $chatsId) . ')');
+                    $stmt->execute();
+                }
             }
 
         } else {
@@ -247,15 +273,22 @@ class erLhcoreClassElasticSearchWorker {
             }
 
         } catch (Exception $e) {
+            $db->rollback();
             // Someone is already processing. So we just ignore and retry later
             return 0;
         }
 
         if (!empty($chatsId)) {
             // Delete indexed chat's records
-            $stmt = $db->prepare('UPDATE lhc_lhesmail_index SET status = 1 WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 3');
-            $stmt->execute();
-            $db->commit();
+            try {
+                $stmt = $db->prepare('UPDATE lhc_lhesmail_index SET status = 1 WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 3');
+                $stmt->execute();
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollback();
+                // Someone is already processing. So we just ignore and retry later
+                return 0;
+            }
 
             $sparams = array();
             $sparams['body']['query']['bool']['must'][]['terms']['_id'] = $chatsId;
@@ -276,8 +309,14 @@ class erLhcoreClassElasticSearchWorker {
                 return 0;
             }
 
-            $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 3');
-            $stmt->execute();
+            try {
+                $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 3');
+                $stmt->execute();
+            } catch (Exception $e) {
+                sleep(1);
+                $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 3');
+                $stmt->execute();
+            }
 
         } else {
             $db->rollback();
@@ -298,15 +337,22 @@ class erLhcoreClassElasticSearchWorker {
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
+            $db->rollback();
             // Someone is already processing. So we just ignore and retry later
             return 0;
         }
 
         if (!empty($chatsId)) {
-            // Delete indexed chat's records
-            $stmt = $db->prepare('UPDATE lhc_lhesmail_index SET status = 1 WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 1');
-            $stmt->execute();
-            $db->commit();
+            try {
+                $stmt = $db->prepare('UPDATE lhc_lhesmail_index SET status = 1 WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 1');
+                $stmt->execute();
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollback();
+                // Someone is already processing. So we just ignore and retry later
+                return 0;
+            }
+            
 
             // This is conversation
             $mails = erLhcoreClassModelMailconvMessage::getList(array('limit' => 1000, 'filterin' => array('conversation_id' => $chatsId)));
@@ -373,8 +419,14 @@ class erLhcoreClassElasticSearchWorker {
             }
 
             if (!empty($chatsId)) {
-                $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 1');
-                $stmt->execute();
+                try {
+                    $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 1');
+                    $stmt->execute();
+                } catch (Exception $e) {
+                    sleep(1);
+                    $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 1');
+                    $stmt->execute();
+                }
             }
 
         } else {
@@ -396,15 +448,21 @@ class erLhcoreClassElasticSearchWorker {
             $stmt->execute();
             $chatsId = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
+            $db->rollback();
             // Someone is already processing. So we just ignore and retry later
             return 0;
         }
 
         if (!empty($chatsId)) {
-            // Delete indexed chat's records
-            $stmt = $db->prepare('UPDATE lhc_lhesmail_index SET status = 1 WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 0');
-            $stmt->execute();
-            $db->commit();
+               try {
+                $stmt = $db->prepare('UPDATE lhc_lhesmail_index SET status = 1 WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 0');
+                $stmt->execute();
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollback();
+                // Someone is already processing. So we just ignore and retry later
+                return 0;
+            }
 
             $mails = erLhcoreClassModelMailconvMessage::getList(array('filterin' => array('id' => $chatsId)));
 
@@ -463,8 +521,14 @@ class erLhcoreClassElasticSearchWorker {
             }
 
             if (!empty($chatsId)) {
-                $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 0');
-                $stmt->execute();
+                try {
+                    $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 0');
+                    $stmt->execute();
+                } catch (Exception $e) {
+                    sleep(1);
+                    $stmt = $db->prepare('DELETE FROM lhc_lhesmail_index WHERE mail_id IN (' . implode(',', $chatsId) . ') AND op = 0');
+                    $stmt->execute();
+                }
             }
 
         } else {
