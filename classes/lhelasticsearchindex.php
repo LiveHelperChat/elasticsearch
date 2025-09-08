@@ -959,6 +959,11 @@ class erLhcoreClassElasticSearchIndex
                 $esChat = new erLhcoreClassModelESMail();
             }
 
+            // Ignore messages without department or conversation
+            if ($item->dep_id == 0 || $item->conversation_id == 0) {
+                continue;
+            }
+
             $esChat->id = $item->id;
             $esChat->status = $item->status;
             $esChat->conversation_id = $item->conversation_id;
