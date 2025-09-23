@@ -237,6 +237,12 @@ $ViewList['deleteindice'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['forcemerge'] = array(
+    'params' => array('indice'),
+    'uparams' => array('csfr'),
+    'functions' => array('configure')
+);
+
 $ViewList['getmapping'] = array(
     'params' => array('indice'),
     'uparams' => array(),
