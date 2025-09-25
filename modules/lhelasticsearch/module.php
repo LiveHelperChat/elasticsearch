@@ -45,7 +45,9 @@ $ViewList['list'] = array(
         'mart_till',
         'aart_till',
         'aart_from',
-        'theme_ids'
+        'theme_ids',
+        'priority_from',
+        'priority_till'
     ),
     'functions' => array('use')
 );

@@ -576,8 +576,6 @@
                                         }
                                     )); ?>
                                 </div>
-
-
                             </div>
 
                             <div class="col-md-2">
@@ -599,6 +597,17 @@
                                         'list_function'  => 'erLhcoreClassModelGenericBotBot::getList',
                                         'list_function_params'  => array('limit' => false)
                                     )); ?>
+                                </div>
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chat Priority');?></label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" class="form-control form-control-sm" name="priority_from" value="<?php echo htmlspecialchars((string)$input->priority_from)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','From');?>" step="1" />
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" class="form-control form-control-sm"  name="priority_till"  value="<?php echo htmlspecialchars((string)$input->priority_till)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','To');?>" step="1" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

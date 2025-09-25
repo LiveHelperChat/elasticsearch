@@ -268,6 +268,14 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['range']['mart']['lte'] = (int)$filterParams['filter']['filterlte']['mart'];
     }
 
+    if (isset($filterParams['filter']['filtergte']['priority'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['priority']['gte'] = (int)$filterParams['filter']['filtergte']['priority'];
+    }
+
+    if (isset($filterParams['filter']['filterlte']['priority'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['priority']['lte'] = (int)$filterParams['filter']['filterlte']['priority'];
+    }
+
     if ($filterParams['input_form']->has_operator == 1) {
         $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
     }
@@ -572,7 +580,7 @@ if ($tab == 'chats') {
             echo $tpl->fetch();
             exit;
         }
-        
+
         $total = erLhcoreClassModelESChat::getCount($sparams, array('date_index' => $dateFilter));
         $tpl->set('total_literal',$total);
 
