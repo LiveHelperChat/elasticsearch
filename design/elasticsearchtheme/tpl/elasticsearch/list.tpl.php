@@ -13,7 +13,7 @@
         <?php endif; ?>
     <?php endif;?>
 
-<ul class="nav nav-pills" role="tablist">
+<ul class="nav nav-pills" role="tablist" data-remember="true">
 	<li role="presentation" class="nav-item"><a class="nav-link<?php if ($tab == '' || $tab == 'chats') : ?> active<?php endif;?>" href="#chats" aria-controls="chats" role="tab" data-bs-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Chats');?></a></li>
 	<li role="presentation" class="nav-item"><a class="non-focus nav-link<?php if ($tab == 'messages') : ?> active<?php endif;?>" href="#messages" aria-controls="messages" role="tab" data-bs-toggle="tab" ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/account','Messages');?></a></li>
 </ul>
