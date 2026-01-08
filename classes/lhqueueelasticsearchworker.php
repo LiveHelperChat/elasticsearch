@@ -355,13 +355,15 @@ class erLhcoreClassElasticSearchWorker {
             
 
             // This is conversation
-            $mails = erLhcoreClassModelMailconvMessage::getList(array('limit' => 1000, 'filterin' => array('conversation_id' => $chatsId)));
-            if (!empty($mails)) {
-                try {
-                    $parts = ceil(count($mails) / 20); // We keep same limit as standard index
-                    for ($i = 0; $i < $parts; $i++) { // Some conversations can be abusively large
-                        $mailsIndex = array_slice($mails,$i * 20,20, true);
-                        $response = erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mailsIndex));
+            // Fetch mails in chunks of 20 to avoid memory issues
+            $offset = 0;
+            $batchSize = 20;
+            do {
+                $mails = erLhcoreClassModelMailconvMessage::getList(array('limit' => $batchSize, 'offset' => $offset, 'filterin' => array('conversation_id' => $chatsId)));
+                
+                if (!empty($mails)) {
+                    try {
+                        $response = erLhcoreClassElasticSearchIndex::indexMails(array('mails' => $mails));
                         foreach ($response as $indexItem) {
                             if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
                                 foreach ($indexItem['items'] as $item) {
@@ -376,7 +378,7 @@ class erLhcoreClassElasticSearchWorker {
                                                 'object_id' => $item['index']['_id']
                                             )
                                         );
-                                        foreach ($mailsIndex as $mail) {
+                                        foreach ($mails as $mail) {
                                             if ($mail->id == $item['index']['_id']) {
                                                 $indexResult = array_search($mail->conversation_id,$chatsId);
                                                 if ($indexResult !== false) {
@@ -389,26 +391,28 @@ class erLhcoreClassElasticSearchWorker {
                                 }
                             }
                         }
-                    }
-                } catch (Exception $e) {
-                    try {
-                        erLhcoreClassLog::write( implode(',',$chatsId) . "\n" . $e->getTraceAsString() . "\n" . $e->getMessage(),
-                            ezcLog::SUCCESS_AUDIT,
-                            array(
-                                'source' => 'lhc',
-                                'category' => 'resque_fatal',
-                                'line' => 0,
-                                'file' => 0,
-                                'object_id' => 0
-                            )
-                        );
                     } catch (Exception $e) {
+                        try {
+                            erLhcoreClassLog::write( implode(',',$chatsId) . "\n" . $e->getTraceAsString() . "\n" . $e->getMessage(),
+                                ezcLog::SUCCESS_AUDIT,
+                                array(
+                                    'source' => 'lhc',
+                                    'category' => 'resque_fatal',
+                                    'line' => 0,
+                                    'file' => 0,
+                                    'object_id' => 0
+                                )
+                            );
+                        } catch (Exception $e) {
 
+                        }
+                        error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+                        return 0;
                     }
-                    error_log($e->getMessage() . "\n" . $e->getTraceAsString());
-                    return 0;
                 }
-            }
+                
+                $offset += $batchSize;
+            } while (count($mails) == $batchSize);
 
             $esOptions = erLhcoreClassChat::getSession()->load( 'erLhcoreClassModelChatConfig', 'elasticsearch_options' );
             $data = (array)$esOptions->data;
