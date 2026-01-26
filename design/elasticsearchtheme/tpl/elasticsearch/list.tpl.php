@@ -36,7 +36,7 @@
 
             			    <th width="21%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Department')?></th>
             			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Time')?></th>
-            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','IP')?></th>
+            			    <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Bot')?></th>
             			    <th width="1%"></th>
             			</tr>  
             		</thead>
@@ -97,12 +97,19 @@
                                     <?php endforeach; ?>
                                 </div>
                                 <?php endif; ?>
-
                             </td>
                             <?php include(erLhcoreClassDesign::designtpl('lhchat/lists_chats_parts/additional_chat_column_row.tpl.php'));?>
                             <td><?php echo htmlspecialchars($item->department)?></td>
             		        <td nowrap="nowrap"><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time/1000)?></td>
-            		        <td ng-non-bindable><?php echo htmlspecialchars((string)$item->ip)?></td>
+            		        <td ng-non-bindable>
+                                <?php if ($item->bot) : ?>
+                                    <?php if (!empty($item->bot->short_name)) : ?>
+                                        <?php echo htmlspecialchars($item->bot->short_name); ?>
+                                    <?php else : ?>
+                                        <?php echo htmlspecialchars($item->gbot_id); ?>
+                                    <?php endif; ?>
+                                <?php endif;?>
+                            </td>
                             <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
             		        <td title="<?php echo htmlspecialchars($item->meta_data['index'])?>">
             		            <a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/delete')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a>

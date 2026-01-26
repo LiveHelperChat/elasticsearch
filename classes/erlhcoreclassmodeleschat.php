@@ -213,6 +213,26 @@ class erLhcoreClassModelESChat
                 }
                 return $this->subjects;
 
+            case 'bot':
+                $chatVariables = $this->chat_variables_array;
+                $bot = null;
+
+                if (isset($chatVariables['gbot_id']) && $chatVariables['gbot_id'] > 0) {
+                    $bot = erLhcoreClassModelGenericBotBot::fetch($chatVariables['gbot_id']);
+                } elseif ($this->gbot_id > 0) {
+                    $bot = erLhcoreClassModelGenericBotBot::fetch($this->gbot_id);
+                }
+
+                $this->bot = $bot;
+                return $this->bot;
+
+            case 'bot_short_name':
+                $this->bot_short_name = '';
+                if (is_object($this->bot)) {
+                    $this->bot_short_name = $this->bot->short_name;
+                }
+                return $this->bot_short_name;
+
             default:
                 break;
         }
