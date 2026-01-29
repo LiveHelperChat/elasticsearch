@@ -311,6 +311,12 @@ $ViewList['updateelastic'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['reindex'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
 $FunctionList['use'] = array('explain' => 'Allow operator to use Elastic Search module');
 $FunctionList['delete'] = array('explain' => 'Allow operator to delete permanently mail records');
 $FunctionList['configure'] = array('explain' => 'Allow operator to configure Elastic Search module');

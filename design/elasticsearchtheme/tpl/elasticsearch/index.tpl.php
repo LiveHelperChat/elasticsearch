@@ -10,6 +10,7 @@
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listov')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of online visitors')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/elastic')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Elastic Search console')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/options')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Elastic Search Options')?></a></li>
+    <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/reindex')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Re-index scheduler')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/indices')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Indices')?></a></li>
 </ul>
 
