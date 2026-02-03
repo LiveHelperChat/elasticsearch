@@ -964,63 +964,65 @@ class erLhcoreClassElasticSearchStatistic
             'desktopinit',
         );
 
-        foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
+        if (isset($response['aggregations']['chats_over_time']['buckets'])) {
+            foreach ($response['aggregations']['chats_over_time']['buckets'] as $bucket) {
 
-            if ($bucket['key'] > 10) {
-                $keyDateUnix = $bucket['key'] / 1000;
-            } else {
-                $keyDateUnix = $bucket['key'];
-            }
+                if ($bucket['key'] > 10) {
+                    $keyDateUnix = $bucket['key'] / 1000;
+                } else {
+                    $keyDateUnix = $bucket['key'];
+                }
 
-            if (is_array($params['params_execution']['charttypes']) && (in_array('active',$params['params_execution']['charttypes']) || in_array('total_chats',$params['params_execution']['charttypes']))) {
-                $totalChats = 0;
-                foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
-                    if (isset($keyStatus[$bucketStatus['key']])) {
-                        $numberOfChats[$keyDateUnix][$keyStatus[$bucketStatus['key']]] = $bucketStatus['doc_count'];
-                        $totalChats += $bucketStatus['doc_count'];
+                if (is_array($params['params_execution']['charttypes']) && (in_array('active',$params['params_execution']['charttypes']) || in_array('total_chats',$params['params_execution']['charttypes']))) {
+                    $totalChats = 0;
+                    foreach ($bucket['status_aggr']['buckets'] as $bucketStatus) {
+                        if (isset($keyStatus[$bucketStatus['key']])) {
+                            $numberOfChats[$keyDateUnix][$keyStatus[$bucketStatus['key']]] = $bucketStatus['doc_count'];
+                            $totalChats += $bucketStatus['doc_count'];
+                        }
+                    }
+                    $numberOfChats[$keyDateUnix]['total_chats'] = $totalChats;
+                }
+
+                if (is_array($params['params_execution']['charttypes']) && in_array('unanswered',$params['params_execution']['charttypes'])) {
+                    $numberOfChats[$keyDateUnix]['unanswered'] = $bucket['unanswered_aggr']['doc_count'];
+                }
+
+                if (is_array($params['params_execution']['charttypes']) && in_array('proactivevsdefault', $params['params_execution']['charttypes'])) {
+                    $numberOfChats[$keyDateUnix]['chatinitdefault'] = $bucket['chat_initiator_aggr']['doc_count'];
+                    $numberOfChats[$keyDateUnix]['chatinitproact'] = $bucket['chat_initiator_proact_aggr']['doc_count'];
+                    $numberOfChats[$keyDateUnix]['chatinitmanualinv'] = $bucket['chat_initiator_proact_man']['doc_count'];
+                }
+
+                if (is_array($params['params_execution']['charttypes']) && in_array('devicetype', $params['params_execution']['charttypes'])) {
+                    foreach ($bucket['device_aggr']['buckets'] as $deviceValue) {
+                        if ($deviceValue['key'] === 1) {
+                            $numberOfChats[$keyDateUnix]['mobileinit'] = $deviceValue['doc_count'];
+                        } elseif ($deviceValue['key'] === 2) {
+                            $numberOfChats[$keyDateUnix]['tabletinit'] = $deviceValue['doc_count'];
+                        } elseif ($deviceValue['key'] === 0) {
+                            $numberOfChats[$keyDateUnix]['desktopinit'] = $deviceValue['doc_count'];
+                        }
                     }
                 }
-                $numberOfChats[$keyDateUnix]['total_chats'] = $totalChats;
-            }
 
-            if (is_array($params['params_execution']['charttypes']) && in_array('unanswered',$params['params_execution']['charttypes'])) {
-                $numberOfChats[$keyDateUnix]['unanswered'] = $bucket['unanswered_aggr']['doc_count'];
-            }
-
-            if (is_array($params['params_execution']['charttypes']) && in_array('proactivevsdefault', $params['params_execution']['charttypes'])) {
-                $numberOfChats[$keyDateUnix]['chatinitdefault'] = $bucket['chat_initiator_aggr']['doc_count'];
-                $numberOfChats[$keyDateUnix]['chatinitproact'] = $bucket['chat_initiator_proact_aggr']['doc_count'];
-                $numberOfChats[$keyDateUnix]['chatinitmanualinv'] = $bucket['chat_initiator_proact_man']['doc_count'];
-            }
-
-            if (is_array($params['params_execution']['charttypes']) && in_array('devicetype', $params['params_execution']['charttypes'])) {
-                foreach ($bucket['device_aggr']['buckets'] as $deviceValue) {
-                    if ($deviceValue['key'] === 1) {
-                        $numberOfChats[$keyDateUnix]['mobileinit'] = $deviceValue['doc_count'];
-                    } elseif ($deviceValue['key'] === 2) {
-                        $numberOfChats[$keyDateUnix]['tabletinit'] = $deviceValue['doc_count'];
-                    } elseif ($deviceValue['key'] === 0) {
-                        $numberOfChats[$keyDateUnix]['desktopinit'] = $deviceValue['doc_count'];
+                foreach ($keyStatus as $mustHave) {
+                    if (! isset($numberOfChats[$keyDateUnix][$mustHave])) {
+                        $numberOfChats[$keyDateUnix][$mustHave] = 0;
                     }
                 }
-            }
 
-            foreach ($keyStatus as $mustHave) {
-                if (! isset($numberOfChats[$keyDateUnix][$mustHave])) {
-                    $numberOfChats[$keyDateUnix][$mustHave] = 0;
+                foreach ($keyStatusInit as $mustHave) {
+                    if (! isset($numberOfChats[$keyDateUnix][$mustHave])) {
+                        $numberOfChats[$keyDateUnix][$mustHave] = 0;
+                    }
                 }
+
+                $numberOfChats[$keyDateUnix]['msg_user'] = 0;
+                $numberOfChats[$keyDateUnix]['msg_operator'] = 0;
+                $numberOfChats[$keyDateUnix]['msg_system'] = 0;
+                $numberOfChats[$keyDateUnix]['msg_bot'] = 0;
             }
-            
-            foreach ($keyStatusInit as $mustHave) {
-                if (! isset($numberOfChats[$keyDateUnix][$mustHave])) {
-                    $numberOfChats[$keyDateUnix][$mustHave] = 0;
-                }
-            }
-            
-            $numberOfChats[$keyDateUnix]['msg_user'] = 0;
-            $numberOfChats[$keyDateUnix]['msg_operator'] = 0;
-            $numberOfChats[$keyDateUnix]['msg_system'] = 0;
-            $numberOfChats[$keyDateUnix]['msg_bot'] = 0;
         }
 
         if (is_array($params['params_execution']['charttypes']) &&
