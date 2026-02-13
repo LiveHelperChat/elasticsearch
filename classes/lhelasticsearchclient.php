@@ -293,7 +293,18 @@ class erLhcoreClassElasticClient
 
             $elasticClient = Elasticsearch\ClientBuilder::create();
 
-            if ($settings['use_iam'] == true) {
+            if (isset($settings['use_api_key']) && $settings['use_api_key'] == true) {
+
+                // API Key authentication
+                if (!empty($settings['api_key_encoded'])) {
+                    // Use base64 encoded API key
+                    $elasticClient->setApiKey($settings['api_key_encoded']);
+                } elseif (!empty($settings['api_key'])) {
+                    // Use id:api_key format, need to encode it
+                    $elasticClient->setApiKey(base64_encode($settings['api_key']));
+                }
+
+            } elseif ($settings['use_iam'] == true) {
 
                 $psr7Handler = Aws\default_http_handler();
                 $signer = new SignatureV4('es', $settings['iam_region']);
