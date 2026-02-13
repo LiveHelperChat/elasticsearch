@@ -297,11 +297,18 @@ class erLhcoreClassElasticClient
 
                 // API Key authentication
                 if (!empty($settings['api_key_encoded'])) {
-                    // Use base64 encoded API key
-                    $elasticClient->setApiKey($settings['api_key_encoded']);
+                    // Decode the base64 encoded API key and split into id and key
+                    $decoded = base64_decode($settings['api_key_encoded']);
+                    $parts = explode(':', $decoded, 2);
+                    if (count($parts) === 2) {
+                        $elasticClient->setApiKey($parts[0], $parts[1]);
+                    }
                 } elseif (!empty($settings['api_key'])) {
-                    // Use id:api_key format, need to encode it
-                    $elasticClient->setApiKey(base64_encode($settings['api_key']));
+                    // Split id:api_key format into separate parts
+                    $parts = explode(':', $settings['api_key'], 2);
+                    if (count($parts) === 2) {
+                        $elasticClient->setApiKey($parts[0], $parts[1]);
+                    }
                 }
 
             } elseif ($settings['use_iam'] == true) {
