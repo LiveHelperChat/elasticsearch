@@ -293,22 +293,28 @@ class erLhcoreClassElasticClient
 
             $elasticClient = Elasticsearch\ClientBuilder::create();
 
+            // Build connection parameters
+            $connectionParams = [
+                'client' => [
+                    RequestOptions::TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 15 : 10),
+                    RequestOptions::CONNECT_TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 10 : 2),
+                    RequestOptions::VERIFY => ((isset($settings['verify_ssl']) && $settings['verify_ssl'] == true || !isset($settings['verify_ssl'])) ? true : false)
+                ],
+            ];
+
             if (isset($settings['use_api_key']) && $settings['use_api_key'] == true) {
 
-                // API Key authentication
+                // API Key authentication - add Authorization header to connection params
                 if (!empty($settings['api_key_encoded'])) {
-                    // Decode the base64 encoded API key and split into id and key
-                    $decoded = base64_decode($settings['api_key_encoded']);
-                    $parts = explode(':', $decoded, 2);
-                    if (count($parts) === 2) {
-                        $elasticClient->setApiKey($parts[0], $parts[1]);
-                    }
+                    // Use base64 encoded API key
+                    $connectionParams['client']['headers']['Authorization'] = [
+                        'ApiKey ' . $settings['api_key_encoded']
+                    ];
                 } elseif (!empty($settings['api_key'])) {
-                    // Split id:api_key format into separate parts
-                    $parts = explode(':', $settings['api_key'], 2);
-                    if (count($parts) === 2) {
-                        $elasticClient->setApiKey($parts[0], $parts[1]);
-                    }
+                    // Use id:api_key format, need to encode it
+                    $connectionParams['client']['headers']['Authorization'] = [
+                        'ApiKey ' . base64_encode($settings['api_key'])
+                    ];
                 }
 
             } elseif ($settings['use_iam'] == true) {
@@ -359,13 +365,7 @@ class erLhcoreClassElasticClient
                 $elasticClient->setHandler($handler);
             }
 
-            self::$handler = $elasticClient->setHosts(array($settings['host'] . ':' . $settings['port']))->setConnectionParams([
-                'client' => [
-                    RequestOptions::TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 15 : 10),
-                    RequestOptions::CONNECT_TIMEOUT => (erLhcoreClassSystem::instance()->backgroundMode == true ? 10 : 2),
-                    RequestOptions::VERIFY => ((isset($settings['verify_ssl']) && $settings['verify_ssl'] == true || !isset($settings['verify_ssl'])) ? true : false)
-                ],
-            ])->build();
+            self::$handler = $elasticClient->setHosts(array($settings['host'] . ':' . $settings['port']))->setConnectionParams($connectionParams)->build();
         }
 
         return self::$handler;
