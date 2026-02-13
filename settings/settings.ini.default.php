@@ -22,7 +22,7 @@ return array (
 	    'api_key_encoded' => '',  // Base64 encoded API key
 	    
 	    // Enable/disable mail module indexing
-	    'use_es_mail' => false  // Set to true to enable mail module features (indices, events)
+	    'use_es_mail' => true  // Set to true to enable mail module features (indices, events)
 );
 
 ?>
