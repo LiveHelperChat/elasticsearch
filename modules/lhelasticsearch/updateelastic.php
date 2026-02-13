@@ -50,6 +50,11 @@ if (in_array($action, array(
 
     foreach ($contentData['types'] as $type => $mapping) {
 
+        // Skip lh_mail index if mail module is disabled
+        if ($type == 'lh_mail' && (!isset($settings['use_es_mail']) || $settings['use_es_mail'] != true)) {
+            continue;
+        }
+
         if ($type != 'lh_online_visitor') {
             $elasticIndex = $indexSave . '-' . $type . ($indexPrepend != '' ? '-' . $indexPrepend : '');
         } else {
