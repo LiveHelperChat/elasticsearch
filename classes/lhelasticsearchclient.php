@@ -147,6 +147,11 @@ class erLhcoreClassElasticClient
 
         foreach ($contentData[$index]['types'] as $type => $mapping) {
 
+            // Skip lh_mail index if mail module is disabled
+            if ($type == 'lh_mail' && (!isset($settings['use_es_mail']) || $settings['use_es_mail'] != true)) {
+                continue;
+            }
+
             if ($type != 'lh_online_visitor') {
                 $indexCurrent = $index . '-' . $type . ($indexPrepend != null ? '-' . $indexPrepend : '');
             } else {

@@ -83,26 +83,27 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('views.export', 'erLhcoreClassElasticSearchView::exportView');
 
                 // Mail module
+                if (isset($this->settings_personal['use_es_mail']) && $this->settings_personal['use_es_mail'] == true) {
+                    // Statistic
+                    $dispatcher->listen('mail.statistic.messagesperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                    $dispatcher->listen('mail.statistic.messagesperuser', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                    $dispatcher->listen('mail.statistic.messagesperdep', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                    $dispatcher->listen('mail.statistic.avginteractionperdep', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                    $dispatcher->listen('mail.statistic.avginteractionperuser', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                    $dispatcher->listen('mail.statistic.messagesperhour', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                    $dispatcher->listen('mail.statistic.attrbyperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
 
-                // Statistic
-                $dispatcher->listen('mail.statistic.messagesperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
-                $dispatcher->listen('mail.statistic.messagesperuser', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
-                $dispatcher->listen('mail.statistic.messagesperdep', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
-                $dispatcher->listen('mail.statistic.avginteractionperdep', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
-                $dispatcher->listen('mail.statistic.avginteractionperuser', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
-                $dispatcher->listen('mail.statistic.messagesperhour', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
-                $dispatcher->listen('mail.statistic.attrbyperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
+                    // Conversations
+                    $dispatcher->listen('mail.conversation.after_save', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::conversationIndex');
+                    $dispatcher->listen('mail.conversation.after_update', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::conversationIndex');
 
-                // Conversations
-                $dispatcher->listen('mail.conversation.after_save', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::conversationIndex');
-                $dispatcher->listen('mail.conversation.after_update', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::conversationIndex');
-
-                // Messages
-                $dispatcher->listen('mail.message.after_save', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
-                $dispatcher->listen('mail.message.after_update', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
-                $dispatcher->listen('mail.message.after_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageRemove');
-                $dispatcher->listen('mail.subject_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
-                $dispatcher->listen('mail.subject_add', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                    // Messages
+                    $dispatcher->listen('mail.message.after_save', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                    $dispatcher->listen('mail.message.after_update', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                    $dispatcher->listen('mail.message.after_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageRemove');
+                    $dispatcher->listen('mail.subject_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                    $dispatcher->listen('mail.subject_add', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                }
 
                 // Online visitors
                 if (isset($this->settings_personal['use_es_ov']) && $this->settings_personal['use_es_ov'] == true) {
