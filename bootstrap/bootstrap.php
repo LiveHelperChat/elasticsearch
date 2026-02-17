@@ -83,7 +83,7 @@ class erLhcoreClassExtensionElasticsearch
                 $dispatcher->listen('views.export', 'erLhcoreClassElasticSearchView::exportView');
 
                 // Mail module
-                if (isset($this->settings_personal['use_es_mail']) && $this->settings_personal['use_es_mail'] == true) {
+                if (isset($this->settings['use_es_mail']) && $this->settings['use_es_mail'] == true) {
                     // Statistic
                     $dispatcher->listen('mail.statistic.messagesperinterval', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
                     $dispatcher->listen('mail.statistic.messagesperuser', 'erLhcoreClassElasticSearchStatistic::mailMessagesperinterval');
