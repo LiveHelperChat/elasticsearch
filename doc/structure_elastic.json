@@ -584,6 +584,18 @@
             },
             "mart": {
               "type": "integer"
+            },
+            "op_msg_count": {
+              "type": "integer"
+            },
+            "vi_msg_count": {
+              "type": "integer"
+            },
+            "bot_msg_count": {
+              "type": "integer"
+            },
+            "sys_msg_count": {
+              "type": "integer"
             }
         },
 		"lh_msg": {

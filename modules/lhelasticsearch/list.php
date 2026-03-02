@@ -276,6 +276,18 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['range']['priority']['lte'] = (int)$filterParams['filter']['filterlte']['priority'];
     }
 
+    if (isset($filterParams['filter']['filtergte']['op_msg_count'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['op_msg_count']['gte'] = (int)$filterParams['filter']['filtergte']['op_msg_count'];
+    }
+
+    if (isset($filterParams['filter']['filtergte']['vi_msg_count'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['vi_msg_count']['gte'] = (int)$filterParams['filter']['filtergte']['vi_msg_count'];
+    }
+
+    if (isset($filterParams['filter']['filtergte']['bot_msg_count'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['bot_msg_count']['gte'] = (int)$filterParams['filter']['filtergte']['bot_msg_count'];
+    }
+
     if ($filterParams['input_form']->has_operator == 1) {
         $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
     }

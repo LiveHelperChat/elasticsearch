@@ -2751,6 +2751,9 @@ class erLhcoreClassElasticSearchStatistic
                     $sparams['body']['query']['bool']['must'][]['terms'][$customFields[$field]] = array_values($value);
                 } elseif ($type == 'filterlike' && $field == 'city') {
                     $sparams['body']['query']['bool']['must'][]['term']['region'] = $value;
+                } elseif ($type == 'customfilter' && in_array($field,['bot_msg_count','vi_msg_count','op_msg_count'])) {
+                    $number = trim(explode('>=',$value)[1]);
+                    $sparams['body']['query']['bool']['must'][]['range'][$field]['gte'] = (int)$number;
                 }
             }
         }

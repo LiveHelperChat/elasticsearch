@@ -204,13 +204,25 @@ class erLhcoreClassElasticSearchIndex
             $esChat->msg_operator = null;
             $esChat->msg_system = null;
 
+            $esChat->op_msg_count = 0;
+            $esChat->vi_msg_count = 0;
+            $esChat->bot_msg_count = 0;
+            $esChat->sys_msg_count = 0;
+
             foreach ($messagesChat as $messageChat) {
                 if ($messageChat->user_id == 0) {
                     $esChat->msg_visitor .= $messageChat->msg . "\n";
+                    $esChat->vi_msg_count++;
                 } elseif ($messageChat->user_id > 0) {
                     $esChat->msg_operator .= $messageChat->msg . "\n";
+                    $esChat->op_msg_count++;
                 } else {
                     $esChat->msg_system .= $messageChat->msg . "\n";
+                    if ($messageChat->user_id == -2) {
+                        $esChat->bot_msg_count++;
+                    } else {
+                        $esChat->sys_msg_count = 0;
+                    }
                 }
             }
 
