@@ -1954,9 +1954,11 @@ class erLhcoreClassElasticSearchStatistic
 
         $result = $elasticSearchHandler->search($sparams);
 
-        foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
-            foreach ($bucket['response_type']['buckets'] as $bucketStat) {
-                $usersStats[$bucket['key']]['mail_statistic_'.$bucketStat['key']] = (isset($params['filter_params']->group_conv) && $params['filter_params']->group_conv == 1 ? $bucketStat['conversation']['value'] : $bucketStat['doc_count']);
+        if (isset($result['aggregations']['group_by_user']['buckets'])) {
+            foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
+                foreach ($bucket['response_type']['buckets'] as $bucketStat) {
+                    $usersStats[$bucket['key']]['mail_statistic_'.$bucketStat['key']] = (isset($params['filter_params']->group_conv) && $params['filter_params']->group_conv == 1 ? $bucketStat['conversation']['value'] : $bucketStat['doc_count']);
+                }
             }
         }
 
