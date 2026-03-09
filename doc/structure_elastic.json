@@ -594,6 +594,9 @@
             "bot_msg_count": {
               "type": "integer"
             },
+            "all_msg_count": {
+              "type": "integer"
+            },
             "sys_msg_count": {
               "type": "integer"
             }

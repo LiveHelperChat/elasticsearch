@@ -629,6 +629,12 @@
                                     <input type="number" min="0" step="1" class="form-control form-control-sm" name="bot_msg_count" value="<?php echo htmlspecialchars((string)$input->bot_msg_count)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Count');?>  &gt;=" />
                                 </div>
                             </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Min messages');?></label>
+                                    <input type="number" min="0" step="1" class="form-control form-control-sm" name="all_msg_count" value="<?php echo htmlspecialchars((string)$input->all_msg_count)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Count');?>  &gt;=" />
+                                </div>
+                            </div>
 
                             <div class="col-md-2">
                                 <label class="col-form-label"><input type="checkbox" name="has_operator" value="1" <?php $input->has_operator == true ? print 'checked="checked"' : ''?> >&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chats with an operator')?></label>

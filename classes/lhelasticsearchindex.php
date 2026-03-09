@@ -208,6 +208,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->vi_msg_count = 0;
             $esChat->bot_msg_count = 0;
             $esChat->sys_msg_count = 0;
+            $esChat->all_msg_count = 0;
 
             foreach ($messagesChat as $messageChat) {
                 if ($messageChat->user_id == 0) {
@@ -225,6 +226,8 @@ class erLhcoreClassElasticSearchIndex
                     }
                 }
             }
+
+            $esChat->all_msg_count = $esChat->op_msg_count + $esChat->vi_msg_count + $esChat->bot_msg_count;
 
             $esChat->msg_system = trim((string)$esChat->msg_system);
             $esChat->msg_operator = trim((string)$esChat->msg_operator);

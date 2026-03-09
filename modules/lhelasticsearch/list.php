@@ -288,6 +288,10 @@ if ($tab == 'chats') {
         $sparams['body']['query']['bool']['must'][]['range']['bot_msg_count']['gte'] = (int)$filterParams['filter']['filtergte']['bot_msg_count'];
     }
 
+    if (isset($filterParams['filter']['filtergte']['all_msg_count'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['all_msg_count']['gte'] = (int)$filterParams['filter']['filtergte']['all_msg_count'];
+    }
+
     if ($filterParams['input_form']->has_operator == 1) {
         $sparams['body']['query']['bool']['must'][]['range']['user_id']['gt'] = (int)0;
     }
