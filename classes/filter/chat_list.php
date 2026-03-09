@@ -543,6 +543,18 @@ $fieldsSearch['all_msg_count'] = array (
     )
 );
 
+$fieldsSearch['all_msg_count_till'] = array (
+    'type' => 'text',
+    'trans' => 'id',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => 'filterlte',
+    'filter_table_field' => 'all_msg_count',
+    'validation_definition' => new ezcInputFormDefinitionElement (
+        ezcInputFormDefinitionElement::OPTIONAL, 'int'
+    )
+);
+
 $fieldsSearch['aart_from'] = array (
     'type' => 'text',
     'trans' => 'id',

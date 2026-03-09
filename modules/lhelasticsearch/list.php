@@ -98,8 +98,6 @@ if ($tab == 'chats') {
     if (trim((string)$filterParams['input_form']->user_id) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['user_id'] = (int)trim($filterParams['input_form']->user_id);
     }
-    
-
 
     if (trim((string)$filterParams['input_form']->invitation_id) != '') {
         $sparams['body']['query']['bool']['must'][]['term']['invitation_id'] = (int)trim($filterParams['input_form']->invitation_id);
@@ -290,6 +288,10 @@ if ($tab == 'chats') {
 
     if (isset($filterParams['filter']['filtergte']['all_msg_count'])) {
         $sparams['body']['query']['bool']['must'][]['range']['all_msg_count']['gte'] = (int)$filterParams['filter']['filtergte']['all_msg_count'];
+    }
+
+    if (isset($filterParams['filter']['filterlte']['all_msg_count'])) {
+        $sparams['body']['query']['bool']['must'][]['range']['all_msg_count']['lte'] = (int)$filterParams['filter']['filterlte']['all_msg_count'];
     }
 
     if ($filterParams['input_form']->has_operator == 1) {

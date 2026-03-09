@@ -2756,6 +2756,24 @@ class erLhcoreClassElasticSearchStatistic
                 } elseif ($type == 'customfilter' && in_array($field,['bot_msg_count','vi_msg_count','op_msg_count','all_msg_count'])) {
                     $number = trim(explode('>=',$value)[1]);
                     $sparams['body']['query']['bool']['must'][]['range'][$field]['gte'] = (int)$number;
+                } elseif ($type == 'customfilter' && in_array($field,['all_msg_count_till'])) {
+                    $number = trim(explode('<=',$value)[1]);
+                    $sparams['body']['query']['bool']['must'][]['range']['all_msg_count']['lte'] = (int)$number;
+                } elseif ($type == 'customfilter' && in_array($field,['all_msg_count_range'])) {
+                    $rangeValue = trim((string)$value);
+                    if (preg_match('/BETWEEN\s+(\d+)\s+AND\s+(\d+)/i', $rangeValue, $matches)) {
+                        $from = (int)$matches[1];
+                        $to = (int)$matches[2];
+
+                        if ($from > $to) {
+                            [$from, $to] = [$to, $from];
+                        }
+
+                        $sparams['body']['query']['bool']['must'][]['range']['all_msg_count'] = [
+                            'gte' => $from,
+                            'lte' => $to
+                        ];
+                    }
                 }
             }
         }
