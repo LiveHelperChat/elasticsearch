@@ -523,15 +523,6 @@
                             <div class="col-md-2">
 
                                 <div class="form-group">
-                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Sort');?></label>
-                                    <select name="sort_chat" class="form-control form-control-sm">
-                                        <option value="desc" <?php ($input->sort_chat == 'desc' || $input->sort_chat == '') ? print 'selected="selected"' : null?> >From new to old</option>
-                                        <option value="asc" <?php $input->sort_chat == 'asc' ? print 'selected="selected"' : null?> >From old to new</option>
-                                        <option value="relevance" <?php ($input->sort_chat == 'relevance') ? print 'selected="selected"' : null?> >Relevance</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
                                     <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chat status');?></label>
                                     <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
                                         'input_name'     => 'chat_status_ids[]',
@@ -576,6 +567,18 @@
                                         }
                                     )); ?>
                                 </div>
+
+                                <div class="form-group">
+                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chat Priority');?></label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" class="form-control form-control-sm" name="priority_from" value="<?php echo htmlspecialchars((string)$input->priority_from)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','From');?>" step="1" />
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" class="form-control form-control-sm"  name="priority_till"  value="<?php echo htmlspecialchars((string)$input->priority_till)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','To');?>" step="1" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-md-2">
@@ -597,17 +600,6 @@
                                         'list_function'  => 'erLhcoreClassModelGenericBotBot::getList',
                                         'list_function_params'  => array('limit' => false)
                                     )); ?>
-                                </div>
-                                <div class="form-group">
-                                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chat Priority');?></label>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <input type="number" class="form-control form-control-sm" name="priority_from" value="<?php echo htmlspecialchars((string)$input->priority_from)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','From');?>" step="1" />
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="number" class="form-control form-control-sm"  name="priority_till"  value="<?php echo htmlspecialchars((string)$input->priority_till)?>" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','To');?>" step="1" />
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         
@@ -747,6 +739,14 @@
 	<div class="btn-group" role="group" aria-label="...">
 		<input type="submit" name="doSearchSubmit" class="btn btn-primary btn-sm" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Search');?>" />
 
+        <select name="sort_chat" class="form-control-sm rounded-0 border-secondary border-end-0" onchange="this.form.submit()">
+            <option value="desc" <?php ($input->sort_chat == 'desc' || $input->sort_chat == '') ? print 'selected="selected"' : null?> >From new to old</option>
+            <option value="asc" <?php $input->sort_chat == 'asc' ? print 'selected="selected"' : null?> >From old to new</option>
+            <option value="relevance" <?php ($input->sort_chat == 'relevance') ? print 'selected="selected"' : null?> >Relevance</option>
+            <option <?php if ($input->sort_chat == 'hnm_desc') : ?>selected="selected"<?php endif; ?> value="hnm_desc"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Highest total number of messages');?></option>
+            <option <?php if ($input->sort_chat == 'hnm_asc') : ?>selected="selected"<?php endif; ?> value="hnm_asc"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Lowest total number of messages');?></option>
+        </select>
+
         <select name="ipp" class="form-control-sm rounded-0 border-secondary" onchange="this.form.submit()">
             <option value="20"  <?php if ($input->ipp == 20) : ?>selected="selected"<?php endif; ?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','20 items per page');?></option>
             <option value="40" <?php if ($input->ipp == 40) : ?>selected="selected"<?php endif; ?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','40 items per page');?></option>
@@ -756,6 +756,7 @@
             <option value="150" <?php if ($input->ipp == 150) : ?>selected="selected"<?php endif; ?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','150 items per page');?></option>
             <option value="200" <?php if ($input->ipp == 200) : ?>selected="selected"<?php endif; ?> ><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','200 items per page');?></option>
         </select>
+
 
         <?php $appendPrintExportURL = ''; if (isset($pages) && $pages->items_total > 0) : ?>
             <?php include(erLhcoreClassDesign::designtpl('lhchat/lists/search_panel_append_print_multiinclude.tpl.php'));?>

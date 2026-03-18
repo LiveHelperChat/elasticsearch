@@ -72,6 +72,7 @@
             		        <td nowrap="nowrap" ng-non-bindable <?php if ($chat->nc != '') : ?>style="color: <?php echo htmlspecialchars($chat->nc)?>"<?php endif;?> <?php if ($chat->nb == 1) : ?>class="fw-bold"<?php endif;?> >
                                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/list/nick.tpl.php')); ?>
                                 <?php if ($chat->priority > 0) : ?><span class="text-muted fs11" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists','Priority');?>"><span class="material-icons me-0">label</span><?php echo $chat->priority?></span><?php endif; ?>
+                                <span class="text-muted fs11 ms-1" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists','Messages count');?>"><span class="material-icons">message</span><?php echo (int)$chat->all_msg_count?></span>
                             </td>
                             <td ng-non-bindable>
                                 <?php if (isset($item->meta_data['highlight'])) : ?>

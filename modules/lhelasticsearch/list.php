@@ -444,6 +444,10 @@ if ($tab == 'chats') {
 
     if ($filterParams['input_form']->sort_chat == 'asc') {
         $sort = array('time' => array('order' => 'asc'));
+    } elseif ($filterParams['input_form']->sort_chat == 'hnm_desc') {
+        $sort = array('all_msg_count' => array('order' => 'desc'));
+    } elseif ($filterParams['input_form']->sort_chat == 'hnm_asc') {
+        $sort = array('all_msg_count' => array('order' => 'asc'));
     } elseif ($filterParams['input_form']->sort_chat == 'relevance') {
         $sort = array('_score' => array('order' => 'desc'));
     } else {
