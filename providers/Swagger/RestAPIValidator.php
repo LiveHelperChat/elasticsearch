@@ -99,6 +99,19 @@ class RestAPIValidator
             }
         }
 
+        if (isset($_GET['identifier'])) {
+            $identifiers = $_GET['identifier'];
+            \erLhcoreClassChat::validateFilterInString($identifiers);
+            if (!empty($identifiers)) {
+                $departments = \erLhcoreClassModelDepartament::getList(['filterin' => ['identifier' => $identifiers]]);
+                if (!empty($departments)){
+                    $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = array_keys($departments);
+                } else {
+                    $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = [-1];
+                }
+            }
+        }
+
         if (isset($filterParams['input']->group_id) && is_numeric($filterParams['input']->group_id) && $filterParams['input']->group_id > 0 ) {
             $db = \ezcDbInstance::get();
             $stmt = $db->prepare('SELECT user_id FROM lh_groupuser WHERE group_id = :group_id');
@@ -731,6 +744,19 @@ class RestAPIValidator
 
         if ($filterParams['input_form']->is_followup == 1) {
             $sparams['body']['query']['bool']['must'][]['range']['follow_up_id']['gt'] = 0;
+        }
+
+        if (isset($_GET['identifier'])) {
+            $identifiers = $_GET['identifier'];
+            \erLhcoreClassChat::validateFilterInString($identifiers);
+            if (!empty($identifiers)) {
+                $departments = \erLhcoreClassModelDepartament::getList(['filterin' => ['identifier' => $identifiers]]);
+                if (!empty($departments)){
+                    $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = array_keys($departments);
+                } else {
+                    $sparams['body']['query']['bool']['must'][]['terms']['dep_id'] = [-1];
+                }
+            }
         }
 
         if (isset($filterParams['input']->subject_id) && is_array($filterParams['input']->subject_id) && !empty($filterParams['input']->subject_id)) {

@@ -40,6 +40,17 @@ class Definition
             "collectionFormat": "multi"
           },
           {
+            "name": "identifier[]",
+            "in": "query",
+            "description": "Department identifiers. Only plain string and numbers allowed.",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "user_ids[]",
             "in": "query",
             "description": "User IDs",
@@ -293,6 +304,17 @@ class Definition
             "type": "array",
             "items":{
               "type":"integer"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "identifier[]",
+            "in": "query",
+            "description": "Department identifiers. Only plain string and numbers allowed.",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
             },
             "collectionFormat": "multi"
           },
