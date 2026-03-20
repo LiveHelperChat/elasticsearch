@@ -36,6 +36,10 @@ try {
 
 if (isset($_POST['doSearch']))
 {
+    if (!isset($_POST['csfr_token']) || !$currentUser->validateCSFRToken($_POST['csfr_token'])) {
+        die();
+    }
+
     $sessionElasticStatistic = erLhcoreClassModelESChat::getSession();
     
     $sparams = array();
@@ -56,6 +60,10 @@ if (isset($_POST['doSearch']))
 $createFieldResponse = null;
 
 if (isset($_POST['doCreateField'])) {
+    if (!isset($_POST['csfr_token']) || !$currentUser->validateCSFRToken($_POST['csfr_token'])) {
+        die();
+    }
+
     $fieldMapping = json_decode($command, true);
     if (json_last_error() !== JSON_ERROR_NONE || !is_array($fieldMapping)) {
         $createFieldResponse = array('error' => true, 'message' => 'Invalid JSON: ' . json_last_error_msg());
