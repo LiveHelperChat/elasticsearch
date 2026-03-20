@@ -184,6 +184,16 @@ class erLhcoreClassElasticSearchIndex
                 }
             }
 
+            $esChat->participant_id = [];
+            $stmtPart = $db->prepare("SELECT `user_id` FROM `lh_chat_participant` WHERE `chat_id` = :chat_id");
+            $stmtPart->bindValue(':chat_id', $item->id, PDO::PARAM_INT);
+            $stmtPart->execute();
+            $participantIds = $stmtPart->fetchAll(PDO::FETCH_COLUMN);
+            foreach ($participantIds as $participantUserId) {
+                $esChat->participant_id[] = (int)$participantUserId;
+            }
+            $esChat->participant_count = count(array_unique(array_filter($esChat->participant_id, function($pid) { return $pid !== 0 && $pid !== -2; })));
+
             // Extensions can append custom value
             erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.indexchat', array(
                 'chat' => & $esChat

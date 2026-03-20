@@ -53,10 +53,31 @@ if (isset($_POST['doSearch']))
     }
 }
 
+$createFieldResponse = null;
+
+if (isset($_POST['doCreateField'])) {
+    $fieldMapping = json_decode($command, true);
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($fieldMapping)) {
+        $createFieldResponse = array('error' => true, 'message' => 'Invalid JSON: ' . json_last_error_msg());
+    } elseif (trim($index) === '') {
+        $createFieldResponse = array('error' => true, 'message' => 'Index name is required.');
+    } else {
+        try {
+            $createFieldResponse = $esSearchHandler->indices()->putMapping(array(
+                'index' => $index,
+                'body'  => array('properties' => $fieldMapping)
+            ));
+        } catch (Exception $e) {
+            $createFieldResponse = array('error' => true, 'message' => $e->getMessage());
+        }
+    }
+}
+
 $tpl->set('command',$command);
 $tpl->set('index',$index);
 $tpl->set('response',$response);
 $tpl->set('clusterInfo', $clusterInfo);
+$tpl->set('createFieldResponse', $createFieldResponse);
 
 $Result['content'] = $tpl->fetch();
 

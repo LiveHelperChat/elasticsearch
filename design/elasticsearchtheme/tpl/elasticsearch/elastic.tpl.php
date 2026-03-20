@@ -44,11 +44,19 @@
 		<input type="text" class="form-control" name="Index" value="<?php echo htmlspecialchars($index)?>">
 	</div>
 
-    <textarea class="form-control" style="font-size:11px" rows="10" name="Query"><?php echo htmlspecialchars($command)?></textarea>
+    <textarea class="form-control" style="font-size:11px" rows="10" name="Query" placeholder='Search query or field mapping, e.g.:&#10;{&#10;  "my_field": {&#10;    "type": "integer"&#10;  }&#10;}'><?php echo htmlspecialchars($command)?></textarea>
     <br>
     <input type="submit" name="doSearch" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Submit')?>" class="btn btn-secondary" />
+    <input type="submit" name="doCreateField" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Create field')?>" class="btn btn-primary" />
 </form>
 <br/>
 <pre style="font-size:11px;">
 <?php echo htmlspecialchars(print_r($response,true))?>
 </pre>
+
+<?php if ($createFieldResponse !== null) : ?>
+<br/>
+<pre style="font-size:11px;">
+<?php echo htmlspecialchars(print_r($createFieldResponse, true))?>
+</pre>
+<?php endif; ?>

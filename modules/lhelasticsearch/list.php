@@ -209,7 +209,15 @@ if ($tab == 'chats') {
 
     if (isset($filterParams['input']->user_ids) && is_array($filterParams['input']->user_ids) && !empty($filterParams['input']->user_ids)) {
         erLhcoreClassChat::validateFilterIn($filterParams['input']->user_ids);
-        $sparams['body']['query']['bool']['must'][]['terms']['user_id'] = $filterParams['input']->user_ids;
+        if ($filterParams['input_form']->as_participant === true) {
+            $sparams['body']['query']['bool']['must'][]['terms']['participant_id'] = $filterParams['input']->user_ids;
+        } else {
+            $sparams['body']['query']['bool']['must'][]['terms']['user_id'] = $filterParams['input']->user_ids;
+        }
+    }
+
+    if ($filterParams['input_form']->participant_not_owner === true) {
+        $sparams['body']['query']['bool']['must'][]['range']['participant_count']['gte'] = 2;
     }
 
     if ($filterParams['input_form']->no_user == 1) {

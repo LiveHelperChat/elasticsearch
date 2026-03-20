@@ -711,6 +711,30 @@ $fieldsSearch['user_ids'] = array (
     )
 );
 
+$fieldsSearch['as_participant'] = array (
+    'type' => 'boolean',
+    'trans' => 'As participant',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => false,
+    'filter_table_field' => 'user_id',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+    )
+);
+
+$fieldsSearch['participant_not_owner'] = array (
+    'type' => 'boolean',
+    'trans' => 'Participant is not a chat owner',
+    'required' => false,
+    'valid_if_filled' => false,
+    'filter_type' => false,
+    'filter_table_field' => 'user_id',
+    'validation_definition' => new ezcInputFormDefinitionElement(
+        ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+    )
+);
+
 $fieldsSearch['group_ids'] = array (
     'type' => 'text',
     'trans' => 'Group',

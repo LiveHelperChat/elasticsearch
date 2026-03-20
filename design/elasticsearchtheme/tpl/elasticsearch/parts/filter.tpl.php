@@ -55,16 +55,26 @@
             <div class="form-group">
                 <?php include(erLhcoreClassDesign::designtpl('elasticsearch/parts/user_title.tpl.php')); ?>
                 <label><?php echo $userTitle['user'];?></label>
-                <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
-                    'input_name'     => 'user_ids[]',
-                    'optional_field' => $userTitle['user_select'],
-                    'selected_id'    => $input->user_ids,
-                    'css_class'      => 'form-control',
-                    'display_name'   => 'name_official',
-                    'ajax'           => 'users',
-                    'list_function'  => 'erLhcoreClassModelUser::getUserList',
-                    'list_function_params'  => array('limit' => 50, 'sort' => '`name` ASC')
-                )); ?>
+                <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                    <?php echo erLhcoreClassRenderHelper::renderMultiDropdown( array (
+                        'input_name'     => 'user_ids[]',
+                        'optional_field' => $userTitle['user_select'],
+                        'selected_id'    => $input->user_ids,
+                        'css_class'      => 'form-control',
+                        'display_name'   => 'name_official',
+                        'ajax'           => 'users',
+                        'list_function'  => 'erLhcoreClassModelUser::getUserList',
+                        'list_function_params'  => array('limit' => 50, 'sort' => '`name` ASC')
+                    )); ?>
+                    </div>
+                    <div class="dropdown ms-1">
+                        <button class="btn btn-sm dropdown-toggle btn-outline-secondary border-secondary-control" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="material-icons">search</span></button>
+                        <div class="dropdown-menu">
+                            <label class="dropdown-item mb-0 ps-2"><input type="checkbox" name="as_participant" <?php if ($input->as_participant === true) : ?>checked="checked"<?php endif;?> value="true"> <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','As participant');?></label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -644,6 +654,10 @@
 
                             <div class="col-md-2">
                                 <label class="col-form-label"><input type="checkbox" name="without_bot" value="1" <?php $input->without_bot == true ? print 'checked="checked"' : ''?> >&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chats which did not had a bot')?></label>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="col-form-label"><input type="checkbox" name="participant_not_owner" value="1" <?php $input->participant_not_owner == true ? print 'checked="checked"' : ''?> >&nbsp;<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Chats with more than one participant')?></label>
                             </div>
 
 

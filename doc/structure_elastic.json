@@ -352,6 +352,12 @@
             "subject_id": {
 				"type": "integer"
 			},
+            "participant_id": {
+				"type": "integer"
+			},
+            "participant_count": {
+				"type": "integer"
+			},
             "abnd": {
 				"type": "integer"
 			},
