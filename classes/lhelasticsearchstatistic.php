@@ -2113,6 +2113,12 @@ class erLhcoreClassElasticSearchStatistic
             $numberOfChatsParticipant = isset($usersStats[$user->id]['total_chats_participant']) ? $usersStats[$user->id]['total_chats_participant'] : 0;
             $totalHoursParticipant = isset($usersStats[$user->id]['total_hours_participant']) ? $usersStats[$user->id]['total_hours_participant'] : 0;
 
+            if ($numberOfChatsParticipant > 0) {
+                $avgChatLengthParticipation = round($totalHoursParticipant / $numberOfChatsParticipant);
+            } else {
+                $avgChatLengthParticipation = 0;
+            }
+
             if ($totalHoursOnlineCount > 1) {
                 $aveNumberParticipant = round($numberOfChatsParticipant / $totalHoursOnlineCount, 2);
             } else {
@@ -2133,6 +2139,10 @@ class erLhcoreClassElasticSearchStatistic
                 'avgWaitTime_front' => ($avgWaitTime > 0 ? erLhcoreClassChat::formatSeconds($avgWaitTime) : ' 0 s.'),
                 'avgChatLength' => ($avgDuration > 0 ? erLhcoreClassChat::formatSeconds($avgDuration) : '0 s.'),
                 'avgChatLengthSeconds' => $avgDuration,
+
+                'avgChatLengthParticipant' => $avgChatLengthParticipation,
+                'avgChatLengthParticipant_front' => $avgChatLengthParticipation > 0 ? erLhcoreClassChat::formatSeconds($avgChatLengthParticipation) : '0 s.',
+
                 'subject_stats' => (isset($usersStats[$user->id]['subject_stats']) ? $usersStats[$user->id]['subject_stats'] : array()),
                 'mail_statistic_0' => (isset($usersStats[$user->id]['mail_statistic_0']) ? $usersStats[$user->id]['mail_statistic_0'] : 0),
                 'mail_statistic_1' => (isset($usersStats[$user->id]['mail_statistic_1']) ? $usersStats[$user->id]['mail_statistic_1'] : 0),
