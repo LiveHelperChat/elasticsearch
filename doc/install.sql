@@ -2,13 +2,13 @@ CREATE TABLE `lhc_lheschat_index` (
   `chat_id` bigint(20) unsigned NOT NULL,
   `status` tinyint(1) unsigned NOT NULL DEFAULT 0,
   UNIQUE KEY `chat_id` (`chat_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `lhc_lhesou_index` (
                                       `online_user_id` bigint(20) unsigned NOT NULL,
                                       `status` tinyint(1) unsigned NOT NULL DEFAULT 0,
                                       UNIQUE KEY `online_user_id` (`online_user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `lhc_lhesmail_index` (
                                       `mail_id` bigint(20) unsigned NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE `lhc_lhesmail_index` (
                                       `udate` bigint(20) unsigned NOT NULL DEFAULT 0,
                                       UNIQUE KEY `mail_id_op` (`mail_id`,`op`),
                                       KEY `status_op` (`status`,`op`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `lhc_mailconv_delete_filter_elastic` (
                                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
