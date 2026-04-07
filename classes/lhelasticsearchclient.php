@@ -167,9 +167,26 @@ class erLhcoreClassElasticClient
             if (($indexExists = $handler->indices()->exists(array('index' => $indexCurrent))) == false || $forceUpdate == true) {
 
                 if ($indexExists == false) {
-                    $handler->indices()->create(array(
-                        'index' => $indexCurrent
-                    ));
+                    $createParams = array(
+                        'index' => $indexCurrent,
+                        'body' => array()
+                    );
+
+                    // -1 means shards setting is intentionally left unset.
+                    if (isset($settings['number_of_shards']) && (int)$settings['number_of_shards'] !== -1) {
+                        $createParams['body']['settings']['number_of_shards'] = (int)$settings['number_of_shards'];
+                    }
+
+                    // -1 means replicas setting is intentionally left unset.
+                    if (isset($settings['number_of_replicas']) && (int)$settings['number_of_replicas'] !== -1) {
+                        $createParams['body']['settings']['number_of_replicas'] = (int)$settings['number_of_replicas'];
+                    }
+
+                    if (empty($createParams['body']['settings'])) {
+                        unset($createParams['body']);
+                    }
+
+                    $handler->indices()->create($createParams);
                 }
 
                 erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.getelasticstructure', array(

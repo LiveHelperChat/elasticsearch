@@ -6,6 +6,8 @@ return array (
 		'verify_ssl' 	=> true,
 		'index' 		=> 'chat-',
         'index_search' 	=> 'chat-*',
+	    'number_of_shards' => -1, // -1 means do not set this setting during index creation
+	    'number_of_replicas' => -1, // -1 means do not set this setting during index creation
 	    'additional_indexes' => array(
 	        
 	    ),
