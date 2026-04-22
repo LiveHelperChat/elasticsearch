@@ -450,7 +450,7 @@ class erLhcoreClassElasticSearchIndex
             $objectsSave[$indexSave][] = $osLog;
         }
 
-        erLhcoreClassModelESOnlineSession::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
+        return erLhcoreClassModelESOnlineSession::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
     }
 
     public static function indexChatDelete($params)
@@ -667,7 +667,7 @@ class erLhcoreClassElasticSearchIndex
         }
 
         if (!empty($objectsSave)) {
-            erLhcoreClassModelESMsg::bulkSave($objectsSave, array('custom_index' => true));
+            return erLhcoreClassModelESMsg::bulkSave($objectsSave, array('custom_index' => true));
         }
     }
 
@@ -767,7 +767,7 @@ class erLhcoreClassElasticSearchIndex
         }
 
         if (!empty($objectsSave)) {
-            erLhcoreClassModelESParticipant::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
+            return erLhcoreClassModelESParticipant::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true));
         }
     }
     

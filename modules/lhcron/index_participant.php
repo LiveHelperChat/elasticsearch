@@ -35,7 +35,32 @@ for ($i = 0; $i < 100000; $i++) {
         exit;
     }
 
-    erLhcoreClassElasticSearchIndex::indexParticipant(array('participant' => $messages));
+    $participantIds = array_keys($messages);
+    $indexedIds = [];
+
+    $response = erLhcoreClassElasticSearchIndex::indexParticipant(array('participant' => $messages));
+    foreach ($response as $indexItem) {
+        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+            foreach ($indexItem['items'] as $item) {
+                if (isset($item['index']['error'])) {
+                    echo 'Participant index error - ' . json_encode($item['index']['error']) . "\n";
+                    error_log('Participant index error - ' . json_encode($item['index']['error']));
+                } else {
+                    $indexedIds[] = $item['index']['_id'];
+                }
+            }
+        } else {
+            foreach ($indexItem['items'] as $item) {
+                $indexedIds[] = $item['index']['_id'];
+            }
+        }
+    }
+
+    $missingIds = array_diff($participantIds, $indexedIds);
+    if (!empty($missingIds)) {
+        error_log('Participant IDs missing from index response: ' . implode(',', $missingIds));
+    }
+
 }
 
 ?>

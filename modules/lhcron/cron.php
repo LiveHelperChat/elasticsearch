@@ -2,7 +2,7 @@
 // Run me every 5 minutes
 // /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/cron
 
-echo "==Indexing messages== \n";
+echo "==INDEXING STATS== \n";
 
 $esOptions = erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
 $data = (array)$esOptions->data;
@@ -37,11 +37,45 @@ for ($i = 0; $i < $parts; $i++) {
 
     echo "Saving participant - ",($i + 1),"\n";
     $messages = \LiveHelperChat\Models\LHCAbstract\ChatParticipant::getList(array('filtergt' => array('id' => $data['last_index_part_id']), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
-    erLhcoreClassElasticSearchIndex::indexParticipant(array('participant' => $messages));
+
+    $batchHasError = false;
+    $participantIds = array_keys($messages);
+    $indexedIds = [];
+
+    $response = erLhcoreClassElasticSearchIndex::indexParticipant(array('participant' => $messages));
+    foreach ($response as $indexItem) {
+        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+            foreach ($indexItem['items'] as $item) {
+                if (isset($item['index']['error'])) {
+                    echo 'Participant index error - ' . json_encode($item['index']['error']) . "\n";
+                    error_log('Participant index error - ' . json_encode($item['index']['error']));
+                    $batchHasError = true;
+                } else {
+                    $indexedIds[] = $item['index']['_id'];
+                }
+            }
+        } else {
+            foreach ($indexItem['items'] as $item) {
+                $indexedIds[] = $item['index']['_id'];
+            }
+        }
+    }
+
+    $missingIds = array_diff($participantIds, $indexedIds);
+    if (!empty($missingIds)) {
+        echo 'Participant IDs missing from index response: ' . implode(',', $missingIds) . "\n";
+        error_log('Participant IDs missing from index response: ' . implode(',', $missingIds));
+        $batchHasError = true;
+    }
+
+    // It will retry next time
+    if ($batchHasError === true) {
+        break;
+    }
 
     $totalIndex += count($messages);
 
-    if (!empty($messages)) {
+    if (!empty($messages) && !$batchHasError) {
         end($messages);
         $lastMsg = current($messages);
 
@@ -69,14 +103,47 @@ for ($i = 0; $i < $parts; $i++) {
 
     echo "Saving msg - ",($i + 1),"\n";
     $messages = erLhcoreClassModelmsg::getList(array('filtergt' => array('id' => $data['last_index_msg_id']), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
-    erLhcoreClassElasticSearchIndex::indexMessages(array('messages' => $messages)); 
-       
+
+    $batchHasError = false;
+    $msgIds = array_keys($messages);
+    $indexedIds = [];
+
+    $response = erLhcoreClassElasticSearchIndex::indexMessages(array('messages' => $messages));
+    foreach ($response as $indexItem) {
+        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+            foreach ($indexItem['items'] as $item) {
+                if (isset($item['index']['error'])) {
+                    echo 'Message index error - ' . json_encode($item['index']['error']) . "\n";
+                    error_log('Message index error - ' . json_encode($item['index']['error']));
+                    $batchHasError = true;
+                } else {
+                    $indexedIds[] = $item['index']['_id'];
+                }
+            }
+        } else {
+            foreach ($indexItem['items'] as $item) {
+                $indexedIds[] = $item['index']['_id'];
+            }
+        }
+    }
+
+    if (count($indexedIds) != count($messages)) {
+        echo 'Indexed and retrieved message count differs: Expected [' . $messages . "] vs [" . count($indexedIds) . "]\n";
+        error_log('Indexed and retrieved message count differs: Expected [' . $messages . "] vs [" . count($indexedIds) . "]");
+        $batchHasError = true;
+    }
+
+    // It will retry next time
+    if ($batchHasError === true) {
+        break;
+    }
+
     $totalIndex += count($messages);
-    
+
     if (!empty($messages)) {
         end($messages);
         $lastMsg = current($messages);
-        
+
         $lastMessageId = $lastMsg->id;
     }
 }
@@ -116,16 +183,32 @@ for ($i = 0; $i < 100; $i++) {
         try {
             if (!empty($chats)){
                 $totalIndex+= count($chats);
-                erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+                $response = erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+                foreach ($response as $indexItem) {
+                    if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+                        foreach ($indexItem['items'] as $item) {
+                            if (isset($item['index']['error'])) {
+                                echo 'Chat index error - ' . json_encode($item['index']['error']) . "\n";
+                                error_log('Chat index error - ' . json_encode($item['index']['error']));
+                                $indexRemove = array_search($item['index']['_id'], $chatsId);
+                                if ($indexRemove !== false) {
+                                    unset($chatsId[$indexRemove]);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         } catch (Exception $e) {
             echo $e->getMessage(),"\n";
             error_log($e->getMessage() . "\n" . $e->getTraceAsString());
         }
 
-        // Delete chats if all ok
-        $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
-        $stmt->execute();
+        // Delete chats if all ok (failed items remain in table for retry)
+        if (!empty($chatsId)) {
+            $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+            $stmt->execute();
+        }
 
     } else {
         $db->rollback();
@@ -147,12 +230,45 @@ $parts = ceil(erLhcoreClassModelUserOnlineSession::getCount(array('filtergt' => 
 
 for ($i = 0; $i < $parts; $i++) {
 
-    echo "Saving Online Session Page - ",($i + 1),"\n";    
+    echo "Saving Online Session Page - ",($i + 1),"\n";
     $items = erLhcoreClassModelUserOnlineSession::getList(array('filtergt' => array('lactivity' => $tsFilter), 'offset' => $i*$pageLimit, 'limit' => $pageLimit, 'sort' => 'id ASC'));
 
-    $totalIndex += count($items);
+    $osIds = array_keys($items);
+    $indexedIds = [];
+    $batchHasError = false;
 
-    erLhcoreClassElasticSearchIndex::indexOs(array('items' => $items));
+    $response = erLhcoreClassElasticSearchIndex::indexOs(array('items' => $items));
+    foreach ($response as $indexItem) {
+        if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+            foreach ($indexItem['items'] as $item) {
+                if (isset($item['index']['error'])) {
+                    echo 'Online session index error - ' . json_encode($item['index']['error']) . "\n";
+                    error_log('Online session index error - ' . json_encode($item['index']['error']));
+                    $batchHasError = true;
+                } else {
+                    $indexedIds[] = $item['index']['_id'];
+                }
+            }
+        } else {
+            foreach ($indexItem['items'] as $item) {
+                $indexedIds[] = $item['index']['_id'];
+            }
+        }
+    }
+
+    $missingIds = array_diff($osIds, $indexedIds);
+    if (!empty($missingIds)) {
+        echo 'Online session IDs missing from index response: ' . implode(',', $missingIds) . "\n";
+        error_log('Online session IDs missing from index response: ' . implode(',', $missingIds));
+        $batchHasError = true;
+    }
+
+    // It will retry next time
+    if ($batchHasError === true) {
+        break;
+    }
+
+    $totalIndex += count($items);
 }
 
 echo "total indexed OS - {$totalIndex}\n";
@@ -174,12 +290,28 @@ if (!empty($chatsId)) {
 
         if (!empty($chats)){
             $totalIndex+= count($chats);
-            erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+            $response = erLhcoreClassElasticSearchIndex::indexChats(array('chats' => $chats));
+            foreach ($response as $indexItem) {
+                if (isset($indexItem['errors']) && $indexItem['errors'] > 0) {
+                    foreach ($indexItem['items'] as $item) {
+                        if (isset($item['index']['error'])) {
+                            echo 'Chat re-index error - ' . json_encode($item['index']['error']) . "\n";
+                            error_log('Chat re-index error - ' . json_encode($item['index']['error']));
+                            $indexRemove = array_search($item['index']['_id'], $chatsId);
+                            if ($indexRemove !== false) {
+                                unset($chatsId[$indexRemove]);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        // Delete chats if all ok
-        $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
-        $stmt->execute();
+        // Delete chats if all ok (failed items remain in table for retry)
+        if (!empty($chatsId)) {
+            $stmt = $db->prepare('DELETE FROM lhc_lheschat_index WHERE chat_id IN (' . implode(',', $chatsId) . ')');
+            $stmt->execute();
+        }
 
     } catch (Exception $e) {
         echo $e->getMessage(),"\n";
