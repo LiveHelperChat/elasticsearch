@@ -37,12 +37,12 @@
     </div>
     
     <div class="form-group">
-        <label>Last indexed message Id</label>
+        <label>Last indexed message Id <small class="text-muted">(max available: <?php echo (int)$max_msg_id; ?>)</small></label>
         <input type="text" class="form-control" name="last_index_msg_id" value="<?php isset($es_options['last_index_msg_id']) ? print $es_options['last_index_msg_id'] : ''?>" />
     </div>
 
     <div class="form-group">
-        <label>Last indexed participant Id</label>
+        <label>Last indexed participant Id <small class="text-muted">(max available: <?php echo (int)$max_part_id; ?>)</small></label>
         <input type="text" class="form-control" name="last_index_part_id" value="<?php isset($es_options['last_index_part_id']) ? print $es_options['last_index_part_id'] : ''?>" />
     </div>
 

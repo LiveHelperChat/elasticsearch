@@ -174,6 +174,14 @@ if ( isset($_POST['StoreOptions']) ) {
 
 $tpl->set('es_options',$data);
 
+$maxMsgList = erLhcoreClassModelmsg::getList(array('sort' => 'id DESC', 'limit' => 1));
+$maxMsg = !empty($maxMsgList) ? current($maxMsgList) : null;
+$tpl->set('max_msg_id', $maxMsg ? $maxMsg->id : 0);
+
+$maxPartList = \LiveHelperChat\Models\LHCAbstract\ChatParticipant::getList(array('sort' => 'id DESC', 'limit' => 1));
+$maxPart = !empty($maxPartList) ? current($maxPartList) : null;
+$tpl->set('max_part_id', $maxPart ? $maxPart->id : 0);
+
 $Result['content'] = $tpl->fetch();
 
 $Result['path'] = array(
