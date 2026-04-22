@@ -128,8 +128,8 @@ for ($i = 0; $i < $parts; $i++) {
     }
 
     if (count($indexedIds) != count($messages)) {
-        echo 'Indexed and retrieved message count differs: Expected [' . $messages . "] vs [" . count($indexedIds) . "]\n";
-        error_log('Indexed and retrieved message count differs: Expected [' . $messages . "] vs [" . count($indexedIds) . "]");
+        echo 'Indexed and retrieved message count differs: Expected [' . count($messages) . "] vs [" . count($indexedIds) . "]\n";
+        error_log('Indexed and retrieved message count differs: Expected [' . count($messages) . "] vs [" . count($indexedIds) . "]");
         $batchHasError = true;
     }
 
