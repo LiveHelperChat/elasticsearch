@@ -1986,15 +1986,50 @@ class erLhcoreClassElasticSearchStatistic
         if (isset($filterOnlineHours['filterin']['dep_id'])) {
             unset($filterOnlineHours['filterin']['dep_id']);
         }
-        
+
+        // Resolve range start/end for overlapping session logic (time=start, lactivity=end).
+        // ES stores timestamps in milliseconds.
+        $onlineRangeStart = null;
+        $onlineRangeEnd = null;
+
+        if (isset($params['filter']['filtergte']['time'])) {
+            $onlineRangeStart = (int)$params['filter']['filtergte']['time'] * 1000;
+        } elseif (isset($params['filter']['filtergt']['time'])) {
+            $onlineRangeStart = (int)$params['filter']['filtergt']['time'] * 1000;
+        }
+
+        if (isset($params['filter']['filterlte']['time'])) {
+            $onlineRangeEnd = (int)$params['filter']['filterlte']['time'] * 1000;
+        } elseif (isset($params['filter']['filterlt']['time'])) {
+            $onlineRangeEnd = (int)$params['filter']['filterlt']['time'] * 1000;
+        }
+
+        // Strip time filters from filterOnlineHours so formatFilter does not add them —
+        // we will add the overlap range conditions manually below.
+        foreach (['filtergte', 'filtergt', 'filterlte', 'filterlt'] as $_fkey) {
+            if (isset($filterOnlineHours[$_fkey]['time'])) {
+                unset($filterOnlineHours[$_fkey]['time']);
+            }
+        }
+
         self::formatFilter($filterOnlineHours, $sparams);
 
         $paramsIndex = $params;
 
-        if (! isset($params['filter']['filtergte']['time']) && ! isset($params['filter']['filterlte']['time'])) {
+        if ($onlineRangeStart === null && $onlineRangeEnd === null) {
+            // No explicit range — fall back to default days filter
             $ts = mktime(0, 0, 0, date('m'), date('d') - $params['days'], date('y'));
-            $sparams['body']['query']['bool']['must'][]['range']['time']['gt'] = $ts * 1000;
+            $onlineRangeStart = $ts * 1000;
             $paramsIndex['filter']['filtergte']['time'] = $ts;
+        }
+
+        // Overlapping filter: session [time, lactivity] overlaps [rangeStart, rangeEnd]
+        // session.time <= rangeEnd  AND  session.lactivity >= rangeStart
+        if ($onlineRangeStart !== null) {
+            $sparams['body']['query']['bool']['must'][]['range']['lactivity']['gte'] = $onlineRangeStart;
+        }
+        if ($onlineRangeEnd !== null) {
+            $sparams['body']['query']['bool']['must'][]['range']['time']['lte'] = $onlineRangeEnd;
         }
 
         $indexSearch = self::getIndexByFilter($paramsIndex['filter'], erLhcoreClassModelESOnlineSession::$elasticType);
@@ -2007,10 +2042,29 @@ class erLhcoreClassElasticSearchStatistic
         $sparams['body']['from'] = 0;
         $sparams['body']['aggs']['group_by_user']['terms']['field'] = 'user_id';
         $sparams['body']['aggs']['group_by_user']['terms']['size'] = 10000;
-        $sparams['body']['aggs']['group_by_user']['aggs']['duration_sum']['sum']['field'] = 'duration';
+
+        // Fractional overlap: only sum the portion of each session that falls within the requested range.
+        // Script computes: min(lactivity, rangeEnd) - max(time, rangeStart)  (in ms, then convert to seconds)
+        $scriptParams = array();
+
+        // date fields in ES return ZonedDateTime — use .toInstant().toEpochMilli() for numeric comparison
+        $clampedEnd   = $onlineRangeEnd   !== null ? 'Math.min(doc[\'lactivity\'].value.toInstant().toEpochMilli(), params.range_end)'   : 'doc[\'lactivity\'].value.toInstant().toEpochMilli()';
+        $clampedStart = $onlineRangeStart !== null ? 'Math.max(doc[\'time\'].value.toInstant().toEpochMilli(), params.range_start)' : 'doc[\'time\'].value.toInstant().toEpochMilli()';
+
+        if ($onlineRangeStart !== null) {
+            $scriptParams['range_start'] = $onlineRangeStart;
+        }
+        if ($onlineRangeEnd !== null) {
+            $scriptParams['range_end'] = $onlineRangeEnd;
+        }
+
+        $sparams['body']['aggs']['group_by_user']['aggs']['duration_sum']['sum']['script'] = array(
+            'source' => '(' . $clampedEnd . ' - ' . $clampedStart . ') / 1000',
+            'params' => $scriptParams,
+        );
 
         $result = $elasticSearchHandler->search($sparams);
-        
+  
         foreach ($result['aggregations']['group_by_user']['buckets'] as $bucket) {
             $usersStats[$bucket['key']]['online_hours'] = $bucket['duration_sum']['value'];
         }
