@@ -576,6 +576,9 @@
 			"msg_system": {
 			    "type": "text"
 			},
+			"msg_bot": {
+			    "type": "text"
+			},
             "hvf": {
               "type": "integer"
             },

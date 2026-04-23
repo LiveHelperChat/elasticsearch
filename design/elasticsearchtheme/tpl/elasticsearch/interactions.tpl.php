@@ -58,6 +58,8 @@
                                                     <i>System:</i>
                                                 <?php elseif ($field == 'subject') : ?>
                                                     <i>Subject:</i>
+                                                <?php elseif ($field == 'msg_bot') : ?>
+                                                    <i>Bot:</i>
                                                 <?php elseif ($field == 'alt_body') : ?>
                                                     <i>Body:</i>
                                                 <?php elseif ($field == 'msg_operator') : ?>

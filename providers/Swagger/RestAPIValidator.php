@@ -359,6 +359,7 @@ class RestAPIValidator
                     $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $paramQuery;
                     $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $paramQuery;
                     $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
+                    $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
                 }
 
             } else {
@@ -372,6 +373,10 @@ class RestAPIValidator
 
                 if (in_array(4,$filterParams['input_form']->search_in)) {
                     $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
+                }
+
+                if (in_array(5,$filterParams['input_form']->search_in)) {
+                    $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
                 }
             }
 

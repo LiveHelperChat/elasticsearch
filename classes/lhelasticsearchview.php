@@ -376,6 +376,7 @@ class erLhcoreClassElasticSearchView
                 $sparams['highlight']['fields']['msg_operator'] = new stdClass();
                 $sparams['highlight']['fields']['msg_visitor'] = new stdClass();
                 $sparams['highlight']['fields']['msg_system'] = new stdClass();
+                $sparams['highlight']['fields']['msg_bot'] = new stdClass();
             }
 
             $items = erLhcoreClassModelESChat::getList(array(

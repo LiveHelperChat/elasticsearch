@@ -82,6 +82,8 @@
                                         <div>
                                             <?php if ($field == 'msg_system') : ?>
                                                 <i class="fw-bold">System:</i>
+                                            <?php elseif ($field == 'msg_bot') : ?>
+                                                <i class="fw-bold">Bot:</i>
                                             <?php elseif ($field == 'msg_operator') : ?>
                                                 <i class="fw-bold">Operator:</i>
                                             <?php else : ?>

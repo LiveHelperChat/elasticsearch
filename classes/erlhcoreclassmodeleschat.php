@@ -74,6 +74,7 @@ class erLhcoreClassModelESChat
             'msg_visitor' => $this->msg_visitor,
             'msg_operator' => $this->msg_operator,
             'msg_system' => $this->msg_system,
+            'msg_bot' => $this->msg_bot,
             'pnd_time' => $this->pnd_time,
             'cls_time' => $this->cls_time,
             'invitation_id' => $this->invitation_id,
@@ -313,6 +314,7 @@ class erLhcoreClassModelESChat
     public $msg_visitor = null;
     public $msg_operator = null;
     public $msg_system = null;
+    public $msg_bot = null;
     public $pnd_time = null;
     public $cls_time = null;
     public $invitation_id = null;

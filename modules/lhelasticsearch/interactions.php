@@ -54,6 +54,7 @@ if (trim($filterParams['input_form']->keyword) != '') {
         $booldConditions['bool']['should'][][$exactMatch]['msg_visitor'] = $paramQuery;
         $booldConditions['bool']['should'][][$exactMatch]['msg_operator'] = $paramQuery;
         $booldConditions['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
+        $booldConditions['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
         $booldConditions['bool']['should'][][$exactMatch]['subject'] = $paramQuery;
         $booldConditions['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
     } else {
@@ -76,6 +77,12 @@ if (trim($filterParams['input_form']->keyword) != '') {
         if (in_array(6,$filterParams['input_form']->search_in)) {
             $booldConditions['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
         }
+
+        // Interactions search has its own search_in mapping: 5 = subject, 6 = alt_body, 7 = bot messages.
+        // Regular chat search uses a different enumeration, where bot messages are mapped to 5.
+        if (in_array(7,$filterParams['input_form']->search_in)) {
+            $booldConditions['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
+        }
     }
 
     $sparams['body']['query']['bool']['should'][] = $booldConditions;
@@ -89,6 +96,7 @@ if (trim($filterParams['input_form']->keyword) != '') {
     $sparams['body']['highlight']['fields']['msg_operator'] = new stdClass();
     $sparams['body']['highlight']['fields']['msg_visitor'] = new stdClass();
     $sparams['body']['highlight']['fields']['msg_system'] = new stdClass();
+    $sparams['body']['highlight']['fields']['msg_bot'] = new stdClass();
     $sparams['body']['highlight']['fields']['subject'] = new stdClass();
     $sparams['body']['highlight']['fields']['alt_body'] = new stdClass();
 }

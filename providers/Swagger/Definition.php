@@ -507,7 +507,7 @@ class Definition
           {
             "name": "search_in[]",
             "in": "query",
-            "description": "Search in. Search in. 2 - Visitor messages, 3 - Operator messages, 4 - System messages",
+            "description": "Search in. 2 - Visitor messages, 3 - Operator messages, 4 - System messages, 5 - bot messages",
             "required": false,
             "type": "array",
             "items": {

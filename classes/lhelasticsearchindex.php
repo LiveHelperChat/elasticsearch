@@ -213,6 +213,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->msg_visitor = null;
             $esChat->msg_operator = null;
             $esChat->msg_system = null;
+            $esChat->msg_bot = null;
 
             $esChat->op_msg_count = 0;
             $esChat->vi_msg_count = 0;
@@ -228,11 +229,12 @@ class erLhcoreClassElasticSearchIndex
                     $esChat->msg_operator .= $messageChat->msg . "\n";
                     $esChat->op_msg_count++;
                 } else {
-                    $esChat->msg_system .= $messageChat->msg . "\n";
                     if ($messageChat->user_id == -2) {
+                        $esChat->msg_bot .= $messageChat->msg . "\n";
                         $esChat->bot_msg_count++;
                     } else {
-                        $esChat->sys_msg_count = 0;
+                        $esChat->msg_system .= $messageChat->msg . "\n";
+                        $esChat->sys_msg_count++;
                     }
                 }
             }
@@ -242,6 +244,7 @@ class erLhcoreClassElasticSearchIndex
             $esChat->msg_system = trim((string)$esChat->msg_system);
             $esChat->msg_operator = trim((string)$esChat->msg_operator);
             $esChat->msg_visitor = trim((string)$esChat->msg_visitor);
+            $esChat->msg_bot = trim((string)$esChat->msg_bot);
 
             // Has visitor file
             $esChat->hvf = preg_match('/\[file="?(.*?)"?\]/is',$esChat->msg_visitor);

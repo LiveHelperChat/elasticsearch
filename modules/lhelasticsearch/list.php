@@ -418,6 +418,7 @@ if ($tab == 'chats') {
                 $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_visitor'] = $paramQuery;
                 $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_operator'] = $paramQuery;
                 $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
             }
 
         } else {
@@ -432,6 +433,10 @@ if ($tab == 'chats') {
             if (in_array(4,$filterParams['input_form']->search_in)) {
                 $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_system'] = $paramQuery;
             }
+            
+            if (in_array(5,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
+            }
         }
 
         if ($filterParams['input_form']->expression != 1) {
@@ -444,6 +449,7 @@ if ($tab == 'chats') {
         $sparams['body']['highlight']['fields']['msg_operator'] = new stdClass();
         $sparams['body']['highlight']['fields']['msg_visitor'] = new stdClass();
         $sparams['body']['highlight']['fields']['msg_system'] = new stdClass();
+        $sparams['body']['highlight']['fields']['msg_bot'] = new stdClass();
     }
 
     erLhcoreClassElasticSearchView::getDepartmentLimitation(['sparams' => & $sparams, 'check_list_permissions' => true, 'check_list_scope' => 'chats']);
