@@ -8,6 +8,7 @@
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listop')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of online operators history')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listpc')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of pending/active chats history')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listov')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of online visitors')?></a></li>
+    <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listlog')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','List of log records')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/elastic')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Elastic Search console')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/options')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Elastic Search Options')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/reindex')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Re-index scheduler')?></a></li>

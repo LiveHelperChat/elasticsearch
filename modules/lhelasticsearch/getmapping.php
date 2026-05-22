@@ -4,6 +4,7 @@ $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/getmapping.tpl.php');
 
 $tpl->set('stats',erLhcoreClassElasticClient::getHandler()->indices()->stats(array('index' => $Params['user_parameters']['indice'])));
 $tpl->set('mapping',erLhcoreClassElasticClient::getHandler()->indices()->getMapping(array('index' => $Params['user_parameters']['indice'])));
+$tpl->set('settings',erLhcoreClassElasticClient::getHandler()->indices()->getSettings(array('index' => $Params['user_parameters']['indice'])));
 
 $Result['content'] = $tpl->fetch();
 $Result['path'] = array(

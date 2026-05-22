@@ -1,0 +1,1 @@
+<button class="btn btn-xs btn-outline-secondary" onclick="lhc.revealModal({'url':'<?php echo erLhcoreClassDesign::baseurl('elasticsearch/log')?>/<?php print (is_object($msg) ? $msg->id : $msg['id'])?>'});"  type="button">ES Log</button>

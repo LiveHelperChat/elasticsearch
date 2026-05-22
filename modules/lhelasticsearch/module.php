@@ -105,14 +105,29 @@ $ViewList['listov'] = array(
     'functions' => array('use')
 );
 
+$ViewList['listlog'] = array(
+    'params' => array(),
+    'functions' => array('configure')
+);
+
 $ViewList['rawov'] = array(
     'params' => array('index','id'),
     'functions' => array('use')
 );
 
+$ViewList['rawlog'] = array(
+    'params' => array('index','id'),
+    'functions' => array('configure')
+);
+
 $ViewList['rawmail'] = array(
     'params' => array('index','id'),
     'functions' => array('use')
+);
+
+$ViewList['log'] = array(
+    'params' => array('id'),
+    'functions' => array('configure')
 );
 
 $ViewList['getpreviouschats'] = array(
@@ -282,6 +297,12 @@ $ViewList['deleteop'] = array(
 );
 
 $ViewList['deleteov'] = array(
+    'params' => array('index','id'),
+    'uparams' => array('csfr'),
+    'functions' => array('configure')
+);
+
+$ViewList['deletelog'] = array(
     'params' => array('index','id'),
     'uparams' => array('csfr'),
     'functions' => array('configure')

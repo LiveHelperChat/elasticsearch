@@ -152,7 +152,7 @@ class erLhcoreClassElasticClient
                 continue;
             }
 
-            if ($type != 'lh_online_visitor') {
+            if ($type != 'lh_online_visitor' && $type != 'lh_rest_log') {
                 $indexCurrent = $index . '-' . $type . ($indexPrepend != null ? '-' . $indexPrepend : '');
             } else {
                 $indexCurrent = $index . '-' . $type;
@@ -182,11 +182,37 @@ class erLhcoreClassElasticClient
                         $createParams['body']['settings']['number_of_replicas'] = (int)$settings['number_of_replicas'];
                     }
 
+                    $hasIndexTypeSettings = false;
+                    if (isset($contentData[$index]['index_settings'][$type])) {
+                        $hasIndexTypeSettings = true;
+                        foreach($contentData[$index]['index_settings'][$type] as $indexSetting => $indexSettingValue) {
+                            $createParams['body']['settings'][$indexSetting] = $indexSettingValue;
+                        }
+                    }
+
                     if (empty($createParams['body']['settings'])) {
                         unset($createParams['body']);
                     }
 
-                    $handler->indices()->create($createParams);
+                    try {
+                        $handler->indices()->create($createParams);
+                    } catch (Exception $e) {
+                        // Retry without index_settings if creation failed (e.g. unsupported settings on older ES versions)
+                        if ($hasIndexTypeSettings) {
+                            foreach (array_keys($contentData[$index]['index_settings'][$type]) as $indexSetting) {
+                                unset($createParams['body']['settings'][$indexSetting]);
+                            }
+                            if (empty($createParams['body']['settings'])) {
+                                unset($createParams['body']['settings']);
+                            }
+                            if (isset($createParams['body']) && empty($createParams['body'])) {
+                                unset($createParams['body']);
+                            }
+                            $handler->indices()->create($createParams);
+                        } else {
+                            throw $e;
+                        }
+                    }
                 }
 
                 erLhcoreClassChatEventDispatcher::getInstance()->dispatch('system.getelasticstructure', array(

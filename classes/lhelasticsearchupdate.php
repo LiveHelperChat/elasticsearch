@@ -44,7 +44,7 @@ class erLhcoreClassElasticSearchUpdate
         // Remove types
        foreach (array_keys($currentTypeProperties) as $type) {
 
-            if (!isset($definition[$type])) {
+            if (!isset($definition[$type]) && $type != '@timestamp') {
                 $status[] = 'type removed in index [' . $type . '] ' . $elasticIndex;
 
                 $params = array(

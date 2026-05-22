@@ -1,762 +1,784 @@
 {
-	"types": {
-		"lh_online_visitor": {
-          "vid": {
+  "index_settings": {
+      "lh_rest_log" : {
+        "index.codec": "best_compression",
+        "index.mode": "logsdb"
+      }
+  },
+  "types": {
+    "lh_rest_log": {
+      "chat_id": {
+        "type": "long"
+      },
+      "time": {
+        "type": "date"
+      },
+      "msg": {
+        "type": "text",
+        "index": false
+      },
+      "meta_msg": {
+        "type": "text",
+        "index": false
+      }
+    },
+    "lh_online_visitor": {
+      "vid": {
+        "type": "keyword"
+      },
+      "ip": {
+        "type": "ip"
+      },
+      "current_page": {
+        "type": "text"
+      },
+      "chat_id": {
+        "type": "long"
+      },
+      "last_visit": {
+        "type": "date"
+      },
+      "first_visit": {
+        "type": "date"
+      },
+      "pages_count": {
+        "type": "integer"
+      },
+      "user_agent": {
+        "type": "text"
+      },
+      "user_country_code": {
+        "type": "keyword"
+      },
+      "user_country_name": {
+        "type": "text"
+      },
+      "operator_message": {
+        "type": "text"
+      },
+      "operator_user_id": {
+        "type": "integer"
+      },
+      "message_seen": {
+        "type": "short"
+      },
+      "location": {
+        "type": "geo_point"
+      },
+      "city": {
+        "type": "text"
+      },
+      "time_on_site": {
+        "type": "integer"
+      },
+      "tt_time_on_site": {
+        "type": "integer"
+      },
+      "identifier": {
+        "type": "keyword"
+      },
+      "referrer": {
+        "type": "text"
+      },
+      "operator_user_proactive": {
+        "type": "text"
+      },
+      "invitation_id": {
+        "type": "integer"
+      },
+      "total_visits": {
+        "type": "integer"
+      },
+      "message_seen_ts": {
+        "type": "date"
+      },
+      "tt_pages_count": {
+        "type": "integer"
+      },
+      "invitation_count": {
+        "type": "integer"
+      },
+      "requires_email": {
+        "type": "short"
+      },
+      "page_title": {
+        "type": "text"
+      },
+      "dep_id": {
+        "type": "integer"
+      },
+      "invitation_seen_count": {
+        "type": "integer"
+      },
+      "reopen_chat": {
+        "type": "short"
+      },
+      "operation": {
+        "type": "text",
+        "index": false
+      },
+      "screenshot_id": {
+        "type": "integer"
+      },
+      "requires_username": {
+        "type": "short"
+      },
+      "online_attr": {
+        "type": "text",
+        "index": false
+      },
+      "visitor_tz": {
+        "type": "keyword"
+      },
+      "requires_phone": {
+        "type": "short"
+      },
+      "last_check_time": {
+        "type": "date"
+      },
+      "notes": {
+        "type": "text"
+      },
+      "online_attr_system": {
+        "type": "text",
+        "index": false
+      },
+      "online_attr_system_flat": {
+        "type": "nested",
+        "dynamic": false,
+        "properties": {
+          "username": {
             "type": "keyword"
-          },
-          "ip": {
-            "type": "ip"
-          },
-          "current_page": {
-            "type": "text"
-          },
-          "chat_id": {
-            "type": "long"
-          },
-          "last_visit": {
-            "type": "date"
-          },
-          "first_visit": {
-            "type": "date"
-          },
-          "pages_count": {
-            "type": "integer"
-          },
-          "user_agent": {
-            "type": "text"
-          },
-          "user_country_code": {
-            "type": "keyword"
-          },
-          "user_country_name": {
-            "type": "text"
-          },
-          "operator_message": {
-            "type": "text"
-          },
-          "operator_user_id": {
-            "type": "integer"
-          },
-          "message_seen": {
-            "type": "short"
-          },
-          "location": {
-            "type": "geo_point"
-          },
-          "city": {
-            "type": "text"
-          },
-          "time_on_site": {
-            "type": "integer"
-          },
-          "tt_time_on_site": {
-            "type": "integer"
-          },
-          "identifier": {
-            "type": "keyword"
-          },
-          "referrer": {
-            "type": "text"
-          },
-          "operator_user_proactive": {
-            "type": "text"
-          },
-          "invitation_id": {
-            "type": "integer"
-          },
-          "total_visits": {
-            "type": "integer"
-          },
-          "message_seen_ts": {
-            "type": "date"
-          },
-          "tt_pages_count": {
-            "type": "integer"
-          },
-          "invitation_count": {
-            "type": "integer"
-          },
-          "requires_email": {
-            "type": "short"
-          },
-          "page_title": {
-            "type": "text"
-          },
-          "dep_id": {
-            "type": "integer"
-          },
-          "invitation_seen_count": {
-            "type": "integer"
-          },
-          "reopen_chat": {
-            "type": "short"
-          },
-          "operation": {
-            "type": "text",
-            "index" : false
-          },
-          "screenshot_id": {
-            "type": "integer"
-          },
-          "requires_username": {
-            "type": "short"
-          },
-          "online_attr": {
-            "type": "text",
-            "index" : false
-          },
-          "visitor_tz": {
-            "type": "keyword"
-          },
-          "requires_phone": {
-            "type": "short"
-          },
-          "last_check_time": {
-            "type": "date"
-          },
-          "notes": {
-            "type": "text"
-          },
-          "online_attr_system": {
-            "type": "text",
-            "index" : false
-          },
-          "online_attr_system_flat": {
-            "type": "nested",
-            "dynamic": false,
-            "properties": {
-              "username" : {
-                "type" : "keyword"
-              }
-            }
-          },
-          "operation_chat": {
-            "type": "text",
-            "index" : false
-          },
-          "user_active": {
-            "type": "short"
-          },
-          "conversion_id": {
-            "type": "integer"
-          },
-          "device_type": {
-            "type": "short"
-          },
-          "chat_time": {
-            "type": "date"
-          },
-          "last_visit_prev": {
-            "type": "date"
           }
-        },
-		"lh_mail": {
-          "conversation_id": {
-            "type": "long"
-          },
-          "conversation_id_old": {
-            "type": "long"
-          },
-          "mailbox_id": {
-            "type": "integer"
-          },
-          "user_id": {
-            "type": "long"
-          },
-          "conv_user_id": {
-            "type": "long"
-          },
-          "follow_up_id": {
-            "type": "long"
-          },
-          "size": {
-            "type": "long"
-          },
-          "uid": {
-            "type": "long"
-          },
-          "recent": {
-            "type": "integer"
-          },
-          "status": {
-            "type": "integer"
-          },
-          "status_conv": {
-            "type": "integer"
-          },
-          "start_type": {
-            "type": "integer"
-          },
-          "flagged": {
-            "type": "integer"
-          },
-          "has_attachment_conv": {
-            "type": "integer"
-          },
-          "is_external": {
-            "type": "integer"
-          },
-          "msgno": {
-            "type": "long"
-          },
-          "time": {
-            "type": "date"
-          },
-          "ctime": {
-            "type": "date"
-          },
-          "lr_time": {
-            "type": "date"
-          },
-          "response_time": {
-            "type": "date"
-          },
-          "cls_time": {
-            "type": "date"
-          },
-          "opened_at": {
-            "type": "date"
-          },
-          "accept_time": {
-            "type": "date"
-          },
-          "references": {
-            "type": "text"
-          },
-          "subject": {
-            "type": "text"
-          },
-          "to_data": {
-            "type": "text"
-          },
-          "sender_address": {
-            "type": "keyword"
-          },
-          "lang": {
-            "type": "keyword"
-          },
-          "sender_name": {
-            "type": "text"
-          },
-          "customer_address": {
-            "type": "keyword"
-          },
-          "customer_address_clean": {
-            "type": "keyword"
-          },
-          "customer_name": {
-            "type": "text"
-          },
-          "from_address": {
-            "type": "keyword"
-          },
-          "from_address_clean": {
-            "type": "keyword"
-          },
-          "from_host": {
-            "type": "keyword"
-          },
-          "from_name": {
-            "type": "text"
-          },
-          "sender_host": {
-            "type": "keyword"
-          },
-          "reply_to_data": {
-            "type": "text"
-          },
-          "body": {
-            "type": "text"
-          },
-          "alt_body": {
-            "type": "text"
-          },
-          "message_id": {
-            "type": "text"
-          },
-          "in_reply_to": {
-            "type": "text"
-          },
-          "rfc822_body": {
-            "type": "text"
-          },
-          "delivery_status": {
-            "type": "text"
-          },
-          "mb_folder": {
-            "type": "text"
-          },
-          "cc_data": {
-            "type": "text"
-          },
-          "bcc_data": {
-            "type": "text"
-          },
-          "hour": {
-            "type": "integer"
-          },
-          "interaction_time": {
-            "type": "integer"
-          },
-          "response_type": {
-            "type": "integer"
-          },
-          "wait_time": {
-            "type": "integer"
-          },
-          "undelivered": {
-            "type": "integer"
-          },
-          "has_attachment": {
-            "type": "integer"
-          },
-          "dep_id": {
-            "type": "integer"
-          },
-          "conv_duration": {
-            "type": "integer"
-          },
-          "subject_id": {
-            "type": "integer"
-          },
-          "priority": {
-            "type": "integer"
-          },
-          "phone": {
-            "type": "keyword"
-          },
-          "mail_variables": {
-            "type": "text",
-            "index" : false
-          }
-        },
-		"lh_chat": {
-			"user_id": {
-				"type": "long"
-			},
-			"transfer_uid": {
-				"type": "long"
-			},
-			"chat_id": {
-				"type": "long"
-			},
-			"dep_id": {
-				"type": "integer"
-			},
-            "theme_id": {
-				"type": "integer"
-			},
-            "iwh_id": {
-				"type": "integer"
-			},
-            "subject_id": {
-				"type": "integer"
-			},
-            "participant_id": {
-				"type": "integer"
-			},
-            "participant_count": {
-				"type": "integer"
-			},
-            "abnd": {
-				"type": "integer"
-			},
-            "drpd": {
-				"type": "integer"
-			},
-			"status": {
-				"type": "integer"
-			},
-			"status_sub": {
-				"type": "integer"
-			},
-			"status_sub_sub": {
-				"type": "integer"
-			},
-            "gbot_id": {
-				"type": "integer"
-			},
-			"sender_user_id": {
-				"type": "integer"
-			},
-			"auto_responder_id": {
-				"type": "integer"
-			},
-			"time": {
-				"type": "date"
-			},
-			"pnd_time": {
-				"type": "date"
-			},
-			"cls_time": {
-				"type": "date"
-			},
-			"ip": {
-			    "type": "ip"
-			},		
-			"hash": {
-			    "type": "keyword"
-			},
-			"referrer": {
-			    "type": "text"
-			},
-			"session_referrer": {
-			    "type": "text"
-			},
-			"email": {
-			    "type": "keyword"
-			},
-			"user_status": {
-			    "type": "integer"
-			},
-            "cls_us": {
-			    "type": "integer"
-			},
-			"support_informed": {
-			    "type": "integer"
-			},
-			"chat_initiator": {
-			    "type": "integer"
-			},
-			"hour": {
-			    "type": "integer"
-			},
-			"online_user_id": {
-			    "type": "integer"
-			},
-			"chat_duration": {
-			    "type": "integer"
-			},
-			"invitation_id": {
-			    "type": "integer"
-			},
-			"transfer_timeout_ts": {
-			    "type": "integer"
-			},
-			"nc_cb_executed": {
-			    "type": "integer"
-			},
-			"operator_typing_id": {
-			    "type": "integer"
-			},
-			"transfer_if_na": {
-			    "type": "integer"
-			},
-			"fbst": {
-			    "type": "integer"
-			},
-			"na_cb_executed": {
-			    "type": "integer"
-			},
-			"transfer_timeout_ac": {
-			    "type": "integer"
-			},
-			"country_code": {
-			    "type": "keyword"
-			},
-			"country_name": {
-			    "type": "keyword"
-			},
-			"phone": {
-			    "type": "keyword"
-			},
-			"user_tz_identifier": {
-			    "type": "keyword"
-			},
-			"chat_locale": {
-			    "type": "keyword"
-			},
-			"chat_locale_to": {
-			    "type": "keyword"
-			},
-			"additional_data": {
-			    "type": "text",
-			    "index" : false
-			},
-			"operation": {
-			    "type": "text",
-			    "index" : false
-			},
-			"chat_variables": {
-			    "type": "text",
-			    "index" : false
-			},
-			"operation_admin": {
-			    "type": "text",
-			    "index" : false
-			},
-			"status_sub_arg": {
-			    "type": "text",
-			    "index" : false
-			},
-			"remarks": {
-			    "type": "text"
-			},
-			"uagent": {
-			    "type": "text"
-			},
-			"nick": {
-			    "type": "text"
-			},
-			"has_unread_messages": {
-			    "type": "integer"
-			},
-			"device_type": {
-			    "type": "integer"
-			},
-			"unread_messages_informed": {
-			    "type": "integer"
-			},
-			"unanswered_chat": {
-			    "type": "integer"
-			},
-			"product_id": {
-			    "type": "integer"
-			},
-			"reinform_timeout": {
-			    "type": "integer"
-			},
-			"tslasign": {
-			    "type": "date"
-			},
-			"user_closed_ts": {
-			    "type": "date"
-			},
-			"screenshot_id": {
-			    "type": "integer"
-			},
-			"usaccept": {
-			    "type": "integer"
-			},
-			"priority": {
-			    "type": "integer"
-			},
-			"has_unread_op_messages": {
-			    "type": "integer"
-			},
-			"wait_time": {
-			    "type": "integer"
-			},
-			"unread_op_messages_informed": {
-			    "type": "integer"
-			},
-			"last_user_msg_time": {
-			    "type": "date"
-			},
-			"last_op_msg_time": {
-			    "type": "date"
-			},
-			"lsync": {
-			    "type": "date"
-			},
-			"last_msg_id": {
-			    "type": "long"
-			},
-			"mail_send": {
-			    "type": "integer"
-			},
-			"location": {
-			    "type": "geo_point"
-			},			
-			"city": {
-			    "type": "keyword"
-			},
-            "region": {
-			    "type": "keyword"
-			},
-			"nick_keyword": {
-			    "type": "keyword"
-			},
-			"msg_visitor": {
-			    "type": "text"
-			},
-			"msg_operator": {
-			    "type": "text"
-			},
-			"msg_system": {
-			    "type": "text"
-			},
-			"msg_bot": {
-			    "type": "text"
-			},
-            "hvf": {
-              "type": "integer"
-            },
-            "hof": {
-              "type": "integer"
-            },
-            "frt": {
-              "type": "integer"
-            },
-            "aart": {
-              "type": "integer"
-            },
-            "mart": {
-              "type": "integer"
-            },
-            "op_msg_count": {
-              "type": "integer"
-            },
-            "vi_msg_count": {
-              "type": "integer"
-            },
-            "bot_msg_count": {
-              "type": "integer"
-            },
-            "all_msg_count": {
-              "type": "integer"
-            },
-            "sys_msg_count": {
-              "type": "integer"
-            }
-        },
-		"lh_msg": {
-			"msg_id": {
-				"type": "long"
-			}, 
-			"msg": {
-				"type": "text"
-			},
-			"time": {
-				"type": "date"
-			},
-			"chat_id": {
-				"type": "long"
-			},
-			"user_id": {
-				"type": "long"
-			},
-			"op_user_id": {
-				"type": "long"
-			},
-			"dep_id": {
-				"type": "integer"
-			},
-            "gbot_id": {
-				"type": "integer"
-			},
-            "status_sub": {
-				"type": "integer"
-			},
-            "del_st": {
-				"type": "short"
-			},
-			"name_support": {
-				"type": "text"
-			}
-		},
-		"lh_os": {
-			"os_id": {
-				"type": "long"
-			}, 
-			"user_id": {
-				"type": "long"
-			},
-			"time": {
-				"type": "date"
-			},
-			"lactivity": {
-				"type": "date"
-			},
-			"duration": {
-				"type": "integer"
-			}
-		},
-		"lh_pc": {
-			"chat_id": {
-				"type": "long"
-			}, 
-			"time": {
-				"type": "date"
-			},
-			"itime": {
-				"type": "date"
-			},
-			"dep_id": {
-				"type": "integer"
-			},
-			"status": {
-				"type": "integer"
-			}
-		},
-		"lh_op": {
-			"user_id": {
-				"type": "long"
-			},
-            "dep_ids": {
-				"type": "long"
-			},
-            "max_chats": {
-              "type": "integer"
-            },
-            "pending_chats": {
-              "type": "integer"
-            },
-            "inactive_chats": {
-              "type": "integer"
-            },
-            "active_chats": {
-              "type": "integer"
-            },
-            "free_slots": {
-              "type": "integer"
-            },
-			"itime": {
-				"type": "date"
-			}			
-		},
-        "lh_participant": {
-			"chat_id": {
-				"type": "long"
-			},
-            "user_id": {
-				"type": "long"
-			},
-            "duration": {
-				"type": "integer"
-			},
-            "dep_id": {
-				"type": "integer"
-			},
-			"time": {
-				"type": "date"
-			},
-            "subject_id": {
-              "type": "integer"
-            },
-            "abnd": {
-              "type": "integer"
-            },
-            "status_sub": {
-              "type": "integer"
-            },
-            "drpd": {
-              "type": "integer"
-            },
-            "gbot_id": {
-              "type": "integer"
-            },
-            "iwh_id": {
-              "type": "integer"
-            },
-            "country_code": {
-              "type": "keyword"
-            },
-            "transfer_uid": {
-              "type": "long"
-            },
-            "invitation_id": {
-              "type": "integer"
-            },
-            "frt": {
-              "type": "integer"
-            },
-            "aart": {
-              "type": "integer"
-            },
-            "mart": {
-              "type": "integer"
-            }
         }
-	}  
+      },
+      "operation_chat": {
+        "type": "text",
+        "index": false
+      },
+      "user_active": {
+        "type": "short"
+      },
+      "conversion_id": {
+        "type": "integer"
+      },
+      "device_type": {
+        "type": "short"
+      },
+      "chat_time": {
+        "type": "date"
+      },
+      "last_visit_prev": {
+        "type": "date"
+      }
+    },
+    "lh_mail": {
+      "conversation_id": {
+        "type": "long"
+      },
+      "conversation_id_old": {
+        "type": "long"
+      },
+      "mailbox_id": {
+        "type": "integer"
+      },
+      "user_id": {
+        "type": "long"
+      },
+      "conv_user_id": {
+        "type": "long"
+      },
+      "follow_up_id": {
+        "type": "long"
+      },
+      "size": {
+        "type": "long"
+      },
+      "uid": {
+        "type": "long"
+      },
+      "recent": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "integer"
+      },
+      "status_conv": {
+        "type": "integer"
+      },
+      "start_type": {
+        "type": "integer"
+      },
+      "flagged": {
+        "type": "integer"
+      },
+      "has_attachment_conv": {
+        "type": "integer"
+      },
+      "is_external": {
+        "type": "integer"
+      },
+      "msgno": {
+        "type": "long"
+      },
+      "time": {
+        "type": "date"
+      },
+      "ctime": {
+        "type": "date"
+      },
+      "lr_time": {
+        "type": "date"
+      },
+      "response_time": {
+        "type": "date"
+      },
+      "cls_time": {
+        "type": "date"
+      },
+      "opened_at": {
+        "type": "date"
+      },
+      "accept_time": {
+        "type": "date"
+      },
+      "references": {
+        "type": "text"
+      },
+      "subject": {
+        "type": "text"
+      },
+      "to_data": {
+        "type": "text"
+      },
+      "sender_address": {
+        "type": "keyword"
+      },
+      "lang": {
+        "type": "keyword"
+      },
+      "sender_name": {
+        "type": "text"
+      },
+      "customer_address": {
+        "type": "keyword"
+      },
+      "customer_address_clean": {
+        "type": "keyword"
+      },
+      "customer_name": {
+        "type": "text"
+      },
+      "from_address": {
+        "type": "keyword"
+      },
+      "from_address_clean": {
+        "type": "keyword"
+      },
+      "from_host": {
+        "type": "keyword"
+      },
+      "from_name": {
+        "type": "text"
+      },
+      "sender_host": {
+        "type": "keyword"
+      },
+      "reply_to_data": {
+        "type": "text"
+      },
+      "body": {
+        "type": "text"
+      },
+      "alt_body": {
+        "type": "text"
+      },
+      "message_id": {
+        "type": "text"
+      },
+      "in_reply_to": {
+        "type": "text"
+      },
+      "rfc822_body": {
+        "type": "text"
+      },
+      "delivery_status": {
+        "type": "text"
+      },
+      "mb_folder": {
+        "type": "text"
+      },
+      "cc_data": {
+        "type": "text"
+      },
+      "bcc_data": {
+        "type": "text"
+      },
+      "hour": {
+        "type": "integer"
+      },
+      "interaction_time": {
+        "type": "integer"
+      },
+      "response_type": {
+        "type": "integer"
+      },
+      "wait_time": {
+        "type": "integer"
+      },
+      "undelivered": {
+        "type": "integer"
+      },
+      "has_attachment": {
+        "type": "integer"
+      },
+      "dep_id": {
+        "type": "integer"
+      },
+      "conv_duration": {
+        "type": "integer"
+      },
+      "subject_id": {
+        "type": "integer"
+      },
+      "priority": {
+        "type": "integer"
+      },
+      "phone": {
+        "type": "keyword"
+      },
+      "mail_variables": {
+        "type": "text",
+        "index": false
+      }
+    },
+    "lh_chat": {
+      "user_id": {
+        "type": "long"
+      },
+      "transfer_uid": {
+        "type": "long"
+      },
+      "chat_id": {
+        "type": "long"
+      },
+      "dep_id": {
+        "type": "integer"
+      },
+      "theme_id": {
+        "type": "integer"
+      },
+      "iwh_id": {
+        "type": "integer"
+      },
+      "subject_id": {
+        "type": "integer"
+      },
+      "participant_id": {
+        "type": "integer"
+      },
+      "participant_count": {
+        "type": "integer"
+      },
+      "abnd": {
+        "type": "integer"
+      },
+      "drpd": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "integer"
+      },
+      "status_sub": {
+        "type": "integer"
+      },
+      "status_sub_sub": {
+        "type": "integer"
+      },
+      "gbot_id": {
+        "type": "integer"
+      },
+      "sender_user_id": {
+        "type": "integer"
+      },
+      "auto_responder_id": {
+        "type": "integer"
+      },
+      "time": {
+        "type": "date"
+      },
+      "pnd_time": {
+        "type": "date"
+      },
+      "cls_time": {
+        "type": "date"
+      },
+      "ip": {
+        "type": "ip"
+      },
+      "hash": {
+        "type": "keyword"
+      },
+      "referrer": {
+        "type": "text"
+      },
+      "session_referrer": {
+        "type": "text"
+      },
+      "email": {
+        "type": "keyword"
+      },
+      "user_status": {
+        "type": "integer"
+      },
+      "cls_us": {
+        "type": "integer"
+      },
+      "support_informed": {
+        "type": "integer"
+      },
+      "chat_initiator": {
+        "type": "integer"
+      },
+      "hour": {
+        "type": "integer"
+      },
+      "online_user_id": {
+        "type": "integer"
+      },
+      "chat_duration": {
+        "type": "integer"
+      },
+      "invitation_id": {
+        "type": "integer"
+      },
+      "transfer_timeout_ts": {
+        "type": "integer"
+      },
+      "nc_cb_executed": {
+        "type": "integer"
+      },
+      "operator_typing_id": {
+        "type": "integer"
+      },
+      "transfer_if_na": {
+        "type": "integer"
+      },
+      "fbst": {
+        "type": "integer"
+      },
+      "na_cb_executed": {
+        "type": "integer"
+      },
+      "transfer_timeout_ac": {
+        "type": "integer"
+      },
+      "country_code": {
+        "type": "keyword"
+      },
+      "country_name": {
+        "type": "keyword"
+      },
+      "phone": {
+        "type": "keyword"
+      },
+      "user_tz_identifier": {
+        "type": "keyword"
+      },
+      "chat_locale": {
+        "type": "keyword"
+      },
+      "chat_locale_to": {
+        "type": "keyword"
+      },
+      "additional_data": {
+        "type": "text",
+        "index": false
+      },
+      "operation": {
+        "type": "text",
+        "index": false
+      },
+      "chat_variables": {
+        "type": "text",
+        "index": false
+      },
+      "operation_admin": {
+        "type": "text",
+        "index": false
+      },
+      "status_sub_arg": {
+        "type": "text",
+        "index": false
+      },
+      "remarks": {
+        "type": "text"
+      },
+      "uagent": {
+        "type": "text"
+      },
+      "nick": {
+        "type": "text"
+      },
+      "has_unread_messages": {
+        "type": "integer"
+      },
+      "device_type": {
+        "type": "integer"
+      },
+      "unread_messages_informed": {
+        "type": "integer"
+      },
+      "unanswered_chat": {
+        "type": "integer"
+      },
+      "product_id": {
+        "type": "integer"
+      },
+      "reinform_timeout": {
+        "type": "integer"
+      },
+      "tslasign": {
+        "type": "date"
+      },
+      "user_closed_ts": {
+        "type": "date"
+      },
+      "screenshot_id": {
+        "type": "integer"
+      },
+      "usaccept": {
+        "type": "integer"
+      },
+      "priority": {
+        "type": "integer"
+      },
+      "has_unread_op_messages": {
+        "type": "integer"
+      },
+      "wait_time": {
+        "type": "integer"
+      },
+      "unread_op_messages_informed": {
+        "type": "integer"
+      },
+      "last_user_msg_time": {
+        "type": "date"
+      },
+      "last_op_msg_time": {
+        "type": "date"
+      },
+      "lsync": {
+        "type": "date"
+      },
+      "last_msg_id": {
+        "type": "long"
+      },
+      "mail_send": {
+        "type": "integer"
+      },
+      "location": {
+        "type": "geo_point"
+      },
+      "city": {
+        "type": "keyword"
+      },
+      "region": {
+        "type": "keyword"
+      },
+      "nick_keyword": {
+        "type": "keyword"
+      },
+      "msg_visitor": {
+        "type": "text"
+      },
+      "msg_operator": {
+        "type": "text"
+      },
+      "msg_system": {
+        "type": "text"
+      },
+      "msg_bot": {
+        "type": "text"
+      },
+      "hvf": {
+        "type": "integer"
+      },
+      "hof": {
+        "type": "integer"
+      },
+      "frt": {
+        "type": "integer"
+      },
+      "aart": {
+        "type": "integer"
+      },
+      "mart": {
+        "type": "integer"
+      },
+      "op_msg_count": {
+        "type": "integer"
+      },
+      "vi_msg_count": {
+        "type": "integer"
+      },
+      "bot_msg_count": {
+        "type": "integer"
+      },
+      "all_msg_count": {
+        "type": "integer"
+      },
+      "sys_msg_count": {
+        "type": "integer"
+      }
+    },
+    "lh_msg": {
+      "msg_id": {
+        "type": "long"
+      },
+      "msg": {
+        "type": "text"
+      },
+      "time": {
+        "type": "date"
+      },
+      "chat_id": {
+        "type": "long"
+      },
+      "user_id": {
+        "type": "long"
+      },
+      "op_user_id": {
+        "type": "long"
+      },
+      "dep_id": {
+        "type": "integer"
+      },
+      "gbot_id": {
+        "type": "integer"
+      },
+      "status_sub": {
+        "type": "integer"
+      },
+      "del_st": {
+        "type": "short"
+      },
+      "name_support": {
+        "type": "text"
+      }
+    },
+    "lh_os": {
+      "os_id": {
+        "type": "long"
+      },
+      "user_id": {
+        "type": "long"
+      },
+      "time": {
+        "type": "date"
+      },
+      "lactivity": {
+        "type": "date"
+      },
+      "duration": {
+        "type": "integer"
+      }
+    },
+    "lh_pc": {
+      "chat_id": {
+        "type": "long"
+      },
+      "time": {
+        "type": "date"
+      },
+      "itime": {
+        "type": "date"
+      },
+      "dep_id": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "integer"
+      }
+    },
+    "lh_op": {
+      "user_id": {
+        "type": "long"
+      },
+      "dep_ids": {
+        "type": "long"
+      },
+      "max_chats": {
+        "type": "integer"
+      },
+      "pending_chats": {
+        "type": "integer"
+      },
+      "inactive_chats": {
+        "type": "integer"
+      },
+      "active_chats": {
+        "type": "integer"
+      },
+      "free_slots": {
+        "type": "integer"
+      },
+      "itime": {
+        "type": "date"
+      }
+    },
+    "lh_participant": {
+      "chat_id": {
+        "type": "long"
+      },
+      "user_id": {
+        "type": "long"
+      },
+      "duration": {
+        "type": "integer"
+      },
+      "dep_id": {
+        "type": "integer"
+      },
+      "time": {
+        "type": "date"
+      },
+      "subject_id": {
+        "type": "integer"
+      },
+      "abnd": {
+        "type": "integer"
+      },
+      "status_sub": {
+        "type": "integer"
+      },
+      "drpd": {
+        "type": "integer"
+      },
+      "gbot_id": {
+        "type": "integer"
+      },
+      "iwh_id": {
+        "type": "integer"
+      },
+      "country_code": {
+        "type": "keyword"
+      },
+      "transfer_uid": {
+        "type": "long"
+      },
+      "invitation_id": {
+        "type": "integer"
+      },
+      "frt": {
+        "type": "integer"
+      },
+      "aart": {
+        "type": "integer"
+      },
+      "mart": {
+        "type": "integer"
+      }
+    }
+  }
 }

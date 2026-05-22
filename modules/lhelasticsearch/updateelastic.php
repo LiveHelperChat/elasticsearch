@@ -55,7 +55,7 @@ if (in_array($action, array(
             continue;
         }
 
-        if ($type != 'lh_online_visitor') {
+        if ($type != 'lh_online_visitor' && $type != 'lh_rest_log') {
             $elasticIndex = $indexSave . '-' . $type . ($indexPrepend != '' ? '-' . $indexPrepend : '');
         } else {
             $elasticIndex = $indexSave . '-' . $type;

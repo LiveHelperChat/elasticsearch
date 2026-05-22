@@ -66,6 +66,18 @@ Sometimes elastic search might miss chat's in it's index especially if it just h
 
 `36 */8 * * * cd /home/www/lhc && php cron.php -s site_admin -e elasticsearch -c cron/reindex_recent > log_reindex_recent.txt /dev/null 2>&1`
 
+#### Index bot/debug log messages into ElasticSearch [Optional]
+
+Indexes chat messages that contain debug/log data (i.e. `meta_msg` with `"debug":true`) into a dedicated ElasticSearch log index. This is useful for analysing bot interactions, sentiment analysis results, and other per-message diagnostic data stored by the bot workflow.
+
+The `-p <limit_days>` parameter sets an upper-bound: only messages belonging to chats older than `<limit_days>` days are indexed. The job resumes from where it last stopped using a saved watermark (`last_index_log_msg_id`), so it is safe to run repeatedly.
+
+`php cron.php -s site_admin -e elasticsearch -c cron/index_logs -p <limit_days>`
+
+Example — index log messages from chats older than 5 days:
+
+`php cron.php -s site_admin -e elasticsearch -c cron/index_logs -p 5`
+
 ### Online Visitors list using ElasticSearch
 
 Sometimes operators run very heavy-duty filters on those lists, so it makes sense to delegate that payload to ElasticSearch

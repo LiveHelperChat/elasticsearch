@@ -28,6 +28,9 @@ if ( isset($_POST['StoreOptions']) ) {
         'last_index_part_id' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'int'
         ),
+        'last_index_log_msg_id' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'int'
+        ),
         'use_es_prev_chats_id' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
         ),
@@ -136,6 +139,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['last_index_msg_id'] = $form->last_index_msg_id ;
     } else {
         $data['last_index_msg_id'] = 0;
+    }
+            
+    if ( $form->hasValidData( 'last_index_log_msg_id' )) {
+        $data['last_index_log_msg_id'] = $form->last_index_log_msg_id ;
+    } else {
+        $data['last_index_log_msg_id'] = 0;
     }
     
     if ( $form->hasValidData( 'last_index_part_id' )) {

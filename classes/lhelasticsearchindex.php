@@ -268,7 +268,7 @@ class erLhcoreClassElasticSearchIndex
                     if (trim($esChat->{$attributeField}) == '') {
                         $esChat->{$attributeField} = null;
                     } else {
-                        $esChat->{$attributeField} = (double)$esChat->{$attributeField};
+                        $esChat->{$attributeField} = (float)$esChat->{$attributeField};
                     }
                 }
             }
@@ -572,6 +572,57 @@ class erLhcoreClassElasticSearchIndex
         }
 
         erLhcoreClassModelESOnlineOperator::bulkSave($objectsSave, array('custom_index' => true));
+    }
+
+    public static function indexLogMessages($params) {
+        $items = $params['messages'];
+
+        $chatsIds = array();
+        foreach ($items as $item) {
+            $chatsIds[] = $item->chat_id;
+        }
+
+        if (empty($chatsIds)) {
+            return;
+        }
+
+        $sparams = array();
+        $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['messages']);
+        $sparams['limit'] = 1000;
+
+        $documents = \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog::getList($sparams);
+
+        $documentsReindexed = array();
+        foreach ($documents as $document) {
+            $documentsReindexed[$document->id] = $document;
+        }
+
+        $objectsSave = array();
+
+        \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog::getSession();
+
+        $indexSave = \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog::$indexName . '-' . \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog::$elasticType;
+
+        foreach ($items as $keyValue => $item) {
+            if (isset($documentsReindexed[$keyValue])) {
+                $esMsg = $documentsReindexed[$keyValue];
+                continue;
+            } else {
+                $esMsg = new \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog();
+            }
+            $esMsg->id = $item->id;
+            $esMsg->chat_id = $item->chat_id;
+            $esMsg->msg = $item->msg;
+            $esMsg->time = $item->time * 1000;
+            $esMsg->meta_msg = $item->meta_msg;
+            $objectsSave[$indexSave][] = $esMsg;
+        }
+
+        if (!empty($objectsSave)) {
+            return ['old' => array_keys($documentsReindexed), 'new' => \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog::bulkSave($objectsSave, array('custom_index' => true, 'ignore_id' => true))];
+        } else {
+            return ['old' => array_keys($documentsReindexed), 'new' => []];
+        }
     }
 
     public static function indexMessages($params)
