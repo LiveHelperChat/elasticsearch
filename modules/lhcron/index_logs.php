@@ -153,7 +153,7 @@ do {
     echo "Deleting ES log records: ", $found, "\n";
 
     if ($found > 0) {
-        \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog::bulkDelete($oldItems);
+        \LiveHelperChatExtension\elasticsearch\providers\Index\RestLog::bulkDelete($oldItems, ['static_index' => true]);
     }
 
 } while ($found === $deleteLimit);

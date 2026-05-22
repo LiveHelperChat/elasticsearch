@@ -461,7 +461,11 @@ trait erLhcoreClassElasticTrait
     {
         $searchHandler = self::getSession();
 
-        $params['index'] = self::$indexName . '-' . self::$elasticType;
+        if (isset($paramsExecution['static_index']) && $paramsExecution['static_index'] == true) {
+            $params['index'] = self::$indexName . '-' . self::$elasticType;
+        } else {
+            $params['index'] = self::$indexName;
+        }
 
         $operations = array();
 
