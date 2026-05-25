@@ -96,7 +96,12 @@ trait erLhcoreClassElasticTrait
                 }
             } else {
                 self::$indexName = $settings['index'];
-                if (__CLASS__ == 'LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor') {
+                if (
+                    in_array(__CLASS__,[
+                        'LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor',
+                        'LiveHelperChatExtension\elasticsearch\providers\Index\RestLog'
+                    ])
+                ) {
                     self::$indexNameSearch = self::$indexName;
                 } else {
                     self::$indexNameSearch = $settings['index_search'];
