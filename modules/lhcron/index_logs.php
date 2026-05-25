@@ -1,6 +1,6 @@
 <?php
 
-// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_logs -p <limit_days>
+// /usr/bin/php cron.php -s site_admin -e elasticsearch -c cron/index_logs -p <limit_days>,<max_per_run>
 
 erLhcoreClassModelChatConfig::$disableCache = true;
 
@@ -12,13 +12,12 @@ if (isset($dataOptions['disable_es']) && $dataOptions['disable_es'] == 1) {
     exit;
 }
 
-if (is_numeric($cronjobPathOption->value)) {
-    $days = (int)$cronjobPathOption->value;
-} else {
-    $days = 0;
-}
+$cronParams = explode(',', $cronjobPathOption->value);
+$days = isset($cronParams[0]) && is_numeric($cronParams[0]) ? (int)$cronParams[0] : 0;
+$maxIterations = isset($cronParams[1]) && is_numeric($cronParams[1]) ? (int)$cronParams[1] : 0;
 
 $pageLimit = 500;
+
 
 $lastMessageId = $dataOptions['last_index_log_msg_id'] ?? 0;
 $totalIndex = 0;
@@ -43,6 +42,11 @@ while (true) {
 
     $batchIndex++;
     echo "Saving msg - ", $batchIndex, "\n";
+
+    if ($maxIterations > 0 && $batchIndex > $maxIterations) {
+        echo "Max iterations limit reached: ", $maxIterations, "\n";
+        break;
+    }
 
     $messages = erLhcoreClassModelmsg::getList(array(
         'filtergt'  => array('id' => $lastMessageId),
