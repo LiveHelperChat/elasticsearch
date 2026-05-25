@@ -57,6 +57,8 @@ while (true) {
     $messagesFound = count($messages);
     $lastIndexTemporary = 0;
 
+    $cutoffOld = time() - 30 * 24 * 3600;
+
     foreach ($messages as $keyItem => $item) {
         $lastIndexTemporary = $item->id;
         if ($item->meta_msg == '' || 
@@ -64,6 +66,12 @@ while (true) {
             str_contains($item->meta_msg,'"ex":"es_log"') ) { // Skip non-debug messages or ones already transferred
                 unset($messages[$keyItem]);
                 continue;
+        }
+        if ($item->time < $cutoffOld) { // Message is older than 30 days, alter meta_msg and skip indexing
+            $item->meta_msg = '{"content":{"html":{"ex":"es_log","debug":true,"content":""}}}';
+            $item->updateThis(['update' => ['meta_msg']]);
+            unset($messages[$keyItem]);
+            continue;
         }
     }
 

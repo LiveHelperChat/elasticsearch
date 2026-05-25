@@ -24,7 +24,7 @@
                         <a title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Raw information')?>" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/rawlog')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
                     <?php endif; ?>
                 </td>
-                <td><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time)?></td>
+                <td><?php echo date(erLhcoreClassModule::$dateDateHourFormat, $item->time / 1000)?></td>
                 <td>
                     <?php if ($item->chat_id): ?>
                         <a href="<?php echo erLhcoreClassDesign::baseurl('chat/single')?>/<?php echo (int)$item->chat_id?>"><?php echo (int)$item->chat_id?></a>
