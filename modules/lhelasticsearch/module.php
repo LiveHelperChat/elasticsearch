@@ -242,6 +242,12 @@ $ViewList['options'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['vectorserver'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
 $ViewList['indices'] = array(
     'params' => array(),
     'uparams' => array(),
@@ -335,6 +341,36 @@ $ViewList['updateelastic'] = array(
 $ViewList['reindex'] = array(
     'params' => array(),
     'uparams' => array(),
+    'functions' => array('configure')
+);
+
+$ViewList['listvector'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
+$ViewList['newvector'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
+$ViewList['editvector'] = array(
+    'params' => array('index','id'),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
+$ViewList['rawvector'] = array(
+    'params' => array('index','id'),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
+$ViewList['deletevector'] = array(
+    'params' => array('index','id'),
+    'uparams' => array('csfr'),
     'functions' => array('configure')
 );
 

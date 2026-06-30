@@ -779,6 +779,31 @@
       "mart": {
         "type": "integer"
       }
+    },
+    "lh_vector_storage": {
+      "name": {
+        "type": "keyword"
+      },
+      "dep_id": {
+        "type": "integer"
+      },
+      "content": {
+        "type": "text"
+      },
+      "original_content": {
+        "type": "text",
+        "index": false
+      },
+      "parent_id": {
+        "type": "keyword"
+      },
+      "vector_storage": {
+        "type": "dense_vector",
+        "dims": 384
+      },
+      "created_at": {
+        "type": "date"
+      }
     }
   }
 }

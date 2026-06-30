@@ -99,7 +99,8 @@ trait erLhcoreClassElasticTrait
                 if (
                     in_array(__CLASS__,[
                         'LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor',
-                        'LiveHelperChatExtension\elasticsearch\providers\Index\RestLog'
+                        'LiveHelperChatExtension\elasticsearch\providers\Index\RestLog',
+                        'LiveHelperChatExtension\elasticsearch\providers\Index\VectorStorage'
                     ])
                 ) {
                     self::$indexNameSearch = self::$indexName;
