@@ -55,6 +55,10 @@ if (in_array($action, array(
             continue;
         }
 
+        if ($type == 'lh_vector_storage' && empty(\erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['embed_server'])){
+            continue;
+        }
+
         if ($type != 'lh_online_visitor' && $type != 'lh_rest_log' && $type != 'lh_vector_storage') {
             $elasticIndex = $indexSave . '-' . $type . ($indexPrepend != '' ? '-' . $indexPrepend : '');
         } else {

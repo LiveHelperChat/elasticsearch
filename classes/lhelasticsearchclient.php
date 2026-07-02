@@ -152,6 +152,10 @@ class erLhcoreClassElasticClient
                 continue;
             }
 
+            if ($type == 'lh_vector_storage' && empty(\erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['embed_server'])){
+                continue;
+            }
+
             if ($type != 'lh_online_visitor' && $type != 'lh_rest_log' && $type != 'lh_vector_storage') {
                 $indexCurrent = $index . '-' . $type . ($indexPrepend != null ? '-' . $indexPrepend : '');
             } else {

@@ -13,8 +13,10 @@
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/options')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Elastic Search Options')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/reindex')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Re-index scheduler')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/indices')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Indices')?></a></li>
+    <?php if (!empty(\erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionElasticsearch')->settings['embed_server'])) : ?>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/vectorserver')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Vector storage test')?></a></li>
     <li><a href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/listvector')?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Vector Storage Documents')?></a></li>
+    <?php endif; ?>
 </ul>
 
 <hr>
