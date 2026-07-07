@@ -478,7 +478,7 @@ if ($tab == 'chats') {
                 $chatDirect = erLhcoreClassModelChat::fetch((int)trim($chat_id));
 
                 if (!($chatDirect instanceof erLhcoreClassModelChat)) {
-                    $chatArchive = erLhcoreClassChatArcive::fetchChatById((int)trim($chat_id));
+                    $chatArchive = erLhcoreClassChatArcive::fetchChatById((int)trim($chat_id), true, false);
                     if (is_array($chatArchive)) {
                         $chatDirect = $chatArchive['chat'];
                     }
