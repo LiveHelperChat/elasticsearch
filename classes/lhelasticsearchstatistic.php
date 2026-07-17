@@ -1695,6 +1695,7 @@ class erLhcoreClassElasticSearchStatistic
         // Append extension custom aggregation
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getperformancestatistic', array(
             'sparams' => & $sparams,
+            'filter_params' => $filterParams
         ));
 
         foreach ($params['ranges'] as $rangeData) {
