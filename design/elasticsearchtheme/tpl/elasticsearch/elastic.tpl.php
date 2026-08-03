@@ -47,13 +47,22 @@
 
     <textarea class="form-control" style="font-size:11px" rows="10" name="Query" placeholder='Search query or field mapping, e.g.:&#10;{&#10;  "my_field": {&#10;    "type": "integer"&#10;  }&#10;}'><?php echo htmlspecialchars($command)?></textarea>
     <br>
-    <input type="submit" name="doSearch" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Submit')?>" class="btn btn-secondary" />
-    <input type="submit" name="doCreateField" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Create field')?>" class="btn btn-primary" />
+    <div class="btn-group" role="group">
+        <input type="submit" name="doSearch" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Submit')?>" class="btn btn-secondary" />
+        <input type="submit" name="doCreateField" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Create field')?>" class="btn btn-primary" />
+        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=Index]').value='chat'; document.querySelector('[name=Query]').value=JSON.stringify({query:{bool:{filter:[{term:{dep_id:1}}]}}},null,2);">
+            <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Sample: chats by dep_id')?>
+        </button>
+        <?php include(erLhcoreClassDesign::designtpl('elasticsearch/elastic_parts/buttons_multiinclude.tpl.php')); ?>
+    </div>
 </form>
 <br/>
-<pre style="font-size:11px;">
-<?php echo htmlspecialchars(print_r($response,true))?>
-</pre>
+
+<?php include(erLhcoreClassDesign::designtpl('elasticsearch/elastic_parts/buttons_parse_multiinclude.tpl.php')); ?>
+
+<div id="parsed-response" class="p-2"></div>                        
+
+<pre style="font-size:11px;" id="raw-response"><?php echo htmlspecialchars(json_encode($response,JSON_PRETTY_PRINT))?></pre>
 
 <?php if ($createFieldResponse !== null) : ?>
 <br/>
