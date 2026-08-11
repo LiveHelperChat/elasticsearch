@@ -16,8 +16,7 @@ $cronParams = explode(',', $cronjobPathOption->value);
 $days = isset($cronParams[0]) && is_numeric($cronParams[0]) ? (int)$cronParams[0] : 0;
 $maxIterations = isset($cronParams[1]) && is_numeric($cronParams[1]) ? (int)$cronParams[1] : 0;
 
-$pageLimit = 500;
-
+$pageLimit = 250;
 
 $lastMessageId = $dataOptions['last_index_log_msg_id'] ?? 0;
 $totalIndex = 0;
