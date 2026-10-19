@@ -126,13 +126,33 @@ $pages->setItemsPerPage(30);
 $pages->paginate();
 
 if ($pages->items_total > 0) {
-    $tpl->set('items', \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::getList(array(
+    $items = \LiveHelperChatExtension\elasticsearch\providers\Index\OnlineVisitor::getList(array(
         'offset' => $pages->low,
         'limit' => $pages->items_per_page,
         'body' => array_merge(array(
             'sort' => $sort
         ), $sparams['body'])
-    )));
+    ));
+
+    $tpl->set('items', $items);
+
+    $depIds = array();
+
+    foreach ($items as $item) {
+        if ($item->dep_id > 0) {
+            $depIds[] = (int)$item->dep_id;
+        }
+    }
+
+    $departments = array();
+
+    if (!empty($depIds)) {
+        foreach (erLhcoreClassModelDepartament::getList(array('filterin' => array('id' => array_unique($depIds)), 'limit' => false, 'sort' => false)) as $dep) {
+            $departments[$dep->id] = $dep->name;
+        }
+    }
+
+    $tpl->set('departments', $departments);
 }
 
 $tpl->set('pages', $pages);

@@ -8,6 +8,7 @@
         <tr>
             <th width="1%"></th>
             <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','ID')?></th>
+            <th width="1%" nowrap><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Chat ID')?></th>
             <th width="19%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Current Page')?></th>
             <th width="26%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Highlight')?></th>
             <th width="1%"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('elasticsearch/admin','Department')?></th>
@@ -29,6 +30,14 @@
                     <?php endif; ?>
                     <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
                         <a title="Raw information" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/rawov')?>/<?php echo $item->meta_data['index']?>/<?php echo $item->id?>"><i class="material-icons">&#xE86F;</i></a>
+                    <?php endif; ?>
+                </td>
+                <td class="text-nowrap">
+                    <?php if ($item->chat_id > 0) : ?>
+                        <a href="#" onclick="lhc.previewChat(<?php echo (int)$item->chat_id?>)" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists','Preview');?>"><i class="material-icons">info_outline</i></a>
+                        <a href="#" onclick="lhinst.startChatNewWindow('<?php echo (int)$item->chat_id?>','<?php echo erLhcoreClassDesign::shrt($item->nick,10,'...',30,ENT_QUOTES);?>')" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/pendingchats','Open in a new window');?>"><?php echo (int)$item->chat_id?></a>
+                    <?php else : ?>
+                        -
                     <?php endif; ?>
                 </td>
                 <td ng-non-bindable>
@@ -59,7 +68,14 @@
                     </div>
                     <?php endif; ?>
                 </td>
-                <td><?php echo $item->dep_id?></td>
+                <td>
+                    <?php $departmentName = ($item->dep_id > 0 && isset($departments[$item->dep_id])) ? $departments[$item->dep_id] : '';?>
+                    <?php if ($departmentName != '') : ?>
+                        <div class="text-truncate" title="<?php echo htmlspecialchars($departmentName)?>"><?php echo htmlspecialchars($departmentName)?></div>
+                    <?php else : ?>
+                        <?php echo (int)$item->dep_id == 0 ? '-' : (int)$item->dep_id?>
+                    <?php endif; ?>
+                </td>
                 <td nowrap="nowrap"><div class="text-truncate" title="<?php echo htmlspecialchars($item->meta_data['index'])?>"><?php echo htmlspecialchars($item->meta_data['index'])?></div></td>
                 <?php if (erLhcoreClassUser::instance()->hasAccessTo('lhelasticsearch','configure')) : ?>
                 <td><a class="btn btn-danger btn-xs csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/messages','Are you sure?');?>')" href="<?php echo erLhcoreClassDesign::baseurl('elasticsearch/deleteov')?>/<?php echo htmlspecialchars($item->meta_data['index'])?>/<?php echo $item->id?>"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('user/userlist','Delete');?></a></td>
