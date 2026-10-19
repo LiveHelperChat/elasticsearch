@@ -102,6 +102,11 @@ $ViewList['raw'] = array(
 
 $ViewList['listov'] = array(
     'params' => array(),
+    'uparams' => array('ds','sort_ov','keyword','ip','search_in','exact_match','fuzzy','fuzzy_prefix','expression','department_ids','timefrom','timefrom_hours','timefrom_minutes','timefrom_seconds','timeto','timeto_hours','timeto_minutes','timeto_seconds'),
+    'multiple_arguments' => array(
+        'search_in',
+        'department_ids'
+    ),
     'functions' => array('use')
 );
 
