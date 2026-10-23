@@ -24,7 +24,7 @@
                     <?php echo $item->lastactivity_ago?> <span class="fs-11"><?php echo $item->time_on_site_front?></span>
                 </td>
                 <td class="text-nowrap">
-                    <a href="#" onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'chat/getonlineuserinfo/<?php echo $item->id?>'})"><?php echo $item->nick?></a>
+                    <a href="#" onclick="lhc.revealModal({'url':WWW_DIR_JAVASCRIPT+'chat/getonlineuserinfo/<?php echo (int)$item->id?>'})"><?php echo htmlspecialchars($item->nick)?></a>
                     <?php if ($item->user_country_code) : ?>
                         <span><img src="<?php echo erLhcoreClassDesign::design('images/flags')?>/<?php echo htmlspecialchars($item->user_country_code)?>.png" alt="<?php echo htmlspecialchars($item->user_country_name)?>" title="<?php echo htmlspecialchars($item->user_country_name . ' (' . $item->city . ' ' . $item->visitor_tz . ' ' .$item->visitor_tz_time)?>)" /></span>
                     <?php endif; ?>

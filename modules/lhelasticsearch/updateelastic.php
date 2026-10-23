@@ -14,7 +14,12 @@ if (in_array($action, array(
     'updateelastic',
     'createelasticindex'
 ))) {
-    
+
+    if (!isset($_SERVER['HTTP_X_CSRFTOKEN']) || !$currentUser->validateCSFRToken($_SERVER['HTTP_X_CSRFTOKEN'])) {
+        echo json_encode(array('result' => 'Invalid CSRF token!'));
+        exit;
+    }
+
     $tpl = erLhcoreClassTemplate::getInstance('elasticsearch/statuselastic.tpl.php');
 
     $contentData = json_decode(file_get_contents('extension/elasticsearch/doc/structure_elastic.json'), true);

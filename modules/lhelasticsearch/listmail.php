@@ -425,6 +425,12 @@ if ($filterParams['input_form']->ds == 1)
         $tpl->set('input', $filterParams['input_form']);
         
         if (ezcInputForm::hasPostData()) {
+
+            if (!isset($_SERVER['HTTP_X_CSRFTOKEN']) || !$currentUser->validateCSFRToken($_SERVER['HTTP_X_CSRFTOKEN'])) {
+                echo 'Invalid CSRF token!';
+                exit;
+            }
+
             $Errors = erLhcoreClassAdminChatValidatorHelper::validateSavedSearch($savedSearch, array(
                 'sort' => $sort,
                 'sparams' => $sparams,
