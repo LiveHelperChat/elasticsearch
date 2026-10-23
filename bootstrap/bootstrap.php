@@ -23,6 +23,8 @@ class erLhcoreClassExtensionElasticsearch
         if (!(isset($this->settings_personal['disable_es']) && $this->settings_personal['disable_es'] == 1)) {
 
             $dispatcher->listen('chat.delete', 'erLhcoreClassElasticSearchIndex::indexChatDelete');
+            $dispatcher->listen('file.main_attr_updated', 'erLhcoreClassElasticSearchIndex::indexChatCaption');
+
             $dispatcher->listen('chat.workflow.has_previous_messages', 'erLhcoreClassElasticSearchIndex::hasPreviousMessages');
             $dispatcher->listen('chat.workflow.get_chat_history', 'erLhcoreClassElasticSearchIndex::getChatHistory');
             $dispatcher->listen('chat.chathistory', 'erLhcoreClassElasticSearchIndex::getConcurrentChats');
@@ -103,6 +105,7 @@ class erLhcoreClassExtensionElasticsearch
                     $dispatcher->listen('mail.message.after_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageRemove');
                     $dispatcher->listen('mail.subject_remove', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
                     $dispatcher->listen('mail.subject_add', '\LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex');
+                    $dispatcher->listen('mail.file.main_attr_updated', 'erLhcoreClassElasticSearchIndex::indexMailCaption');
                 }
 
                 // Online visitors

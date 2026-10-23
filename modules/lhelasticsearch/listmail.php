@@ -352,6 +352,26 @@ if (trim($filterParams['input_form']->keyword) != '') {
         if (in_array(12,$filterParams['input_form']->search_in)) {
             $sparams['body']['query']['bool']['should'][][$exactMatch]['customer_name'] = $paramQuery;
         }
+
+        if (in_array(13,$filterParams['input_form']->search_in)) {
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_user'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_user'] = new stdClass();
+        }
+
+        if (in_array(14,$filterParams['input_form']->search_in)) {
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_op'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_op'] = new stdClass();
+        }
+
+        if (in_array(15,$filterParams['input_form']->search_in)) {
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_ocr_user'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_ocr_user'] = new stdClass();
+        }
+
+        if (in_array(16,$filterParams['input_form']->search_in)) {
+            $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_ocr_op'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_ocr_op'] = new stdClass();
+        }
     }
 
     if ($filterParams['input_form']->expression != 1) {

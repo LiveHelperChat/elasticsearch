@@ -350,6 +350,18 @@
       "mail_variables": {
         "type": "text",
         "index": false
+      },
+      "caption_user": {
+        "type": "text"
+      },
+      "caption_op": {
+        "type": "text"
+      },
+      "caption_ocr_user": {
+        "type": "text"
+      },
+      "caption_ocr_op": {
+        "type": "text"
       }
     },
     "lh_chat": {
@@ -630,6 +642,18 @@
       },
       "sys_msg_count": {
         "type": "integer"
+      },
+      "caption_user": {
+        "type": "text"
+      },
+      "caption_op": {
+        "type": "text"
+      },
+      "caption_ocr_user": {
+        "type": "text"
+      },
+      "caption_ocr_op": {
+        "type": "text"
       }
     },
     "lh_msg": {

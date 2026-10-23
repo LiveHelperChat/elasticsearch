@@ -252,6 +252,14 @@ class erLhcoreClassElasticSearchIndex
             // Hast operator file
             $esChat->hof = preg_match('/\[file="?(.*?)"?\]/is',$esChat->msg_operator);
 
+            // File captions grouped by who uploaded the file
+            $captions = self::getChatCaptions($item);
+
+            $esChat->caption_user = $captions['caption_user'];
+            $esChat->caption_op = $captions['caption_op'];
+            $esChat->caption_ocr_user = $captions['caption_ocr_user'];
+            $esChat->caption_ocr_op = $captions['caption_ocr_op'];
+
             // Fields defined from settings file
             foreach ($attributesGet as $attributeField => $attributeGet) {
                 $esChat->{$attributeField} = erLhcoreClassGenericBotWorkflow::translateMessage($attributeGet['content'], array('chat' => $item, 'args' => ['chat' => $item]));
@@ -470,6 +478,36 @@ class erLhcoreClassElasticSearchIndex
         if ($chat instanceof erLhcoreClassModelESChat) {
             $chat->removeThis();
         }
+    }
+
+    /**
+     * Schedule chat re-index when a chat file caption is changed.
+     */
+    public static function indexChatCaption($params)
+    {
+        if (!isset($params['chat_file']) || !($params['chat_file'] instanceof erLhcoreClassModelChatFile) || (int)$params['chat_file']->chat_id <= 0) {
+            return;
+        }
+
+        $chat = new \stdClass();
+        $chat->id = (int)$params['chat_file']->chat_id;
+
+        \LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::indexChatDelay(array('chat' => $chat));
+    }
+
+    /**
+     * Schedule mail message re-index when a mail file caption is changed.
+     */
+    public static function indexMailCaption($params)
+    {
+        if (!isset($params['chat_file']) || !($params['chat_file'] instanceof erLhcoreClassModelMailconvFile) || (int)$params['chat_file']->message_id <= 0) {
+            return;
+        }
+
+        $message = new \stdClass();
+        $message->id = (int)$params['chat_file']->message_id;
+
+        \LiveHelperChatExtension\elasticsearch\providers\Index\Scheduler::mailMessageIndex(array('message' => $message));
     }
 
     public static function indexPendingChats($params)
@@ -987,6 +1025,132 @@ class erLhcoreClassElasticSearchIndex
         return strtolower($name . $domain);
     }
 
+    public static function getChatCaptions($chat)
+    {
+        $captions = array(
+            'caption_user' => null,
+            'caption_op' => null,
+            'caption_ocr_user' => null,
+            'caption_ocr_op' => null
+        );
+
+        if (!isset($chat->id) || (int)$chat->id == 0) {
+            return $captions;
+        }
+
+        $captionUser = '';
+        $captionOp = '';
+        $captionOcrUser = '';
+        $captionOcrOp = '';
+
+        $chatFiles = erLhcoreClassModelChatFile::getList(array('limit' => false, 'sort' => 'id ASC', 'filter' => array('chat_id' => $chat->id)));
+
+        foreach ($chatFiles as $chatFile) {
+            $caption = trim((string)$chatFile->caption);
+            $captionOcr = trim((string)$chatFile->caption_ocr);
+
+            if ($caption === '' && $captionOcr === '') {
+                continue;
+            }
+
+            $fileName = $chatFile->id . '-' . ($chatFile->upload_name != '' ? $chatFile->upload_name : $chatFile->name);
+
+            if ($chatFile->user_id > 0) {
+                if ($caption !== '') {
+                    $captionOp .= "===\n" . $fileName . "\n===\n" . $caption . "\n";
+                }
+                if ($captionOcr !== '') {
+                    $captionOcrOp .= "===\n" . $fileName . "\n===\n" . $captionOcr . "\n";
+                }
+            } else {
+                if ($caption !== '') {
+                    $captionUser .= "===\n" . $fileName . "\n===\n" . $caption . "\n";
+                }
+                if ($captionOcr !== '') {
+                    $captionOcrUser .= "===\n" . $fileName . "\n===\n" . $captionOcr . "\n";
+                }
+            }
+        }
+
+        if (trim($captionUser) !== '') {
+            $captions['caption_user'] = trim($captionUser);
+        }
+
+        if (trim($captionOp) !== '') {
+            $captions['caption_op'] = trim($captionOp);
+        }
+
+        if (trim($captionOcrUser) !== '') {
+            $captions['caption_ocr_user'] = trim($captionOcrUser);
+        }
+
+        if (trim($captionOcrOp) !== '') {
+            $captions['caption_ocr_op'] = trim($captionOcrOp);
+        }
+
+        return $captions;
+    }
+
+    public static function getMailCaptions($message)
+    {
+        $captions = array(
+            'caption_user' => null,
+            'caption_op' => null,
+            'caption_ocr_user' => null,
+            'caption_ocr_op' => null
+        );
+
+        if (!isset($message->id) || (int)$message->id == 0) {
+            return $captions;
+        }
+
+        if (isset($message->is_archive) && $message->is_archive === true) {
+            $mailFileClass = 'LiveHelperChat\\Models\\mailConv\\Archive\\File';
+        } else {
+            $mailFileClass = 'erLhcoreClassModelMailconvFile';
+        }
+
+        // Files from messages we have sent are operator files
+        $isOperatorFile = (int)$message->response_type == erLhcoreClassModelMailconvMessage::RESPONSE_INTERNAL;
+
+        $captionKey = $isOperatorFile ? 'caption_op' : 'caption_user';
+        $captionOcrKey = $isOperatorFile ? 'caption_ocr_op' : 'caption_ocr_user';
+
+        $captionValue = '';
+        $captionOcrValue = '';
+
+        $mailFiles = $mailFileClass::getList(array('limit' => false, 'sort' => 'id ASC', 'filter' => array('message_id' => $message->id)));
+
+        foreach ($mailFiles as $mailFile) {
+            $caption = trim((string)$mailFile->caption);
+            $captionOcr = trim((string)$mailFile->caption_ocr);
+
+            if ($caption === '' && $captionOcr === '') {
+                continue;
+            }
+
+            $fileName = $mailFile->id . '-' . ($mailFile->name != '' ? $mailFile->name : $mailFile->file_name);
+
+            if ($caption !== '') {
+                $captionValue .= "===\n" . $fileName . "\n===\n" . $caption . "\n";
+            }
+
+            if ($captionOcr !== '') {
+                $captionOcrValue .= "===\n" . $fileName . "\n===\n" . $captionOcr . "\n";
+            }
+        }
+
+        if (trim($captionValue) !== '') {
+            $captions[$captionKey] = trim($captionValue);
+        }
+
+        if (trim($captionOcrValue) !== '') {
+            $captions[$captionOcrKey] = trim($captionOcrValue);
+        }
+
+        return $captions;
+    }
+
     public static function indexMails($params) {
         $sparams = array();
         $sparams['body']['query']['bool']['must'][]['terms']['_id'] = array_keys($params['mails']);
@@ -1031,6 +1195,7 @@ class erLhcoreClassElasticSearchIndex
             }
         }
 
+        // File captions are built per individual mail message by getMailCaptions()
         foreach ($params['mails'] as $keyValue => $item) {
             if (isset($documentsReindexed[$keyValue])) {
                 $esChat = $documentsReindexed[$keyValue];
@@ -1114,6 +1279,12 @@ class erLhcoreClassElasticSearchIndex
                 $esChat->has_attachment_conv = $item->conversation->has_attachment;
             }
 
+            $captions = self::getMailCaptions($item);
+
+            $esChat->caption_user = $captions['caption_user'];
+            $esChat->caption_op = $captions['caption_op'];
+            $esChat->caption_ocr_user = $captions['caption_ocr_user'];
+            $esChat->caption_ocr_op = $captions['caption_ocr_op'];
             $esChat->subject_id = [];
 
             // If it's archive record use archive subject

@@ -9,6 +9,10 @@ More information can be found at <a target="_blank" title="https://www.elastic.c
     <li><span class="badge bg-secondary">msg_operator</span> - operator messages</li>
     <li><span class="badge bg-secondary">msg_system</span> - system messages</li>
     <li><span class="badge bg-secondary">msg_bot</span> - bot messages</li>
+    <li><span class="badge bg-secondary">caption_user</span> - visitor file captions</li>
+    <li><span class="badge bg-secondary">caption_op</span> - operator file captions</li>
+    <li><span class="badge bg-secondary">caption_ocr_user</span> - visitor file OCR text</li>
+    <li><span class="badge bg-secondary">caption_ocr_op</span> - operator file OCR text</li>
     <li><span class="badge bg-secondary">email</span> - visitor e-mail</li>
     <li><span class="badge bg-secondary">city</span> - visitor city. E.g. <i>Frankfurt am Main || Hesse</i></li>
     <li><span class="badge bg-secondary">region</span> - visitor region <i>Hesse</i></li>

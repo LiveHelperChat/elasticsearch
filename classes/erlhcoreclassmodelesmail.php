@@ -67,6 +67,10 @@ class erLhcoreClassModelESMail
             'customer_address' => $this->customer_address,
             'customer_address_clean' => $this->customer_address_clean,
             'customer_name' => $this->customer_name,
+            'caption_user' => $this->caption_user,
+            'caption_op' => $this->caption_op,
+            'caption_ocr_user' => $this->caption_ocr_user,
+            'caption_ocr_op' => $this->caption_ocr_op,
         );
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('elasticsearch.getstate_mail', array(
@@ -225,6 +229,10 @@ class erLhcoreClassModelESMail
     public $conversation_id_old = null;
     public $has_attachment_conv = null;
     public $is_external = null;
+    public $caption_user = null;
+    public $caption_op = null;
+    public $caption_ocr_user = null;
+    public $caption_ocr_op = null;
 
     // Dynamic attributes
     public $subject_id = null;

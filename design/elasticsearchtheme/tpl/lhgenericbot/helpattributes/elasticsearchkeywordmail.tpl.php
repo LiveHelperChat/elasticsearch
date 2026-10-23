@@ -17,6 +17,10 @@
     <li><span class="badge bg-secondary">bcc_data</span> - In BCC data</li>
     <li><span class="badge bg-secondary">mb_folder</span> - In mailbox path</li>
     <li><span class="badge bg-secondary">customer_name</span> - Customer name</li>
+    <li><span class="badge bg-secondary">caption_user</span> - Customer file captions</li>
+    <li><span class="badge bg-secondary">caption_op</span> - Operator file captions</li>
+    <li><span class="badge bg-secondary">caption_ocr_user</span> - Customer file OCR text</li>
+    <li><span class="badge bg-secondary">caption_ocr_op</span> - Operator file OCR text</li>
     <li><span class="badge bg-secondary">customer_address</span> - Customer email</li>
     <li><span class="badge bg-secondary">customer_address_clean</span> - Customer email without dots in the name</li>
     <li><span class="badge bg-secondary">from_address</span> - From address of the mail message</li>

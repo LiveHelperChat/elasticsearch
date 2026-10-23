@@ -24,7 +24,7 @@ $dateFilter = array(
 
 $minimumMatch = 0;
 
-if (trim($filterParams['input_form']->attr) != '') {
+if (trim($filterParams['input_form']->attr) != '' && $filterParams['input_form']->val != '') {
     if ($filterParams['input_form']->attr == 'email'){
         $booldConditions['bool']['should'][]['term']['email'] = $filterParams['input_form']->val;
         $booldConditions['bool']['should'][]['term']['from_address'] = $filterParams['input_form']->val;
@@ -78,10 +78,31 @@ if (trim($filterParams['input_form']->keyword) != '') {
             $booldConditions['bool']['should'][][$exactMatch]['alt_body'] = $paramQuery;
         }
 
-        // Interactions search has its own search_in mapping: 5 = subject, 6 = alt_body, 7 = bot messages.
+        // Interactions search has its own search_in mapping: 5 = subject, 6 = alt_body, 7 = bot messages,
+        // 8-11 = file captions/OCR (shared by chat and mail indexes).
         // Regular chat search uses a different enumeration, where bot messages are mapped to 5.
         if (in_array(7,$filterParams['input_form']->search_in)) {
             $booldConditions['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
+        }
+
+        if (in_array(8,$filterParams['input_form']->search_in)) {
+            $booldConditions['bool']['should'][][$exactMatch]['caption_user'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_user'] = new stdClass();
+        }
+
+        if (in_array(9,$filterParams['input_form']->search_in)) {
+            $booldConditions['bool']['should'][][$exactMatch]['caption_op'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_op'] = new stdClass();
+        }
+
+        if (in_array(10,$filterParams['input_form']->search_in)) {
+            $booldConditions['bool']['should'][][$exactMatch]['caption_ocr_user'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_ocr_user'] = new stdClass();
+        }
+
+        if (in_array(11,$filterParams['input_form']->search_in)) {
+            $booldConditions['bool']['should'][][$exactMatch]['caption_ocr_op'] = $paramQuery;
+            $sparams['body']['highlight']['fields']['caption_ocr_op'] = new stdClass();
         }
     }
 

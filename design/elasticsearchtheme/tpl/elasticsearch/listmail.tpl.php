@@ -103,6 +103,14 @@
                                                 <div>
                                                     <?php if ($field == 'subject') : ?>
                                                         <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Subject');?>:</i>
+                                                    <?php elseif ($field == 'caption_user') : ?>
+                                                        <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Customer file captions');?>:</i>
+                                                    <?php elseif ($field == 'caption_op') : ?>
+                                                        <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Operator file captions');?>:</i>
+                                                    <?php elseif ($field == 'caption_ocr_user') : ?>
+                                                        <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Customer file OCR text');?>:</i>
+                                                    <?php elseif ($field == 'caption_ocr_op') : ?>
+                                                        <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Operator file OCR text');?>:</i>
                                                     <?php else : ?>
                                                         <i class="fw-bold"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('module/mailconvconv','Body');?>:</i>
                                                     <?php endif; ?>

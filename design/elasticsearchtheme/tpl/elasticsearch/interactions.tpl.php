@@ -64,6 +64,14 @@
                                                     <i>Body:</i>
                                                 <?php elseif ($field == 'msg_operator') : ?>
                                                     <i>Operator:</i>
+                                                <?php elseif ($field == 'caption_user') : ?>
+                                                    <i><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Visitor file captions');?>/<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Customer file captions');?>:</i>
+                                                <?php elseif ($field == 'caption_op') : ?>
+                                                    <i><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Operator file captions');?>:</i>
+                                                <?php elseif ($field == 'caption_ocr_user') : ?>
+                                                    <i><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Visitor file OCR text');?>/<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('bracket/lists/filter','Customer file OCR text');?>:</i>
+                                                <?php elseif ($field == 'caption_ocr_op') : ?>
+                                                    <i><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/lists/search_panel','Operator file OCR text');?>:</i>
                                                 <?php else : ?>
                                                     <i>Visitor:</i>
                                                 <?php endif; ?>

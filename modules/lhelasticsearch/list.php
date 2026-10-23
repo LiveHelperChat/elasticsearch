@@ -437,6 +437,26 @@ if ($tab == 'chats') {
             if (in_array(5,$filterParams['input_form']->search_in)) {
                 $sparams['body']['query']['bool']['should'][][$exactMatch]['msg_bot'] = $paramQuery;
             }
+
+            if (in_array(6,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_user'] = $paramQuery;
+                $sparams['body']['highlight']['fields']['caption_user'] = new stdClass();
+            }
+
+            if (in_array(7,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_op'] = $paramQuery;
+                $sparams['body']['highlight']['fields']['caption_op'] = new stdClass();
+            }
+
+            if (in_array(8,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_ocr_user'] = $paramQuery;
+                $sparams['body']['highlight']['fields']['caption_ocr_user'] = new stdClass();
+            }
+
+            if (in_array(9,$filterParams['input_form']->search_in)) {
+                $sparams['body']['query']['bool']['should'][][$exactMatch]['caption_ocr_op'] = $paramQuery;
+                $sparams['body']['highlight']['fields']['caption_ocr_op'] = new stdClass();
+            }
         }
 
         if ($filterParams['input_form']->expression != 1) {

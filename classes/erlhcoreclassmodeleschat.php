@@ -75,6 +75,10 @@ class erLhcoreClassModelESChat
             'msg_operator' => $this->msg_operator,
             'msg_system' => $this->msg_system,
             'msg_bot' => $this->msg_bot,
+            'caption_user' => $this->caption_user,
+            'caption_op' => $this->caption_op,
+            'caption_ocr_user' => $this->caption_ocr_user,
+            'caption_ocr_op' => $this->caption_ocr_op,
             'pnd_time' => $this->pnd_time,
             'cls_time' => $this->cls_time,
             'invitation_id' => $this->invitation_id,
@@ -315,6 +319,10 @@ class erLhcoreClassModelESChat
     public $msg_operator = null;
     public $msg_system = null;
     public $msg_bot = null;
+    public $caption_user = null;
+    public $caption_op = null;
+    public $caption_ocr_user = null;
+    public $caption_ocr_op = null;
     public $pnd_time = null;
     public $cls_time = null;
     public $invitation_id = null;
